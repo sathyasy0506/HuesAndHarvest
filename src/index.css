@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #234541;
+  --hover-color: #234541;
+  --text-color: #000000;
+  --bg-color: #ffffff;
+  --card-color: #f1f1f1;
+  --sho-bg-color: #f7fdfa; /* very light lime green */
+  --dark-gold-color: #b8860b; /* Dark Gold */
+  --font-poppins: 'Poppins', sans-serif;
+  --font-outfit: 'Outfit', sans-serif;
+}
+
+.dark {
+  --primary-color: #38715c;
+  --hover-color: #34645e;
+  --text-color: #ffffff;
+  --bg-color: #081216;
+  --card-color: #1e1e1e;
+  --sho-bg-color: #000000; /* black for dark mode */
+  --dark-gold-color: #b8860b;
+  --font-poppins: 'Poppins', sans-serif;
+  --font-outfit: 'Outfit', sans-serif;
+}
+
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-poppins);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+* {
+  box-sizing: border-box;
+}
