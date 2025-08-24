@@ -12,6 +12,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import CloseIcon from "@mui/icons-material/Close"; // add this import
 import { ENDPOINTS } from "../../api/config";
 import NoProductsImg from "../../assets/images/no-product-found.webp";
+import { useNavigate } from "react-router-dom";
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
@@ -21,8 +22,15 @@ const Shop = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [sortBy, setSortBy] = useState("default");
   const [openFilters, setOpenFilters] = useState(false);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true); // Added loading state
   const [selectedStockStatuses, setSelectedStockStatuses] = useState([]); // [] = all
+
+  const slugify = (name) =>
+    name
+      .toLowerCase()
+      .replace(/\s+/g, "-") // spaces → hyphens
+      .replace(/[^\w-]+/g, ""); // remove special characters
 
   useEffect(() => {
     fetch(ENDPOINTS.LIST_PRODUCTS)
@@ -426,12 +434,17 @@ const Shop = () => {
                 filteredProducts.map((p) => (
                   <div
                     key={p.id}
-                    className="rounded-xl p-5 shadow-sm hover:shadow-md transition flex flex-col"
+                    className="rounded-xl p-5 shadow-sm hover:shadow-md transition flex flex-col cursor-pointer"
                     style={{
                       opacity: p.stock_status === "outofstock" ? 0.6 : 1,
                     }}
+                    onClick={() =>
+                      navigate(`/product/${slugify(p.name)}`, {
+                        state: { id: p.id },
+                      })
+                    }
                   >
-                    {/* Image with grayscale only */}
+                    {/* Image */}
                     <div
                       className="aspect-square flex items-center justify-center mb-4 bg-gray-50 dark:bg-gray-200 rounded-lg"
                       style={{
@@ -454,6 +467,7 @@ const Shop = () => {
                       />
                     </div>
 
+                    {/* Product Info */}
                     <h3
                       className="font-semibold text-sm mb-2"
                       style={{
@@ -480,22 +494,9 @@ const Shop = () => {
                           ₹ {Number(p.oldPrice).toFixed(2)}
                         </span>
                       </div>
-
-                      {/* Stock info: only text colored red/orange/green */}
-                      <div className="text-sm font-medium">
-                        {p.stock_status === "outofstock" ? (
-                          <span style={{ color: "#FF4D4F" }}>Out of Stock</span>
-                        ) : p.stock_quantity !== null &&
-                          p.stock_quantity < 10 ? (
-                          <span style={{ color: "#FF9900" }}>
-                            Only {p.stock_quantity} left
-                          </span>
-                        ) : (
-                          <span style={{ color: "#00C851" }}>In Stock</span>
-                        )}
-                      </div>
                     </div>
 
+                    {/* Shop Now Button */}
                     <div className="flex justify-center items-center h-full">
                       <button
                         className="relative w-full px-4 py-2 flex items-center justify-center transition"
@@ -511,24 +512,14 @@ const Shop = () => {
                           pointerEvents:
                             p.stock_status === "outofstock" ? "none" : "auto",
                         }}
+                        onClick={(e) => {
+                          e.stopPropagation(); // prevent card click
+                          navigate(`/product/${slugify(p.name)}`, {
+                            state: { id: p.id },
+                          });
+                        }}
                       >
                         <span>Shop Now</span>
-                        <span
-                          style={{
-                            backgroundColor: "var(--bg-color)",
-                            color: "var(--primary-color)",
-                            borderRadius: "9999px",
-                            padding: "4px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            transform: "rotate(-180deg)",
-                            position: "absolute",
-                            right: "10px",
-                          }}
-                        >
-                          <TransitEnterexitIcon fontSize="small" />
-                        </span>
                       </button>
                     </div>
                   </div>

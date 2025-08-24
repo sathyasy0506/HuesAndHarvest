@@ -9,6 +9,7 @@ import {
   Shield,
   Clock,
 } from "lucide-react";
+import Silk from "../Home/Silk";
 
 // FeatureCard Component
 const FeatureCard = ({ Icon, title, description }) => (
@@ -60,7 +61,9 @@ const StarRating = ({ count }) => (
 const reviews = Array.from({ length: 20 }, (_, i) => ({
   name: `User ${i + 1}`,
   date: `August ${i + 1}, 2022`,
-  review: `This is a sample review from user ${i + 1}. The product is really good and I am satisfied with the purchase.`,
+  review: `This is a sample review from user ${
+    i + 1
+  }. The product is really good and I am satisfied with the purchase.`,
   stars: Math.floor(Math.random() * 5) + 1,
 }));
 
@@ -92,7 +95,7 @@ function ProductPage() {
   ).toFixed(1);
 
   return (
-    <div className="min-h-screen px-4 sm:px-6 py-8 flex justify-center bg-white dark:bg-black relative z-[50]">
+    <div className="min-h-screen px-4 sm:px-6 py-8 flex justify-center bg-white dark:bg-black relative z-1">
       <div className="w-full max-w-7xl flex flex-col gap-16">
         {/* Top Section */}
         <div className="flex flex-col md:flex-row items-start gap-10">
@@ -189,11 +192,7 @@ function ProductPage() {
               className="rounded-2xl overflow-hidden h-80"
               style={{ borderBottomLeftRadius: "6rem" }}
             >
-              <img
-                src={appleImage}
-                alt="Fresh red apples on tree branch"
-                className="w-full h-full object-cover"
-              />
+              <Silk className="w-full h-full" />
             </div>
           </div>
 
@@ -284,7 +283,9 @@ function ProductPage() {
                 className="flex flex-col bg-white p-6 rounded-xl shadow hover:shadow-md transition-shadow duration-300 w-full"
               >
                 <div className="flex items-center justify-between">
-                  <h4 className="font-semibold text-lg text-gray-900">{r.name}</h4>
+                  <h4 className="font-semibold text-lg text-gray-900">
+                    {r.name}
+                  </h4>
                   <span className="text-sm text-gray-500">{r.date}</span>
                 </div>
                 <div className="mt-2">
@@ -339,7 +340,9 @@ function ProductPage() {
                       <div className="mt-1">
                         <StarRating count={r.stars} />
                       </div>
-                      <p className="mt-2 text-gray-700 leading-relaxed">{r.review}</p>
+                      <p className="mt-2 text-gray-700 leading-relaxed">
+                        {r.review}
+                      </p>
                     </div>
                   ))}
                 </div>
