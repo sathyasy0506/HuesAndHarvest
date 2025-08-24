@@ -8,6 +8,7 @@ const Header = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [hideHeader, setHideHeader] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [bannerOverlay, setBannerOverlay] = useState(true);
 
   const location = useLocation();
 
@@ -72,7 +73,7 @@ const Header = () => {
   const navigation = [
     { name: "HOME", path: "/" },
     { name: "SHOP", path: "/shop" },
-    { name: "CONTACT", path: "/contact" },
+    { name: "CONTACT", path: "/product" },
   ];
 
   const isActive = (path) =>
@@ -80,13 +81,26 @@ const Header = () => {
       ? true
       : location.pathname === path;
 
+  // New: decide text color based on scroll
+  const headerTextColor = darkMode
+    ? "text-white"
+    : location.pathname === "/" || location.pathname === "/home"
+    ? "text-white"
+    : !hideHeader && lastScrollY > 50
+    ? "text-white"
+    : "text-black";
+
   return (
     <header
-      className={`backdrop-blur-md bg-[var(--bg-color)]/70 fixed left-0 top-0 w-full z-50 shadow-sm border-b border-[var(--card-color)] transition-transform duration-300 ${
+      className={`fixed top-0 left-0 w-full z-[9999] shadow-sm transition-transform duration-300 ${
         hideHeader ? "-translate-y-full" : "translate-y-0"
+      } ${
+        !hideHeader && lastScrollY > 50
+          ? "backdrop-blur-xl bg-[#234541]/80 border border-white/10"
+          : "bg-transparent"
       }`}
     >
-<div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-16">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-16">
         <div className="flex justify-between items-center h-20">
           {/* LEFT (Logo - desktop) */}
           <Link to="/" className="hidden md:flex items-center select-none">
@@ -104,13 +118,13 @@ const Header = () => {
                 key={item.name}
                 to={item.path}
                 className={`relative font-medium tracking-wide transition-all duration-200
-                  ${
-                    isActive(item.path)
-                      ? "text-[var(--dark-gold-color)] scale-105 -translate-y-0.5 font-semibold"
-                      : "text-[var(--text-color)]"
-                  }
-                  hover:text-[var(--dark-gold-color)] hover:scale-105 hover:-translate-y-0.5 hover:font-semibold
-                `}
+    ${
+      isActive(item.path)
+        ? `${headerTextColor} scale-105 -translate-y-0.5 font-semibold`
+        : headerTextColor
+    }
+    hover:${headerTextColor} hover:scale-105 hover:-translate-y-0.5 hover:font-semibold
+  `}
                 style={{ fontFamily: "var(--font-poppins)" }}
               >
                 {item.name}
@@ -119,19 +133,25 @@ const Header = () => {
           </nav>
 
           {/* RIGHT (Icons + Dark Mode - desktop) */}
-          <div className="hidden md:flex items-center gap-6">
-            <button className="text-[var(--text-color)] hover:text-[var(--dark-gold-color)] hover:scale-110 transition">
+          <div className="hidden md:flex items-center gap-6 ">
+            <button
+              className={`${headerTextColor} hover:${headerTextColor} hover:scale-110 transition`}
+            >
               <Search className="w-5 h-5" />
             </button>
-            <button className="text-[var(--text-color)] hover:text-[var(--dark-gold-color)] hover:scale-110 transition">
+            <button
+              className={`${headerTextColor} hover:${headerTextColor} hover:scale-110 transition`}
+            >
               <ShoppingBag className="w-5 h-5" />
             </button>
-            <button className="text-[var(--text-color)] hover:text-[var(--dark-gold-color)] hover:scale-110 transition">
+            <button
+              className={`${headerTextColor} hover:${headerTextColor} hover:scale-110 transition`}
+            >
               <User className="w-5 h-5" />
             </button>
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="text-[var(--text-color)] hover:text-[var(--dark-gold-color)] hover:scale-110 transition"
+              className={`${headerTextColor} hover:${headerTextColor} hover:scale-110 transition`}
               title="Toggle Dark Mode"
             >
               {darkMode ? (
@@ -146,7 +166,7 @@ const Header = () => {
           <div className="flex items-center justify-between w-full md:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-[var(--text-color)] hover:text-[var(--dark-gold-color)] transition"
+              className={`${headerTextColor} hover:${headerTextColor} transition`}
             >
               <svg
                 className="w-7 h-7"
@@ -181,10 +201,14 @@ const Header = () => {
             </Link>
 
             <div className="flex items-center gap-4">
-              <button className="text-[var(--text-color)] hover:text-[var(--dark-gold-color)] hover:scale-110 transition">
+              <button
+                className={`${headerTextColor} hover:${headerTextColor} hover:scale-110 transition`}
+              >
                 <Search className="w-6 h-6" />
               </button>
-              <button className="text-[var(--text-color)] hover:text-[var(--dark-gold-color)] hover:scale-110 transition">
+              <button
+                className={`${headerTextColor} hover:${headerTextColor} hover:scale-110 transition`}
+              >
                 <ShoppingBag className="w-6 h-6" />
               </button>
             </div>
@@ -205,9 +229,9 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(false)}
               className={`text-2xl font-semibold transition ${
                 isActive(item.path)
-                  ? "text-[var(--dark-gold-color)] scale-105 -translate-y-0.5"
-                  : "text-[var(--text-color)]"
-              } hover:text-[var(--dark-gold-color)]`}
+                  ? "text-white scale-105 -translate-y-0.5"
+                  : "text-white"
+              } hover:text-white`}
               style={{ fontFamily: "var(--font-poppins)" }}
             >
               {item.name}
@@ -216,7 +240,7 @@ const Header = () => {
 
           <button
             onClick={() => setIsMobileMenuOpen(false)}
-            className="text-2xl font-semibold text-[var(--text-color)] hover:text-[var(--dark-gold-color)] transition"
+            className="text-2xl font-semibold text-white hover:text-white transition"
             style={{ fontFamily: "var(--font-poppins)" }}
           >
             Account
@@ -227,7 +251,7 @@ const Header = () => {
               setDarkMode(!darkMode);
               setIsMobileMenuOpen(false);
             }}
-            className="flex items-center gap-2 text-xl font-medium text-[var(--text-color)] hover:text-[var(--dark-gold-color)] transition"
+            className="flex items-center gap-2 text-xl font-medium text-white hover:text-white transition"
             style={{ fontFamily: "var(--font-poppins)" }}
           >
             {darkMode ? (
