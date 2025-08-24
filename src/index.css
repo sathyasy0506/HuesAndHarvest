@@ -10,17 +10,17 @@
   --text-color: #000000;
   --bg-color: #ffffff;
   --card-color: #f1f1f1;
-  --sho-bg-color: #f7fdfa; /* very light lime green */
+  --sho-bg-color: #ffffff; /* very light lime green */
   --dark-gold-color: #b8860b; /* Dark Gold */
   --font-poppins: 'Poppins', sans-serif;
   --font-outfit: 'Outfit', sans-serif;
 }
 
 .dark {
-  --primary-color: #38715c;
+  --primary-color: #6cae8f;
   --hover-color: #34645e;
   --text-color: #ffffff;
-  --bg-color: #081216;
+  --bg-color: #040404;
   --card-color: #1e1e1e;
   --sho-bg-color: #000000; /* black for dark mode */
   --dark-gold-color: #b8860b;
@@ -38,4 +38,15 @@ body {
 
 * {
   box-sizing: border-box;
+}
+
+@keyframes bounceTick {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.2); }
+  80% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.animate-bounce-tick {
+  animation: bounceTick 0.35s ease-out forwards;
 }
