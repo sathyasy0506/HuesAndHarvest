@@ -6,6 +6,9 @@ import LogoDark from "../assets/images/dark.png";
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [hideHeader, setHideHeader] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
   const location = useLocation();
 
   useEffect(() => {
@@ -17,13 +20,54 @@ const Header = () => {
 
   useEffect(() => {
     const root = document.documentElement;
-    if (darkMode) {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
+    if (darkMode) root.classList.add("dark");
+    else root.classList.remove("dark");
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
   }, [darkMode]);
+
+  // Scroll listener with pointer peek effect
+  useEffect(() => {
+    const isPointerAtTop = { current: false };
+
+    const handleScroll = () => {
+      if (isPointerAtTop.current) {
+        setHideHeader(false); // show header while pointer at top
+        return;
+      }
+
+      if (window.scrollY > lastScrollY && window.scrollY > 100) {
+        setHideHeader(true); // scrolling down
+      } else {
+        setHideHeader(false); // scrolling up
+      }
+      setLastScrollY(window.scrollY);
+    };
+
+    const handlePointerMove = (e) => {
+      if (e.clientY <= 50) {
+        isPointerAtTop.current = true;
+        setHideHeader(false);
+      } else {
+        isPointerAtTop.current = false;
+      }
+    };
+
+    const handlePointerUp = () => {
+      // when pointer released, immediately check scroll again
+      isPointerAtTop.current = false;
+      handleScroll();
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", handlePointerUp);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+    };
+  }, [lastScrollY]);
 
   const navigation = [
     { name: "HOME", path: "/" },
@@ -37,8 +81,12 @@ const Header = () => {
       : location.pathname === path;
 
   return (
-    <header className="backdrop-blur-md bg-[var(--bg-color)]/70 fixed left-0 top-0 w-full z-50 shadow-sm border-b border-[var(--card-color)] transition">
-      <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-16">
+    <header
+      className={`backdrop-blur-md bg-[var(--bg-color)]/70 fixed left-0 top-0 w-full z-50 shadow-sm border-b border-[var(--card-color)] transition-transform duration-300 ${
+        hideHeader ? "-translate-y-full" : "translate-y-0"
+      }`}
+    >
+<div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-16">
         <div className="flex justify-between items-center h-20">
           {/* LEFT (Logo - desktop) */}
           <Link to="/" className="hidden md:flex items-center select-none">
@@ -81,7 +129,6 @@ const Header = () => {
             <button className="text-[var(--text-color)] hover:text-[var(--dark-gold-color)] hover:scale-110 transition">
               <User className="w-5 h-5" />
             </button>
-            {/* Dark/Light toggle desktop */}
             <button
               onClick={() => setDarkMode(!darkMode)}
               className="text-[var(--text-color)] hover:text-[var(--dark-gold-color)] hover:scale-110 transition"
@@ -95,9 +142,8 @@ const Header = () => {
             </button>
           </div>
 
-          {/* MOBILE HEADER (Hamburger + Logo center + Icons right) */}
+          {/* MOBILE HEADER */}
           <div className="flex items-center justify-between w-full md:hidden">
-            {/* Left: Hamburger */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="text-[var(--text-color)] hover:text-[var(--dark-gold-color)] transition"
@@ -126,7 +172,6 @@ const Header = () => {
               </svg>
             </button>
 
-            {/* Center: Logo */}
             <Link to="/" className="flex items-center select-none">
               <img
                 src={LogoDark}
@@ -135,7 +180,6 @@ const Header = () => {
               />
             </Link>
 
-            {/* Right: Search + Cart */}
             <div className="flex items-center gap-4">
               <button className="text-[var(--text-color)] hover:text-[var(--dark-gold-color)] hover:scale-110 transition">
                 <Search className="w-6 h-6" />
@@ -148,10 +192,10 @@ const Header = () => {
         </div>
       </div>
 
-      {/* MOBILE MENU (Drawer under header) */}
+      {/* MOBILE MENU */}
       <div
         className={`fixed top-20 left-0 w-full h-[calc(100vh-5rem)] z-40 bg-[var(--bg-color)] transform transition-transform duration-300 ease-in-out
-  ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+          ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         <nav className="flex flex-col items-center justify-center h-full gap-8">
           {navigation.map((item) => (
@@ -170,7 +214,6 @@ const Header = () => {
             </Link>
           ))}
 
-          {/* Account */}
           <button
             onClick={() => setIsMobileMenuOpen(false)}
             className="text-2xl font-semibold text-[var(--text-color)] hover:text-[var(--dark-gold-color)] transition"
@@ -179,7 +222,6 @@ const Header = () => {
             Account
           </button>
 
-          {/* Dark/Light Mode */}
           <button
             onClick={() => {
               setDarkMode(!darkMode);
