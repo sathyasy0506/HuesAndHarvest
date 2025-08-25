@@ -42,7 +42,7 @@ function App() {
       </div>
 
       {/* Loader Overlay (fades out smoothly) */}
-      {/* <Loader isLoading={loading} /> */}
+      <Loader isLoading={loading} />
     </Router>
   );
 }
