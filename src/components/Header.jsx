@@ -92,11 +92,11 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-[2] shadow-sm transition-transform duration-300 ${
+      className={`fixed top-0 left-0 w-full z-[50] shadow-sm transition-transform duration-300 ${
         hideHeader ? "-translate-y-full" : "translate-y-0"
       } ${
         !hideHeader && lastScrollY > 50
-          ? "backdrop-blur-xl bg-[#234541]/80 border border-white/10"
+          ? "backdrop-blur-xl bg-[#234541]/80 border-transparent"
           : "bg-transparent"
       }`}
     >
