@@ -1,8 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Cursor from "react-animated-cursor";
 
 const GlobalCursor = () => {
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    // Check if window exists (for SSR safety) and width is desktop
+    if (typeof window !== "undefined") {
+      setIsDesktop(window.innerWidth >= 1024); // You can adjust the breakpoint
+    }
+  }, []);
+
+  if (!isDesktop) return null; // Don't render cursor on mobile/tablet
+
   return createPortal(
     <Cursor
       innerSize={8}
@@ -20,7 +31,7 @@ const GlobalCursor = () => {
       hoverables={["a", "button", ".hoverable"]}
       style={{ pointerEvents: "none" }}
     />,
-    document.body // Append to body
+    document.body
   );
 };
 
