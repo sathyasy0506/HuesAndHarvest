@@ -9,10 +9,11 @@ import DialogContent from "@mui/material/DialogContent";
 import Button from "@mui/material/Button";
 import TransitEnterexitIcon from "@mui/icons-material/TransitEnterexit";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import CloseIcon from "@mui/icons-material/Close"; // add this import
+import CloseIcon from "@mui/icons-material/Close";
 import { ENDPOINTS } from "../../api/config";
 import NoProductsImg from "../../assets/images/no-product-found.webp";
 import { useNavigate } from "react-router-dom";
+import Loader from "../Load";
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
@@ -56,6 +57,8 @@ const Shop = () => {
   }, []);
 
   const filteredProducts = useMemo(() => {
+    if (loading) return []; // Return empty array while loading
+
     return products
       .filter((p) => {
         const categoryMatch =
@@ -95,7 +98,7 @@ const Shop = () => {
 
         return 0;
       });
-  }, [products, selectedCategories, priceRange, sortBy, selectedStockStatuses]);
+  }, [products, selectedCategories, priceRange, sortBy, selectedStockStatuses, loading]);
 
   const filtersApplied =
     selectedCategories.length > 0 ||
@@ -338,6 +341,11 @@ const Shop = () => {
     </div>
   );
 
+  // Show loader while data is being fetched
+  if (loading) {
+    return <Loader/>;
+  }
+
   return (
     <div
       className="min-h-screen px-4 sm:px-6 py-8 mt-0"
@@ -423,14 +431,7 @@ const Shop = () => {
                 overflowY: "auto",
               }}
             >
-              {loading ? (
-                Array.from({ length: 6 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="rounded-xl p-5 shadow-sm animate-pulse h-80 bg-gray-200"
-                  ></div>
-                ))
-              ) : filteredProducts.length > 0 ? (
+              {filteredProducts.length > 0 ? (
                 filteredProducts.map((p) => (
                   <div
                     key={p.id}
@@ -438,6 +439,7 @@ const Shop = () => {
                     style={{
                       opacity: p.stock_status === "outofstock" ? 0.6 : 1,
                     }}
+                    // In your Shop component
                     onClick={() =>
                       navigate(`/product/${slugify(p.name)}`, {
                         state: { id: p.id },
