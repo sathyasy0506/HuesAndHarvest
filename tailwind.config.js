@@ -19,12 +19,17 @@ export default {
           "0%, 100%": { transform: "scale(1)" },
           "50%": { transform: "scale(0.4)" },
         },
+        "bounce-smooth": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
       },
       animation: {
         "fade-in-up": "fade-in-up 0.8s ease-out forwards",
         "sk-chase": "sk-chase 2.5s linear infinite",
         "sk-chase-dot": "sk-chase-dot 2s ease-in-out infinite",
         "sk-chase-dot-before": "sk-chase-dot-before 2s ease-in-out infinite",
+        "bounce-smooth": "bounce-smooth 1s ease-in-out infinite",
       },
     },
   },

@@ -98,7 +98,14 @@ const Shop = () => {
 
         return 0;
       });
-  }, [products, selectedCategories, priceRange, sortBy, selectedStockStatuses, loading]);
+  }, [
+    products,
+    selectedCategories,
+    priceRange,
+    sortBy,
+    selectedStockStatuses,
+    loading,
+  ]);
 
   const filtersApplied =
     selectedCategories.length > 0 ||
@@ -343,7 +350,7 @@ const Shop = () => {
 
   // Show loader while data is being fetched
   if (loading) {
-    return <Loader/>;
+    return <Loader />;
   }
 
   return (
