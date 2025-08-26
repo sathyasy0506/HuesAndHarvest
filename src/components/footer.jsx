@@ -1,7 +1,6 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import {
   Leaf,
-  Home,
   Wrench,
   FlaskRound as Flask,
   Shield,
@@ -9,12 +8,12 @@ import {
   Facebook,
   Twitter,
 } from "lucide-react";
-import Silk from "./Home/Silk"; // import your Silk background
+import Silk from "./Home/Silk";
 import logo from "../assets/images/H&H.png";
 
-const Footer = () => {
+const Footer = forwardRef((props, ref) => {
   return (
-    <footer className="relative text-white overflow-hidden">
+    <footer ref={ref} className="relative text-white overflow-hidden">
       {/* Animated Silk Background */}
       <div className="absolute inset-0 z-0">
         <Silk
@@ -77,7 +76,7 @@ const Footer = () => {
           <h2 className="text-center text-2xl font-light tracking-wider mb-12">
             WE ALWAYS CARE FOR YOU
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full border-2 flex items-center justify-center">
                 <Leaf className="w-8 h-8" />
@@ -86,12 +85,7 @@ const Footer = () => {
                 100% NATURAL
               </h3>
             </div>
-            <div className="text-center">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full border-2 flex items-center justify-center">
-                <Home className="w-8 h-8" />
-              </div>
-              <h3 className="text-sm font-medium tracking-wide">HOME-MADE</h3>
-            </div>
+
             <div className="text-center">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full border-2 flex items-center justify-center">
                 <Wrench className="w-8 h-8" />
@@ -223,6 +217,6 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
 
 export default Footer;

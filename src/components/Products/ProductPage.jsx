@@ -205,7 +205,11 @@ function ProductPage() {
   };
 
   if (!product) {
-    return <div><Loader/></div>;
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
   }
 
   // Determine stock message
@@ -213,7 +217,7 @@ function ProductPage() {
   if (product.stock_quantity === 0 || product.stock_status === "outofstock") {
     stockMessage = "Out of Stock";
   } else if (product.stock_quantity < 10) {
-    stockMessage = `Only ${product.stock_quantity} left`;
+    stockMessage = `Hurry Up Only ${product.stock_quantity} Left!`;
   } else {
     stockMessage = "In Stock";
   }
@@ -325,7 +329,7 @@ function ProductPage() {
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3 justify-center md:justify-start">
               <span
                 className="text-2xl sm:text-3xl font-bold"
                 style={{ color: "var(--text-color)" }}
@@ -340,7 +344,7 @@ function ProductPage() {
               </span>
             </div>
             {/* Stock and Quantity Row */}
-            <div className="flex items-center gap-8 mt-2">
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-8 mt-2">
               {/* Stock Status */}
               <p
                 className={`font-medium ${
@@ -437,7 +441,7 @@ function ProductPage() {
                 backgroundColor: "var(--bg-color)",
               }}
             >
-              <div className="grid grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <FeatureCard
                   Icon={Truck}
                   title="Free Delivery Across Town!"
@@ -538,50 +542,51 @@ function ProductPage() {
           style={{ fontFamily: "var(--font-poppins)" }}
         >
           {/* Title */}
-          <h2 className="text-2xl font-bold mb-8 text-gray-900 dark:text-white">
+          <h2 className="text-2xl font-bold mb-8 text-gray-900 dark:text-white text-center md:text-left">
             Ratings & Reviews
           </h2>
 
           {/* Ratings Bar Graph */}
-          <div className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-6 mb-8 shadow-md flex flex-col gap-4">
-            <div className="flex flex-row gap-6">
-              {/* Average Rating Circle - 1/4 width, vertically centered */}
-              <div className="w-1/4 flex items-center justify-center">
-                <AverageRatingCircle rating={averageRating} />
-              </div>
+          {reviews.length > 0 && (
+            <div className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-6 mb-8 shadow-md flex flex-col gap-4">
+              <div className="flex flex-row gap-6">
+                {/* Average Rating Circle - 1/4 width, vertically centered */}
+                <div className="w-1/4 flex items-center justify-center">
+                  <AverageRatingCircle rating={averageRating} />
+                </div>
 
-              {/* Star Graph - 3/4 width */}
-              <div className="w-3/4 flex flex-col gap-3 justify-center">
-                {[5, 4, 3, 2, 1].map((star) => {
-                  const percentage =
-                    (reviews.filter((r) => r.stars === star).length /
-                      reviews.length) *
-                    100;
-                  return (
-                    <div key={star} className="flex items-center gap-3">
-                      <span className="w-5 text-gray-700 dark:text-gray-300">
-                        {star}
-                      </span>
-                      <div className="flex-1 h-3 rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-700">
-                        <div
-                          className="h-3 rounded-xl"
-                          style={{
-                            width: `${percentage}%`,
-                            backgroundColor: "var(--primary-color)",
-                          }}
-                        ></div>
+                {/* Star Graph - 3/4 width */}
+                <div className="w-3/4 flex flex-col gap-3 justify-center">
+                  {[5, 4, 3, 2, 1].map((star) => {
+                    const percentage =
+                      (reviews.filter((r) => r.stars === star).length /
+                        reviews.length) *
+                      100;
+                    return (
+                      <div key={star} className="flex items-center gap-3">
+                        <span className="w-5 text-gray-700 dark:text-gray-300">
+                          {star}
+                        </span>
+                        <div className="flex-1 h-3 rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-700">
+                          <div
+                            className="h-3 rounded-xl"
+                            style={{
+                              width: `${percentage}%`,
+                              backgroundColor: "var(--primary-color)",
+                            }}
+                          ></div>
+                        </div>
+                        <span className="w-10 text-right text-sm text-gray-700 dark:text-gray-400">
+                          {Math.round(percentage)}%
+                        </span>
                       </div>
-                      <span className="w-10 text-right text-sm text-gray-700 dark:text-gray-400">
-                        {Math.round(percentage)}%
-                      </span>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Review Cards */}
           {/* Review Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {reviews.length === 0 ? (
