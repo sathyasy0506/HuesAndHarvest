@@ -92,17 +92,25 @@ const Header = () => {
 
   // Scroll listener
   useEffect(() => {
+    let lastScroll = 0;
+
     const handleScroll = () => {
-      if (window.scrollY > lastScrollY && window.scrollY > 100) {
+      const currentScroll = window.scrollY;
+
+      if (currentScroll > lastScroll) {
+        // Scrolling down
         setHideHeader(true);
       } else {
+        // Scrolling up
         setHideHeader(false);
       }
-      setLastScrollY(window.scrollY);
+
+      lastScroll = currentScroll;
     };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   const navigation = [
     { name: "HOME", path: "/" },
@@ -116,7 +124,7 @@ const Header = () => {
 
   const headerTextColor = darkMode
     ? "text-white"
-    : location.pathname === "/" || location.pathname === "/home"
+    : location.pathname === "/" || location.pathname === "/home" || location.pathname === "/auth"
     ? "text-white"
     : !hideHeader && lastScrollY > 50
     ? "text-white"

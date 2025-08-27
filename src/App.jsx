@@ -13,6 +13,7 @@ import "./index.css";
 import ScrollIndicator from "./components/Common/ScrollIndicator";
 import Cart from "./components/Cart/Cart";
 import AuthPage from "./components/Auth/Auth";
+import AccountDashboard from "./components/MyAccount/AccountDashboard";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -41,6 +42,7 @@ function App() {
             <Route path="/reviews" element={<RatingsAndReviews />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/account" element={<AccountDashboard />} />
           </Routes>
         </div>
 
