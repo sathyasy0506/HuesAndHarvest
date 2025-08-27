@@ -53,26 +53,38 @@ const OrdersSection = () => {
   const getStatusIcon = (status) => {
     switch (status) {
       case "delivered":
-        return <CheckCircle className="w-5 h-5 text-green-600" />;
+        return (
+          <CheckCircle
+            className="w-5 h-5"
+            style={{ color: "var(--success-color)" }}
+          />
+        );
       case "shipped":
-        return <Truck className="w-5 h-5 text-blue-600" />;
+        return (
+          <Truck className="w-5 h-5" style={{ color: "var(--accent-color)" }} />
+        );
       case "processing":
-        return <RefreshCw className="w-5 h-5 text-yellow-600" />;
+        return (
+          <RefreshCw
+            className="w-5 h-5"
+            style={{ color: "var(--warning-color)" }}
+          />
+        );
       case "pending":
-        return <Clock className="w-5 h-5 text-gray-600" />;
+        return <Clock className="w-5 h-5 muted-text" />;
       default:
-        return <Package className="w-5 h-5 text-gray-600" />;
+        return <Package className="w-5 h-5 muted-text" />;
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusClass = (status) => {
     switch (status) {
       case "delivered":
-        return "bg-green-100 text-green-800";
+        return "success-badge";
       case "shipped":
         return "bg-blue-100 text-blue-800";
       case "processing":
-        return "bg-yellow-100 text-yellow-800";
+        return "warning-badge";
       case "pending":
         return "bg-gray-100 text-gray-800";
       default:
@@ -107,11 +119,16 @@ const OrdersSection = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+      <div className="card-bg rounded-2xl p-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Order History</h1>
+          <h1
+            className="text-3xl font-bold primary-text"
+            style={{ fontFamily: "var(--font-outfit)" }}
+          >
+            Order History
+          </h1>
           <div className="flex items-center space-x-4">
-            <select className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <select className="input-field px-4 py-2 rounded-lg">
               <option>Last 3 months</option>
               <option>Last 6 months</option>
               <option>Last year</option>
@@ -120,19 +137,34 @@ const OrdersSection = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex space-x-1 bg-gray-100 rounded-xl p-1">
+        <div
+          className="flex space-x-1 rounded-xl p-1"
+          style={{ backgroundColor: "var(--secondary-bg)" }}
+        >
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-lg font-medium transition-all ${
                 activeTab === tab.id
-                  ? "bg-white text-blue-600 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
+                  ? "card-bg shadow-sm"
+                  : "hover:bg-opacity-50"
               }`}
+              style={{
+                color:
+                  activeTab === tab.id
+                    ? "var(--accent-color)"
+                    : "var(--muted-text)",
+              }}
             >
               <span>{tab.label}</span>
-              <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">
+              <span
+                className="text-xs px-2 py-1 rounded-full"
+                style={{
+                  backgroundColor: "var(--secondary-bg)",
+                  color: "var(--muted-text)",
+                }}
+              >
                 {tab.count}
               </span>
             </button>
@@ -145,7 +177,7 @@ const OrdersSection = () => {
         {filteredOrders.map((order) => (
           <div
             key={order.id}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow"
+            className="card-bg rounded-2xl p-6 hover:shadow-md transition-shadow"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
@@ -155,13 +187,13 @@ const OrdersSection = () => {
                   className="w-16 h-16 object-cover rounded-xl"
                 />
                 <div>
-                  <h3 className="font-semibold text-gray-900 text-lg">
+                  <h3 className="font-semibold primary-text text-lg">
                     {order.id}
                   </h3>
-                  <p className="text-gray-500">
+                  <p className="muted-text">
                     Placed on {new Date(order.date).toLocaleDateString()}
                   </p>
-                  <p className="text-gray-600">
+                  <p className="muted-text">
                     {order.items} item{order.items > 1 ? "s" : ""}
                   </p>
                 </div>
@@ -169,11 +201,11 @@ const OrdersSection = () => {
 
               <div className="flex items-center space-x-6">
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-2xl font-bold primary-text">
                     ${order.total}
                   </p>
                   <div
-                    className={`inline-flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                    className={`inline-flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusClass(
                       order.status
                     )}`}
                   >
@@ -183,11 +215,14 @@ const OrdersSection = () => {
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                  <button
+                    className="p-2 transition-colors rounded-lg"
+                    style={{ color: "var(--muted-text)" }}
+                  >
                     <Eye className="w-5 h-5" />
                   </button>
                   {order.status === "delivered" && (
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <button className="primary-button px-4 py-2 rounded-lg">
                       Reorder
                     </button>
                   )}
@@ -199,15 +234,18 @@ const OrdersSection = () => {
       </div>
 
       {filteredOrders.length === 0 && (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
-          <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+        <div className="card-bg rounded-2xl p-12 text-center">
+          <Package
+            className="w-16 h-16 mx-auto mb-4"
+            style={{ color: "var(--muted-text)" }}
+          />
+          <h3 className="text-xl font-semibold primary-text mb-2">
             No orders found
           </h3>
-          <p className="text-gray-500 mb-6">
+          <p className="muted-text mb-6">
             You haven't placed any orders in this category yet.
           </p>
-          <button className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors">
+          <button className="primary-button px-6 py-3 rounded-xl">
             Start Shopping
           </button>
         </div>

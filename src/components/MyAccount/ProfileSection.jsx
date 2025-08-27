@@ -20,20 +20,33 @@ const ProfileSection = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-8 text-white relative overflow-hidden">
+      <div className="gradient-header rounded-2xl p-8 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-black bg-opacity-10"></div>
         <div className="relative flex items-center justify-between">
           <div className="flex items-center space-x-6">
             <div className="relative">
               <div className="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                <span className="text-2xl font-bold">JD</span>
+                <span
+                  className="text-2xl font-bold"
+                  style={{ fontFamily: "var(--font-outfit)" }}
+                >
+                  JD
+                </span>
               </div>
-              <button className="absolute -bottom-2 -right-2 w-8 h-8 bg-white text-gray-600 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors">
+              <button
+                className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
+                style={{ color: "var(--text-color)" }}
+              >
                 <Camera className="w-4 h-4" />
               </button>
             </div>
             <div>
-              <h1 className="text-3xl font-bold">John Doe</h1>
+              <h1
+                className="text-3xl font-bold"
+                style={{ fontFamily: "var(--font-outfit)" }}
+              >
+                John Doe
+              </h1>
               <p className="text-blue-100 text-lg">Premium Member since 2020</p>
             </div>
           </div>
@@ -52,14 +65,16 @@ const ProfileSection = () => {
       </div>
 
       {/* Profile Form */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">
+      <div className="card-bg rounded-2xl p-8">
+        <h2
+          className="text-2xl font-bold primary-text mb-6"
+          style={{ fontFamily: "var(--font-outfit)" }}
+        >
           Personal Information
         </h2>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium primary-text mb-2">
               First Name
             </label>
             <input
@@ -69,12 +84,11 @@ const ProfileSection = () => {
                 setFormData({ ...formData, firstName: e.target.value })
               }
               disabled={!isEditing}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500 transition-colors"
+              className="w-full input-field px-4 py-3 rounded-xl transition-colors"
             />
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium primary-text mb-2">
               Last Name
             </label>
             <input
@@ -84,12 +98,11 @@ const ProfileSection = () => {
                 setFormData({ ...formData, lastName: e.target.value })
               }
               disabled={!isEditing}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500 transition-colors"
+              className="w-full input-field px-4 py-3 rounded-xl transition-colors"
             />
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium primary-text mb-2">
               Email
             </label>
             <input
@@ -99,12 +112,11 @@ const ProfileSection = () => {
                 setFormData({ ...formData, email: e.target.value })
               }
               disabled={!isEditing}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500 transition-colors"
+              className="w-full input-field px-4 py-3 rounded-xl transition-colors"
             />
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium primary-text mb-2">
               Phone
             </label>
             <input
@@ -114,12 +126,11 @@ const ProfileSection = () => {
                 setFormData({ ...formData, phone: e.target.value })
               }
               disabled={!isEditing}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500 transition-colors"
+              className="w-full input-field px-4 py-3 rounded-xl transition-colors"
             />
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium primary-text mb-2">
               Birth Date
             </label>
             <input
@@ -129,21 +140,21 @@ const ProfileSection = () => {
                 setFormData({ ...formData, birthDate: e.target.value })
               }
               disabled={!isEditing}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500 transition-colors"
+              className="w-full input-field px-4 py-3 rounded-xl transition-colors"
             />
           </div>
         </div>
 
         <div className="mt-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium primary-text mb-2">
             Bio
           </label>
           <textarea
             value={formData.bio}
             onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
             disabled={!isEditing}
-            rows="4"
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500 transition-colors resize-none"
+            rows={4}
+            className="w-full input-field px-4 py-3 rounded-xl transition-colors resize-none"
             placeholder="Tell us a bit about yourself..."
           />
         </div>
@@ -152,13 +163,13 @@ const ProfileSection = () => {
           <div className="mt-8 flex justify-end space-x-4">
             <button
               onClick={() => setIsEditing(false)}
-              className="px-6 py-3 border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 transition-colors"
+              className="secondary-button px-6 py-3 rounded-xl"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
-              className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 flex items-center space-x-2 transition-colors"
+              className="primary-button px-6 py-3 rounded-xl flex items-center space-x-2"
             >
               <Save className="w-5 h-5" />
               <span>Save Changes</span>

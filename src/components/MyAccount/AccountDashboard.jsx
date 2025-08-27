@@ -35,7 +35,7 @@ function AccountDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 mt-4">
+    <div className="min-h-screen dashboard-bg mt-4">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar */}
@@ -56,25 +56,39 @@ function AccountDashboard() {
 
 // Placeholder components for sections not yet implemented
 const NotificationPlaceholder = ({ title }) => (
-  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-    <h1 className="text-3xl font-bold text-gray-900 mb-4">{title}</h1>
+  <div className="card-bg rounded-2xl p-8">
+    <h1
+      className="text-3xl font-bold primary-text mb-4"
+      style={{ fontFamily: "var(--font-outfit)" }}
+    >
+      {title}
+    </h1>
     <div className="space-y-6">
       {[1, 2, 3].map((i) => (
         <div
           key={i}
-          className="flex items-start space-x-4 p-4 bg-gray-50 rounded-xl"
+          className="flex items-start space-x-4 p-4 rounded-xl"
+          style={{ backgroundColor: "var(--secondary-bg)" }}
         >
-          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-            <span className="text-blue-600 font-semibold">{i}</span>
+          <div
+            className="w-12 h-12 rounded-full flex items-center justify-center"
+            style={{ backgroundColor: "var(--accent-color)", opacity: 0.1 }}
+          >
+            <span
+              className="font-semibold"
+              style={{ color: "var(--accent-color)" }}
+            >
+              {i}
+            </span>
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold text-gray-900">
+            <h3 className="font-semibold primary-text">
               Notification Title {i}
             </h3>
-            <p className="text-gray-600 mt-1">
+            <p className="muted-text mt-1">
               This is a sample notification message that would appear here.
             </p>
-            <p className="text-sm text-gray-500 mt-2">2 hours ago</p>
+            <p className="text-sm muted-text mt-2">2 hours ago</p>
           </div>
         </div>
       ))}
@@ -84,32 +98,46 @@ const NotificationPlaceholder = ({ title }) => (
 
 const SecurityPlaceholder = ({ title }) => (
   <div className="space-y-8">
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">{title}</h1>
+    <div className="card-bg rounded-2xl p-8">
+      <h1
+        className="text-3xl font-bold primary-text mb-6"
+        style={{ fontFamily: "var(--font-outfit)" }}
+      >
+        {title}
+      </h1>
       <div className="space-y-6">
-        <div className="flex items-center justify-between p-4 border border-gray-200 rounded-xl">
+        <div
+          className="flex items-center justify-between p-4 rounded-xl"
+          style={{ border: "1px solid var(--border-color)" }}
+        >
           <div>
-            <h3 className="font-semibold text-gray-900">
+            <h3 className="font-semibold primary-text">
               Two-Factor Authentication
             </h3>
-            <p className="text-gray-600">
+            <p className="muted-text">
               Add an extra layer of security to your account
             </p>
           </div>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          <button className="primary-button px-4 py-2 rounded-lg">
             Enable
           </button>
         </div>
-        <div className="flex items-center justify-between p-4 border border-gray-200 rounded-xl">
+        <div
+          className="flex items-center justify-between p-4 rounded-xl"
+          style={{ border: "1px solid var(--border-color)" }}
+        >
           <div>
-            <h3 className="font-semibold text-gray-900">Login Alerts</h3>
-            <p className="text-gray-600">
+            <h3 className="font-semibold primary-text">Login Alerts</h3>
+            <p className="muted-text">
               Get notified when someone logs into your account
             </p>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
             <input type="checkbox" className="sr-only peer" defaultChecked />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            <div
+              className="w-11 h-6 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all"
+              style={{ backgroundColor: "var(--border-color)" }}
+            ></div>
           </label>
         </div>
       </div>
@@ -119,13 +147,16 @@ const SecurityPlaceholder = ({ title }) => (
 
 const SettingsPlaceholder = ({ title }) => (
   <div className="space-y-8">
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">{title}</h1>
+    <div className="card-bg rounded-2xl p-8">
+      <h1
+        className="text-3xl font-bold primary-text mb-6"
+        style={{ fontFamily: "var(--font-outfit)" }}
+      >
+        {title}
+      </h1>
       <div className="space-y-6">
         <div>
-          <h3 className="font-semibold text-gray-900 mb-3">
-            Email Preferences
-          </h3>
+          <h3 className="font-semibold primary-text mb-3">Email Preferences</h3>
           <div className="space-y-3">
             {[
               "Order updates",
@@ -135,25 +166,24 @@ const SettingsPlaceholder = ({ title }) => (
               <label key={item} className="flex items-center">
                 <input
                   type="checkbox"
-                  className="w-5 h-5 text-blue-600 border-gray-300 rounded"
+                  className="w-5 h-5 rounded"
+                  style={{ color: "var(--accent-color)" }}
                   defaultChecked
                 />
-                <span className="ml-3 text-gray-700">{item}</span>
+                <span className="ml-3 primary-text">{item}</span>
               </label>
             ))}
           </div>
         </div>
         <div>
-          <h3 className="font-semibold text-gray-900 mb-3">
-            Language & Region
-          </h3>
+          <h3 className="font-semibold primary-text mb-3">Language & Region</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <select className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <select className="input-field px-4 py-3 rounded-xl">
               <option>English (US)</option>
               <option>Spanish</option>
               <option>French</option>
             </select>
-            <select className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <select className="input-field px-4 py-3 rounded-xl">
               <option>United States</option>
               <option>Canada</option>
               <option>United Kingdom</option>
@@ -167,8 +197,13 @@ const SettingsPlaceholder = ({ title }) => (
 
 const HelpPlaceholder = ({ title }) => (
   <div className="space-y-8">
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">{title}</h1>
+    <div className="card-bg rounded-2xl p-8">
+      <h1
+        className="text-3xl font-bold primary-text mb-6"
+        style={{ fontFamily: "var(--font-outfit)" }}
+      >
+        {title}
+      </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {[
           { title: "Order Issues", desc: "Problems with your orders" },
@@ -178,10 +213,14 @@ const HelpPlaceholder = ({ title }) => (
         ].map((item) => (
           <div
             key={item.title}
-            className="p-6 border border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition-colors cursor-pointer"
+            className="p-6 rounded-xl cursor-pointer transition-colors hover:opacity-80"
+            style={{
+              border: "1px solid var(--border-color)",
+              backgroundColor: "var(--card-color)",
+            }}
           >
-            <h3 className="font-semibold text-gray-900 mb-2">{item.title}</h3>
-            <p className="text-gray-600">{item.desc}</p>
+            <h3 className="font-semibold primary-text mb-2">{item.title}</h3>
+            <p className="muted-text">{item.desc}</p>
           </div>
         ))}
       </div>

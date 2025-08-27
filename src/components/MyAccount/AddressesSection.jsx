@@ -64,15 +64,17 @@ const AddressesSection = () => {
     };
 
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-xl font-semibold text-gray-900 mb-6">
+      <div className="card-bg rounded-2xl p-6">
+        <h3
+          className="text-xl font-semibold primary-text mb-6"
+          style={{ fontFamily: "var(--font-outfit)" }}
+        >
           {address ? "Edit Address" : "Add New Address"}
         </h3>
-
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium primary-text mb-2">
                 Address Type
               </label>
               <select
@@ -80,7 +82,7 @@ const AddressesSection = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, type: e.target.value })
                 }
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full input-field px-4 py-3 rounded-xl"
               >
                 <option value="home">Home</option>
                 <option value="work">Work</option>
@@ -89,7 +91,7 @@ const AddressesSection = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium primary-text mb-2">
                 Label
               </label>
               <input
@@ -98,7 +100,7 @@ const AddressesSection = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, label: e.target.value })
                 }
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full input-field px-4 py-3 rounded-xl"
                 placeholder="e.g., Home, Work, Mom's House"
                 required
               />
@@ -106,7 +108,7 @@ const AddressesSection = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium primary-text mb-2">
               Full Name
             </label>
             <input
@@ -115,13 +117,13 @@ const AddressesSection = () => {
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full input-field px-4 py-3 rounded-xl"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium primary-text mb-2">
               Street Address
             </label>
             <input
@@ -130,14 +132,14 @@ const AddressesSection = () => {
               onChange={(e) =>
                 setFormData({ ...formData, street: e.target.value })
               }
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full input-field px-4 py-3 rounded-xl"
               required
             />
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium primary-text mb-2">
                 City
               </label>
               <input
@@ -146,13 +148,13 @@ const AddressesSection = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, city: e.target.value })
                 }
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full input-field px-4 py-3 rounded-xl"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium primary-text mb-2">
                 State
               </label>
               <input
@@ -161,13 +163,13 @@ const AddressesSection = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, state: e.target.value })
                 }
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full input-field px-4 py-3 rounded-xl"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium primary-text mb-2">
                 ZIP Code
               </label>
               <input
@@ -176,7 +178,7 @@ const AddressesSection = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, zip: e.target.value })
                 }
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full input-field px-4 py-3 rounded-xl"
                 required
               />
             </div>
@@ -190,9 +192,10 @@ const AddressesSection = () => {
               onChange={(e) =>
                 setFormData({ ...formData, isDefault: e.target.checked })
               }
-              className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              className="w-5 h-5 rounded"
+              style={{ color: "var(--accent-color)" }}
             />
-            <label htmlFor="isDefault" className="ml-3 text-sm text-gray-700">
+            <label htmlFor="isDefault" className="ml-3 text-sm primary-text">
               Set as default address
             </label>
           </div>
@@ -201,13 +204,13 @@ const AddressesSection = () => {
             <button
               type="button"
               onClick={onCancel}
-              className="px-6 py-3 border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 transition-colors"
+              className="secondary-button px-6 py-3 rounded-xl"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+              className="primary-button px-6 py-3 rounded-xl"
             >
               {address ? "Update Address" : "Add Address"}
             </button>
@@ -220,15 +223,20 @@ const AddressesSection = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+      <div className="card-bg rounded-2xl p-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Addresses</h1>
-            <p className="text-gray-500 mt-2">Manage your delivery addresses</p>
+            <h1
+              className="text-3xl font-bold primary-text"
+              style={{ fontFamily: "var(--font-outfit)" }}
+            >
+              Addresses
+            </h1>
+            <p className="muted-text mt-2">Manage your delivery addresses</p>
           </div>
           <button
             onClick={() => setShowForm(true)}
-            className="flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+            className="flex items-center space-x-2 primary-button px-6 py-3 rounded-xl"
           >
             <Plus className="w-5 h-5" />
             <span>Add Address</span>
@@ -265,29 +273,44 @@ const AddressesSection = () => {
         {addresses.map((address) => (
           <div
             key={address.id}
-            className={`bg-white rounded-2xl shadow-sm border p-6 transition-all hover:shadow-md ${
-              address.isDefault
-                ? "border-blue-200 ring-1 ring-blue-100"
-                : "border-gray-100"
+            className={`card-bg rounded-2xl p-6 transition-all hover:shadow-md ${
+              address.isDefault ? "ring-1 ring-opacity-20" : ""
             }`}
+            style={{
+              borderColor: address.isDefault
+                ? "var(--accent-color)"
+                : "var(--border-color)",
+              backgroundColor: address.isDefault
+                ? "rgba(107, 174, 143, 0.05)"
+                : "var(--card-color)",
+            }}
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center space-x-3">
                 <div
                   className={`p-2 rounded-lg ${
-                    address.isDefault
-                      ? "bg-blue-100 text-blue-600"
-                      : "bg-gray-100 text-gray-600"
+                    address.isDefault ? "text-white" : "muted-text"
                   }`}
+                  style={{
+                    backgroundColor: address.isDefault
+                      ? "var(--accent-color)"
+                      : "var(--secondary-bg)",
+                  }}
                 >
                   {getAddressIcon(address.type)}
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">
+                  <h3 className="font-semibold primary-text">
                     {address.label}
                   </h3>
                   {address.isDefault && (
-                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                    <span
+                      className="text-xs px-2 py-1 rounded-full"
+                      style={{
+                        backgroundColor: "rgba(107, 174, 143, 0.1)",
+                        color: "var(--accent-color)",
+                      }}
+                    >
                       Default
                     </span>
                   )}
@@ -300,17 +323,21 @@ const AddressesSection = () => {
                     setEditingId(address.id);
                     setShowForm(true);
                   }}
-                  className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  className="p-2 rounded-lg transition-colors"
+                  style={{ color: "var(--muted-text)" }}
                 >
                   <Edit3 className="w-4 h-4" />
                 </button>
-                <button className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                <button
+                  className="p-2 rounded-lg transition-colors"
+                  style={{ color: "var(--error-color)" }}
+                >
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            <div className="text-gray-700 space-y-1">
+            <div className="primary-text space-y-1">
               <p className="font-medium">{address.name}</p>
               <p>{address.street}</p>
               <p>

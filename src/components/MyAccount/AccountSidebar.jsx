@@ -26,14 +26,19 @@ const AccountSidebar = ({ activeSection, setActiveSection }) => {
   ];
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-fit sticky top-8">
+    <div className="card-bg rounded-2xl p-6 h-fit sticky top-8">
       <div className="flex items-center space-x-3 mb-8">
-        <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+        <div className="w-12 h-12 gradient-header rounded-full flex items-center justify-center">
           <User className="w-6 h-6 text-white" />
         </div>
         <div>
-          <h3 className="font-semibold text-gray-900">John Doe</h3>
-          <p className="text-sm text-gray-500">Premium Member</p>
+          <h3
+            className="font-semibold primary-text"
+            style={{ fontFamily: "var(--font-outfit)" }}
+          >
+            John Doe
+          </h3>
+          <p className="text-sm muted-text">Premium Member</p>
         </div>
       </div>
 
@@ -46,8 +51,8 @@ const AccountSidebar = ({ activeSection, setActiveSection }) => {
               onClick={() => setActiveSection(item.id)}
               className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 ${
                 activeSection === item.id
-                  ? "bg-blue-50 text-blue-600 border-l-4 border-blue-600"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  ? "sidebar-item active"
+                  : "sidebar-item"
               }`}
             >
               <Icon className="w-5 h-5" />
@@ -57,8 +62,14 @@ const AccountSidebar = ({ activeSection, setActiveSection }) => {
         })}
       </nav>
 
-      <div className="mt-8 pt-6 border-t border-gray-100">
-        <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-red-600 hover:bg-red-50 transition-colors">
+      <div
+        className="mt-8 pt-6"
+        style={{ borderTop: "1px solid var(--border-color)" }}
+      >
+        <button
+          className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-colors"
+          style={{ color: "var(--error-color)" }}
+        >
           <LogOut className="w-5 h-5" />
           <span className="font-medium">Sign Out</span>
         </button>
