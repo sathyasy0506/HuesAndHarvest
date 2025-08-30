@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import LoginForm from "./LoginForm";
 import SignUpForm from "./SignUpForm";
 import ForgotPasswordForm from "./ForgetPasswordForm";
-import Silk from "../Home/Silk"; // your silk component
+import Silk from "../Background/Silk"; // your silk component
 import Logo from "../../assets/images/form.png";
 
 const AuthPage = () => {

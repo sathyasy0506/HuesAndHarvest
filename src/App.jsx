@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
-import Home from "./components/Home/Home";
 import Shop from "./components/shop/shop";
 import Footer from "./components/footer";
 import ProductPage from "./components/Products/ProductPage";
@@ -14,6 +13,8 @@ import ScrollIndicator from "./components/Common/ScrollIndicator";
 import Cart from "./components/Cart/Cart";
 import AuthPage from "./components/Auth/Auth";
 import AccountDashboard from "./components/MyAccount/AccountDashboard";
+import Home from "./components/Home/Home";
+import AboutUs from "./components/AboutUs/AboutUs";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -37,6 +38,7 @@ function App() {
         <div className="pt-16 max-w-8xl mx-auto w-full">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/about" element={<AboutUs />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/product/:productName" element={<ProductPage />} />
             <Route path="/reviews" element={<RatingsAndReviews />} />

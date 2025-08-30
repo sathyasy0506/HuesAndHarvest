@@ -1,19 +1,33 @@
-// Home.jsx
 import React from "react";
-import Silk from "../Home/Silk"; // adjust relative path
+import Features from "./Features";
+import Process from "./Process";
+import Testimonials from "./Testimonials";
+import Newsletter from "./Newsletter";
+import Hero from "./Hero";
+import BrandStory from "./BrandStory";
+import ProductCategories from "./ProductCategories";
+import InstagramFeed from "./InstagramFeed";
+import ProductListing from "./ProductListing";
+import Gradient from "../Background/Gradient";
 
 const Home = () => {
   return (
-    <div className="w-full h-screen -mt-16">
-      <Silk
-        speed={5}
-        scale={1}
-        color="#234541" // You can change this or make it dynamic
-        noiseIntensity={1.5}
-        rotation={0}
-      />
-
-    </div>
+    <>
+      {/* Hero without background */}
+      <div className="-mt-16 overflow-hidden">
+        <Gradient>
+          <Hero />
+          <BrandStory />
+          <ProductListing />
+          <ProductCategories />
+          <Features />
+          <Process />
+          <Testimonials />
+          <InstagramFeed />
+          <Newsletter />
+        </Gradient>
+      </div>
+    </>
   );
 };
 

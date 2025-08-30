@@ -1,6 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Silk from "./Home/Silk";
+import Silk from "./Background/Silk";
 import Logo from "../assets/images/H&H.png";
 
 const Loader = ({ isLoading }) => {

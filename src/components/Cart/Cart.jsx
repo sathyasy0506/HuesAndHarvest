@@ -65,81 +65,46 @@ const Cart = () => {
   const total = subtotal + shipping + tax;
 
   return (
-    <div
-      className="min-h-screen pt-12"
-      style={{ backgroundColor: "var(--bg-color)", color: "var(--text-color)" }}
-    >
+    <div className="min-h-screen pt-12 bg-dashboard-bg text-primary-text">
       <div className="max-w-7xl mx-auto px-6 py-8">
         {items.length === 0 ? (
-          // Empty Cart State
-          <div
-            className="flex flex-col items-center justify-center mt-12 py-20"
-            style={{ color: "var(--text-color)" }}
-          >
-            <h2
-              className="text-3xl font-bold mb-4"
-              style={{ fontFamily: "var(--font-outfit)" }}
-            >
+          <div className="flex flex-col items-center justify-center mt-12 py-20">
+            <h2 className="text-3xl font-bold mb-4 font-outfit">
               Your Cart is Empty
             </h2>
-            <p className="mb-6" style={{ opacity: 0.7 }}>
+            <p className="mb-6 opacity-70">
               Looks like you haven’t added anything to your cart yet.
             </p>
             <button
-              className="px-6 py-3 rounded-2xl font-semibold shadow-lg"
-              style={{
-                backgroundColor: "var(--primary-color)",
-                color: "var(--text-color)",
-              }}
-              onClick={() => {
-                // Redirect to shop page
-                window.location.href = "/shop"; // replace with your shop route
-              }}
+              className="px-6 py-3 rounded-2xl font-semibold shadow-lg primary-button"
+              onClick={() => (window.location.href = "/shop")}
             >
               Continue Shopping
             </button>
           </div>
         ) : (
-          // Cart Items and Order Summary
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Cart Items Section */}
             <div className="lg:col-span-2">
-              <div
-                className="rounded-3xl overflow-hidden shadow-xl"
-                style={{ backgroundColor: "var(--card-color)" }}
-              >
-                <div
-                  className="p-8"
-                  style={{
-                    background:
-                      "linear-gradient(to right, var(--primary-color), var(--hover-color))",
-                    color: "var(--text-color)",
-                  }}
-                >
-                  <h1
-                    className="text-3xl font-bold mb-2 "
-                    style={{
-                      fontFamily: "var(--font-outfit)",
-                      color: "var(--white)",
-                    }}
-                  >
+              <div className="rounded-3xl overflow-hidden card-bg">
+                <div className="p-8 gradient-header text-white">
+                  <h1 className="text-3xl font-bold mb-2 font-outfit">
                     Shopping Cart
                   </h1>
-                  <p style={{ color: "var(--sho-bg-color)" }}>
+                  <p className="opacity-70">
                     Secure checkout with 256-bit SSL encryption
                   </p>
                 </div>
 
-                <div className="p-8">
+                <div
+                  className="p-8 "
+                  style={{ backgroundColor: "var(--card-bg)" }}
+                >
                   <div className="space-y-6">
                     {items.map((item) => (
                       <div
                         key={item.id}
-                        className="flex gap-6 p-6 rounded-2xl border"
-                        style={{
-                          backgroundColor: "var(--sho-bg-color)",
-                          borderColor: "var(--card-color)",
-                        }}
+                        className="flex gap-6 p-6 rounded-2xl cards-bg"
                       >
                         <img
                           src={item.image}
@@ -148,88 +113,47 @@ const Cart = () => {
                         />
                         <div className="flex-1">
                           <div className="flex justify-between items-start mb-2">
-                            <h3
-                              className="text-xl font-semibold"
-                              style={{
-                                color: "var(--text-color)",
-                                fontFamily: "var(--font-outfit)",
-                              }}
-                            >
+                            <h3 className="text-xl font-semibold font-outfit">
                               {item.name}
                             </h3>
                             <button
                               onClick={() => removeItem(item.id)}
-                              style={{ color: "var(--text-color)" }}
-                              className="p-1 hover:text-red-500"
+                              className="p-1 hover:text-error-color"
                             >
                               <X className="w-5 h-5" />
                             </button>
                           </div>
-                          <p
-                            style={{ color: "var(--text-color)", opacity: 0.7 }}
-                          >
-                            {item.brand}
-                          </p>
-                          <p
-                            style={{ color: "var(--text-color)", opacity: 0.7 }}
-                          >
+                          <p className="opacity-70">{item.brand}</p>
+                          <p className="opacity-70">
                             {item.color} {item.size && `• ${item.size}`}
                           </p>
                           <div className="flex items-center justify-between mt-4">
-                            <div
-                              className="flex items-center border-2 rounded-xl"
-                              style={{ borderColor: "var(--card-color)" }}
-                            >
+                            <div className="flex items-center rounded-xl">
                               <button
                                 onClick={() =>
                                   updateQuantity(item.id, item.quantity - 1)
                                 }
-                                className="p-3 hover:bg-opacity-10 rounded-l-xl"
-                                style={{
-                                  backgroundColor: "var(--sho-bg-color)",
-                                }}
+                                className="p-3 hover:bg-accent-hover rounded-l-xl"
                               >
-                                <Minus
-                                  className="w-4 h-4"
-                                  style={{ color: "var(--text-color)" }}
-                                />
+                                <Minus className="w-4 h-4" />
                               </button>
-                              <span
-                                className="px-4 py-3 font-semibold"
-                                style={{ color: "var(--text-color)" }}
-                              >
+                              <span className="px-4 py-3 font-semibold">
                                 {item.quantity}
                               </span>
                               <button
                                 onClick={() =>
                                   updateQuantity(item.id, item.quantity + 1)
                                 }
-                                className="p-3 hover:bg-opacity-10 rounded-r-xl"
-                                style={{
-                                  backgroundColor: "var(--sho-bg-color)",
-                                }}
+                                className="p-3 hover:bg-accent-hover rounded-r-xl"
                               >
-                                <Plus
-                                  className="w-4 h-4"
-                                  style={{ color: "var(--text-color)" }}
-                                />
+                                <Plus className="w-4 h-4" />
                               </button>
                             </div>
                             <div className="text-right">
-                              <p
-                                className="text-2xl font-bold"
-                                style={{ color: "var(--text-color)" }}
-                              >
+                              <p className="text-2xl font-bold">
                                 ${(item.price * item.quantity).toFixed(2)}
                               </p>
-                              <p
-                                style={{
-                                  color: "var(--text-color)",
-                                  opacity: 0.7,
-                                }}
-                              >
-                                ${item.price} each
-                              </p>
+                              <p className="opacity-70">${item.price} each</p>
                             </div>
                           </div>
                         </div>
@@ -237,14 +161,8 @@ const Cart = () => {
                     ))}
                   </div>
 
-                  <div
-                    className="mt-8 flex items-center gap-4"
-                    style={{ color: "var(--text-color)" }}
-                  >
-                    <Shield
-                      className="w-6 h-6"
-                      style={{ color: "var(--dark-gold-color)" }}
-                    />
+                  <div className="mt-8 flex items-center gap-4">
+                    <Shield className="w-6 h-6 text-dark-gold-color" />
                     <span>Secure Payment</span>
                     <CreditCard className="w-6 h-6" />
                     <span>Multiple Payment Options</span>
@@ -256,90 +174,47 @@ const Cart = () => {
             </div>
 
             {/* Order Summary Section */}
-            <div className="lg:col-span-1 ">
-              <div
-                className="rounded-3xl shadow-xl p-8 sticky top-8"
-                style={{ backgroundColor: "var(--card-color)" }}
-              >
-                <h2
-                  className="text-2xl font-bold mb-8"
-                  style={{ fontFamily: "var(--font-outfit)" }}
-                >
+            <div className="lg:col-span-1">
+              <div className="rounded-3xl shadow-xl p-8 sticky top-8 card-bg">
+                <h2 className="text-2xl font-bold mb-8 font-outfit">
                   Order Summary
                 </h2>
 
                 <div className="space-y-4 mb-8">
-                  <div
-                    className="flex justify-between"
-                    style={{ color: "var(--text-color)", opacity: 0.8 }}
-                  >
+                  <div className="flex justify-between opacity-80">
                     <span>Subtotal ({items.length} items)</span>
                     <span className="font-semibold">
                       ${subtotal.toFixed(2)}
                     </span>
                   </div>
-                  <div
-                    className="flex justify-between"
-                    style={{ color: "var(--text-color)", opacity: 0.8 }}
-                  >
+                  <div className="flex justify-between opacity-80">
                     <span>Shipping</span>
-                    <span
-                      className="font-semibold"
-                      style={{ color: "var(--dark-gold-color)" }}
-                    >
+                    <span className="font-semibold text-dark-gold-color">
                       Free
                     </span>
                   </div>
-                  <div
-                    className="flex justify-between"
-                    style={{ color: "var(--text-color)", opacity: 0.8 }}
-                  >
+                  <div className="flex justify-between opacity-80">
                     <span>Tax</span>
                     <span className="font-semibold">${tax.toFixed(2)}</span>
                   </div>
-                  <hr style={{ borderColor: "var(--card-color)" }} />
-                  <div
-                    className="flex justify-between text-2xl font-bold"
-                    style={{ color: "var(--text-color)" }}
-                  >
+                  <hr className="border-card-color" />
+                  <div className="flex justify-between text-2xl font-bold">
                     <span>Total</span>
                     <span>${total.toFixed(2)}</span>
                   </div>
                 </div>
 
-                <button
-                  className="w-full py-4 rounded-2xl font-bold text-lg mb-4 shadow-lg"
-                  style={{
-                    backgroundColor: "var(--primary-color)",
-                    color: "var(--text-color)",
-                  }}
-                >
+                <button className="w-full py-4 rounded-2xl font-bold text-lg mb-4 shadow-lg primary-button">
                   Proceed to Secure Checkout
                 </button>
 
-                <button
-                  className="w-full py-3 rounded-2xl font-semibold"
-                  style={{
-                    border: "2px solid var(--card-color)",
-                    color: "var(--text-color)",
-                    backgroundColor: "var(--sho-bg-color)",
-                  }}
-                >
+                <button className="w-full py-3 rounded-2xl secondary-button mb-4">
                   Continue Shopping
                 </button>
 
-                <div
-                  className="mt-6 p-4 rounded-xl"
-                  style={{ backgroundColor: "var(--sho-bg-color)" }}
-                >
-                  <div
-                    className="flex items-center gap-2 text-sm"
-                    style={{ color: "var(--text-color)", opacity: 0.7 }}
-                  >
-                    <Shield
-                      className="w-4 h-4"
-                      style={{ color: "var(--dark-gold-color)" }}
-                    />
+                <div className="mt-6 p-4 rounded-xl cards-bg">
+                  <div className="flex items-center gap-2 text-sm opacity-70">
+                    <Shield className="w-4 h-4 text-dark-gold-color" />
                     <span>
                       Your payment information is protected by 256-bit SSL
                       encryption

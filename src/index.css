@@ -21,12 +21,14 @@
   --secondary-bg: #f8fafc;
   --border-color: #e2e8f0;
   --muted-text: #64748b;
-  --accent-color: #3b82f6;
-  --accent-hover: #2563eb;
+  --accent-color: #234541;
+  --accent-hover: #2b534f;
   --success-color: #10b981;
   --warning-color: #f59e0b;
   --error-color: #ef4444;
   --shadow-color: rgba(0, 0, 0, 0.1);
+  --cards-bg: #e6f0f0; /* light mint green for light mode */
+
 }
 
 .dark {
@@ -35,7 +37,7 @@
   --text-color: #ffffff;
   --bg-color: #141e1c;
   --card-color: #121b1a;
-  --sho-bg-color: #141e1c;
+  --sho-bg-color: #234541;
   --dark-gold-color: #e7b043;
   --font-poppins: 'Poppins', sans-serif;
   --font-outfit: 'Outfit', sans-serif;
@@ -52,6 +54,8 @@
   --warning-color: #fbbf24;
   --error-color: #f87171;
   --shadow-color: rgba(0, 0, 0, 0.3);
+  --cards-bg: #1e2a28; /* dark greenish shade for dark mode */
+
 }
 
 body {
@@ -178,4 +182,26 @@ body {
 
 .header-toggle:hover {
   background-color: var(--secondary-bg);
+}
+
+
+/* Apply to the scroll container */
+.scrollbar-hide::-webkit-scrollbar {
+  height: 8px; /* scrollbar height */
+}
+
+.scrollbar-hide::-webkit-scrollbar-track {
+  background: #e0e0e0; /* track color - light grey */
+  border-radius: 4px;
+}
+
+.scrollbar-hide::-webkit-scrollbar-thumb {
+  background: #9e9e9e; /* thumb color - darker grey */
+  border-radius: 4px;
+}
+
+/* Firefox */
+.scrollbar-hide {
+  scrollbar-width: thin;
+  scrollbar-color: #9e9e9e #e0e0e0;
 }

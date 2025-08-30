@@ -11,7 +11,7 @@ import {
   Clock,
 } from "lucide-react";
 import StarIcon from "@mui/icons-material/Star";
-import Silk from "../Home/Silk";
+import Silk from "../Background/Silk";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
@@ -260,10 +260,7 @@ function ProductPage() {
             </div>
 
             {/* Main Image with Navigation */}
-            <div
-              className="relative flex-1 aspect-square rounded-xl overflow-hidden order-1 md:order-2"
-              style={{ backgroundColor: "var(--sho-bg-color)" }}
-            >
+            <div className="relative flex-1 aspect-square rounded-xl overflow-hidden order-1 md:order-2">
               <img
                 src={images[selectedImageIndex]}
                 alt={product.name}

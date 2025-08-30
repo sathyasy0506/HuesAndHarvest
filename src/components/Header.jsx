@@ -6,8 +6,7 @@ import { Search, ShoppingBag, User, Sun, Moon, X } from "lucide-react";
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
-  const [hideHeader, setHideHeader] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const searchContainerRef = useRef(null);
@@ -92,20 +91,9 @@ const Header = () => {
 
   // Scroll listener
   useEffect(() => {
-    let lastScroll = 0;
-
     const handleScroll = () => {
       const currentScroll = window.scrollY;
-
-      if (currentScroll > lastScroll) {
-        // Scrolling down
-        setHideHeader(true);
-      } else {
-        // Scrolling up
-        setHideHeader(false);
-      }
-
-      lastScroll = currentScroll;
+      setIsScrolled(currentScroll > 50);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -122,23 +110,28 @@ const Header = () => {
       ? true
       : location.pathname === path;
 
-  const headerTextColor = darkMode
+  // Determine header colors based on scroll state
+  // const headerBgColor = isScrolled ? "bg-yellow-500" : "bg-transparent";
+
+  const headerTextColor = isScrolled
     ? "text-white"
-    : location.pathname === "/" || location.pathname === "/home" || location.pathname === "/auth"
+    : darkMode
     ? "text-white"
-    : !hideHeader && lastScrollY > 50
+    : location.pathname === "/" ||
+      location.pathname === "/home" ||
+      location.pathname === "/auth"
     ? "text-white"
     : "text-black";
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 shadow-sm transition-transform duration-300 ${
-        hideHeader ? "-translate-y-full" : "translate-y-0"
-      } ${
-        !hideHeader && lastScrollY > 50
-          ? "backdrop-blur-xl bg-[#234541]/80 border-transparent"
-          : "bg-transparent"
-      }`}
+      className="fixed top-0 left-0 w-full z-50"
+      style={{
+        backgroundColor: isScrolled ? "rgba(35, 69, 65, 0.6)" : "transparent", // semi-transparent
+        backdropFilter: isScrolled ? "blur(10px)" : "none", // blur effect
+        WebkitBackdropFilter: isScrolled ? "blur(10px)" : "none", // for Safari
+        transition: "background-color 0.3s, backdrop-filter 0.3s",
+      }}
     >
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-16">
         <div className="flex justify-between items-center h-20">
