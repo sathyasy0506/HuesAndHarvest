@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-// Generate 20 dummy reviews
 const reviews = Array.from({ length: 20 }, (_, i) => ({
   name: `User ${i + 1}`,
   date: `August ${i + 1}, 2022`,

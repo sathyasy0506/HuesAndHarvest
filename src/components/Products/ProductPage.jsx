@@ -24,7 +24,7 @@ const FeatureCard = ({ Icon, title, description }) => (
     <div className="flex-shrink-0">
       <div
         className="w-12 h-12 rounded-full flex items-center justify-center"
-        style={{ backgroundColor: "var(--card-color)" }}
+        style={{ backgroundColor: "var(--cards-bg)" }}
       >
         <Icon className="w-6 h-6" style={{ color: "var(--primary-color)" }} />
       </div>
@@ -182,7 +182,7 @@ function ProductPage() {
   useEffect(() => {
     if (!productId) return;
 
-    fetch(`https://admin.huesandharvest.com/api/reviews.php?id=${productId}`)
+    fetch(`https://admin.huesandharvest.com/api/product_reviews.php?id=${productId}`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
@@ -433,7 +433,7 @@ function ProductPage() {
             <div
               className="rounded-2xl border px-8 py-[40px] flex-1"
               style={{
-                borderColor: "var(--card-color)",
+                borderColor: "var(--cards-bg)",
                 borderTopRightRadius: "6rem",
                 backgroundColor: "var(--bg-color)",
               }}
@@ -474,7 +474,7 @@ function ProductPage() {
             className="lg:w-1/3 flex flex-col gap-8 p-0 rounded-2xl"
             style={{
               borderTopRightRadius: "6rem",
-              backgroundColor: "var(--card-color)",
+              backgroundColor: "var(--cards-bg)",
             }}
           >
             <div className="rounded-2xl p-4 flex-1 flex justify-between flex-col gap-6">
@@ -511,7 +511,7 @@ function ProductPage() {
                 </h2>
                 <div
                   className="border-t"
-                  style={{ borderColor: "var(--card-color)" }}
+                  style={{ borderColor: "var(--cards-bg)" }}
                 >
                   <div className="py-3 flex justify-between">
                     <span
@@ -545,14 +545,17 @@ function ProductPage() {
 
           {/* Ratings Bar Graph */}
           {reviews.length > 0 && (
-            <div className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-6 mb-8 shadow-md flex flex-col gap-4">
+            <div
+              className="rounded-2xl p-6 mb-8 shadow-md flex flex-col gap-4"
+              style={{ backgroundColor: "var(--cards-bg)" }}
+            >
               <div className="flex flex-row gap-6">
-                {/* Average Rating Circle - 1/4 width, vertically centered */}
+                {/* Average Rating Circle */}
                 <div className="w-1/4 flex items-center justify-center">
                   <AverageRatingCircle rating={averageRating} />
                 </div>
 
-                {/* Star Graph - 3/4 width */}
+                {/* Star Graph */}
                 <div className="w-3/4 flex flex-col gap-3 justify-center">
                   {[5, 4, 3, 2, 1].map((star) => {
                     const percentage =
@@ -594,7 +597,8 @@ function ProductPage() {
               reviews.slice(0, 6).map((r, i) => (
                 <div
                   key={i}
-                  className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
+                  className="rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
+                  style={{ backgroundColor: "var(--cards-bg)" }}
                 >
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="font-semibold text-gray-900 dark:text-white">
@@ -644,7 +648,8 @@ function ProductPage() {
               }}
             >
               <div
-                className="bg-gray-100 dark:bg-gray-900 rounded-2xl w-[600px] max-w-full h-[500px] p-6 relative shadow-lg flex flex-col"
+                className="rounded-2xl w-[600px] max-w-full h-[500px] p-6 relative shadow-lg flex flex-col"
+                style={{ backgroundColor: "var(--cards-bg)" }}
                 onClick={(e) => e.stopPropagation()}
               >
                 <button
@@ -663,7 +668,8 @@ function ProductPage() {
                   {reviews.slice(0, modalVisibleCount).map((r, index) => (
                     <div
                       key={index}
-                      className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4 shadow-md w-full"
+                      className="rounded-2xl p-4 shadow-md w-full"
+                      style={{ backgroundColor: "var(--cards-bg)" }}
                     >
                       <div className="flex justify-between mb-2">
                         <h4 className="font-semibold text-gray-900 dark:text-white">

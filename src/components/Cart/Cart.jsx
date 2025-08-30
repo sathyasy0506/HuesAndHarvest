@@ -96,15 +96,12 @@ const Cart = () => {
                   </p>
                 </div>
 
-                <div
-                  className="p-8 "
-                  style={{ backgroundColor: "var(--card-bg)" }}
-                >
+                <div className="p-8 cards-bg">
                   <div className="space-y-6">
                     {items.map((item) => (
                       <div
                         key={item.id}
-                        className="flex gap-6 p-6 rounded-2xl cards-bg"
+                        className="flex gap-6 p-6 rounded-2xl border border-card-color border-[0.5px] cards-bg"
                       >
                         <img
                           src={item.image}
@@ -128,7 +125,7 @@ const Cart = () => {
                             {item.color} {item.size && `• ${item.size}`}
                           </p>
                           <div className="flex items-center justify-between mt-4">
-                            <div className="flex items-center rounded-xl">
+                            <div className="flex items-center border-2 rounded-xl border-card-color">
                               <button
                                 onClick={() =>
                                   updateQuantity(item.id, item.quantity - 1)

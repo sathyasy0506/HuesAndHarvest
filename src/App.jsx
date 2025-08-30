@@ -15,6 +15,8 @@ import AuthPage from "./components/Auth/Auth";
 import AccountDashboard from "./components/MyAccount/AccountDashboard";
 import Home from "./components/Home/Home";
 import AboutUs from "./components/AboutUs/AboutUs";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 function App() {
   const [loading, setLoading] = useState(true);

@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Slider from "react-slick";
+import { Users } from "lucide-react";
+import StarIcon from "@mui/icons-material/Star";
 import { motion } from "framer-motion";
-import { Star, Users } from "lucide-react";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 30 },
@@ -8,32 +10,51 @@ const fadeInUp = {
   transition: { duration: 0.6 },
 };
 
-const staggerContainer = {
-  animate: { transition: { staggerChildren: 0.1 } },
-};
-
-const testimonials = [
-  {
-    name: "Sarah Johnson",
-    text: "These chips are absolutely incredible! The quality and flavor are unmatched.",
-    rating: 5,
-    location: "California",
-  },
-  {
-    name: "Mike Chen",
-    text: "Finally found chips that taste authentic and don't have weird chemicals.",
-    rating: 5,
-    location: "New York",
-  },
-  {
-    name: "Emma Williams",
-    text: "Love supporting a brand that cares about sustainability and quality.",
-    rating: 5,
-    location: "Texas",
-  },
-];
+// RatingStars component
+const RatingStars = ({ rating }) => (
+  <div className="flex items-center space-x-1 mb-4">
+    {[...Array(5)].map((_, i) =>
+      i < rating ? (
+        <StarIcon key={i} style={{ color: "#facc15" }} />
+      ) : (
+        <StarIcon  key={i} style={{ color: "#d1d5db" }} />
+      )
+    )}
+  </div>
+);
 
 const Testimonials = () => {
+  const [reviews, setReviews] = useState([]);
+
+  useEffect(() => {
+    fetch("https://admin.huesandharvest.com/api/reviews.php")
+      .then((res) => res.json())
+      .then((data) => setReviews(data))
+      .catch((err) => console.error("Error fetching reviews:", err));
+  }, []);
+
+  if (!reviews.length) return null; // Optional loader
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 600,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 4000,
+    responsive: [
+      {
+        breakpoint: 1024, // tablets
+        settings: { slidesToShow: 2 },
+      },
+      {
+        breakpoint: 640, // mobile
+        settings: { slidesToShow: 1 },
+      },
+    ],
+  };
+
   return (
     <section className="py-20 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -59,76 +80,59 @@ const Testimonials = () => {
           </p>
         </motion.div>
 
-        <motion.div
-          className="grid md:grid-cols-3 gap-8"
-          variants={staggerContainer}
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
-        >
-          {testimonials.map((testimonial, index) => (
-            <motion.div
-              key={index}
-              className="p-8 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300"
-              style={{
-                backgroundColor: "var(--cards-bg)",
-                color: "var(--text-color)",
-                fontFamily: "var(--font-poppins)",
-              }}
-              variants={fadeInUp}
-              whileHover={{ y: -5 }}
-            >
-              {/* ⭐ Stars (always yellow) */}
-              <div className="flex items-center space-x-1 mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className="w-5 h-5"
-                    style={{ color: "#facc15" }} // Tailwind's yellow-400
-                  />
-                ))}
-              </div>
-
-              {/* Testimonial text */}
-              <p
-                className="mb-6 leading-relaxed italic"
-                style={{ color: "var(--muted-text)" }}
+        <Slider {...settings}>
+          {reviews.map((review) => (
+            <div key={review.id} className="px-3">
+              <motion.div
+                className="p-8 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300"
+                style={{
+                  backgroundColor: "var(--cards-bg)",
+                  color: "var(--text-color)",
+                  fontFamily: "var(--font-poppins)",
+                  height: "100%",
+                }}
+                whileHover={{ y: -5 }}
               >
-                "{testimonial.text}"
-              </p>
-
-              {/* User info */}
-              <div className="flex items-center space-x-3">
-                <div
-                  className="w-12 h-12 rounded-full flex items-center justify-center"
-                  style={{ backgroundColor: "var(--secondary-bg)" }}
+                <RatingStars rating={review.rating} />
+                <p
+                  className="mb-6 leading-relaxed italic"
+                  style={{ color: "var(--muted-text)" }}
                 >
-                  <Users
-                    className="w-6 h-6"
-                    style={{ color: "var(--accent-color)" }}
-                  />
-                </div>
-                <div>
+                  "{review.review}"
+                </p>
+
+                <div className="flex items-center space-x-3">
                   <div
-                    className="font-semibold"
-                    style={{
-                      color: "var(--text-color)",
-                      fontFamily: "var(--font-outfit)",
-                    }}
+                    className="w-12 h-12 rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: "var(--secondary-bg)" }}
                   >
-                    {testimonial.name}
+                    <Users
+                      className="w-6 h-6"
+                      style={{ color: "var(--accent-color)" }}
+                    />
                   </div>
-                  <div
-                    className="text-sm"
-                    style={{ color: "var(--muted-text)" }}
-                  >
-                    {testimonial.location}
+                  <div>
+                    <div
+                      className="font-semibold"
+                      style={{
+                        color: "var(--text-color)",
+                        fontFamily: "var(--font-outfit)",
+                      }}
+                    >
+                      {review.reviewer}
+                    </div>
+                    <div
+                      className="text-sm"
+                      style={{ color: "var(--muted-text)" }}
+                    >
+                      {review.date_created}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </Slider>
       </div>
     </section>
   );

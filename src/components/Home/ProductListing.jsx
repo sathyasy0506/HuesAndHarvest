@@ -1,19 +1,45 @@
-import React, { useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-
-const products = Array.from({ length: 15 }, (_, i) => ({
-  id: i + 1,
-  name: `Artisan Chip ${i + 1}`,
-  price: `$${(10 + i * 0.75).toFixed(2)}`,
-  oldPrice: `$${(14 + i * 0.75).toFixed(2)}`,
-  image: `https://picsum.photos/seed/chip${i + 1}/400/400`,
-}));
+import { useNavigate } from "react-router-dom";
 
 const ProductListing = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
+  const navigate = useNavigate();
+
+  const slugify = (name) =>
+    name
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^\w-]+/g, "");
+
+  // Fetch products from your PHP API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(
+          "https://admin.huesandharvest.com/api/list_products.php",
+          { credentials: "include" }
+        );
+        const data = await res.json();
+        if (data.success) {
+          setProducts(data.products);
+        } else {
+          console.error("API error:", data.message);
+        }
+      } catch (error) {
+        console.error("Fetch failed:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const scroll = (direction) => {
-    if (scrollRef.current) {
+    if (scrollRef.current && scrollRef.current.firstChild) {
       const cardWidth = scrollRef.current.firstChild.offsetWidth + 24;
       scrollRef.current.scrollBy({
         left: direction === "left" ? -cardWidth * 4 : cardWidth * 4,
@@ -21,6 +47,24 @@ const ProductListing = () => {
       });
     }
   };
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-transparent">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <h2
+            className="text-2xl font-bold text-center"
+            style={{
+              color: "var(--text-color)",
+              fontFamily: "var(--font-outfit)",
+            }}
+          >
+            Loading products...
+          </h2>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-20 bg-transparent">
@@ -40,6 +84,7 @@ const ProductListing = () => {
           onClick={() => scroll("left")}
           className="absolute left-0 top-1/2 -translate-y-1/2 p-3 rounded-full shadow-md hover:shadow-xl z-20 hidden lg:flex"
           style={{ backgroundColor: "var(--sho-bg-color)" }}
+          aria-label="Scroll left"
         >
           <ChevronLeft
             className="w-6 h-6"
@@ -50,30 +95,34 @@ const ProductListing = () => {
           onClick={() => scroll("right")}
           className="absolute right-0 top-1/2 -translate-y-1/2 p-3 rounded-full shadow-md hover:shadow-xl z-20 hidden lg:flex"
           style={{ backgroundColor: "var(--sho-bg-color)" }}
+          aria-label="Scroll right"
         >
           <ChevronRight
             className="w-6 h-6"
             style={{ color: "var(--text-color)" }}
           />
         </button>
+
         {/* Show All */}
-        <div className="text-right mb-6 flex justify-end items-center gap-2 cursor-pointer">
-          <span
-            className="text-lg font-bold transition-all"
+        <div className="flex justify-end mb-6">
+          <button
+            onClick={() => navigate("/shop")}
+            className="flex items-center gap-2 cursor-pointer transition-transform duration-200 ease-in-out hover:scale-105"
             style={{
+              backgroundColor: "transparent",
+              border: "none",
               color: "var(--primary-color)",
               fontFamily: "var(--font-outfit)",
+              fontWeight: 600,
+              padding: 0,
             }}
           >
-            Show All Products
-          </span>
-          <ArrowRight
-            className="w-4 h-4 transform"
-            style={{
-              color: "var(--primary-color)",
-              transform: "rotate(-45deg)",
-            }}
-          />
+            <span className="text-lg font-bold">Show All Products</span>
+            <ArrowRight
+              className="w-4 h-4 transform -rotate-45"
+              style={{ color: "var(--primary-color)" }}
+            />
+          </button>
         </div>
 
         {/* Product Scroll */}
@@ -84,26 +133,35 @@ const ProductListing = () => {
           {products.map((product) => (
             <div
               key={product.id}
-              className="snap-start flex-shrink-0 w-[300px] rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 relative group overflow-hidden"
+              className="snap-start flex-shrink-0 w-[300px] rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 relative group overflow-hidden cursor-pointer"
               style={{
                 backgroundColor: "var(--cards-bg)",
                 fontFamily: "var(--font-poppins)",
               }}
+              onClick={() =>
+                navigate(`/product/${slugify(product.name)}`, {
+                  state: { id: product.id },
+                })
+              }
             >
               {/* Image */}
               <div className="relative h-64">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{
-                    background:
-                      "linear-gradient(to top right, var(--accent-color)/10, var(--warning-color)/10)",
-                  }}
-                ></div>
+                <div className="relative h-64 rounded-xl bg-gray-300 flex items-center justify-center">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    loading="lazy"
+                    className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+
+                {product.stock_status === "outofstock" && (
+                  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <span className="text-white font-bold text-lg">
+                      Out of Stock
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Info */}
@@ -120,23 +178,32 @@ const ProductListing = () => {
                       className="text-xl font-bold"
                       style={{ color: "var(--accent-color)" }}
                     >
-                      {product.price}
+                      ₹{product.price}
                     </span>
-                    <span
-                      className="line-through"
-                      style={{ color: "var(--muted-text)" }}
-                    >
-                      {product.oldPrice}
-                    </span>
+                    {product.oldPrice > product.price && (
+                      <span
+                        className="line-through"
+                        style={{ color: "var(--muted-text)" }}
+                      >
+                        ₹{product.oldPrice}
+                      </span>
+                    )}
                   </div>
                 </div>
 
                 {/* Shop Now Button */}
                 <button
-                  className="px-4 py-2 transition-all duration-300 flex items-center justify-between rounded-md w-full font-medium"
+                  disabled={product.stock_status === "outofstock"}
+                  className="px-4 py-2 transition-all duration-300 flex items-center justify-between rounded-md w-full font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{
                     backgroundColor: "var(--accent-color)",
                     color: "var(--white)",
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent card click
+                    navigate(`/product/${slugify(product.name)}`, {
+                      state: { id: product.id },
+                    });
                   }}
                 >
                   <span>Shop Now</span>
@@ -145,11 +212,8 @@ const ProductListing = () => {
                     style={{ backgroundColor: "var(--white)" }}
                   >
                     <ArrowRight
-                      className="w-3 h-3 transform"
-                      style={{
-                        color: "var(--accent-color)",
-                        transform: "rotate(-45deg)",
-                      }}
+                      className="w-3 h-3 transform -rotate-45"
+                      style={{ color: "var(--accent-color)" }}
                     />
                   </div>
                 </button>
