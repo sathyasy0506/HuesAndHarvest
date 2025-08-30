@@ -357,7 +357,7 @@ const Shop = () => {
     <div
       className="min-h-screen px-4 sm:px-6 py-8 mt-0"
       style={{
-        backgroundColor: "var(--sho-bg-color)",
+        backgroundColor: "var(--secondary-bg)",
         color: "var(--text-color)",
         fontFamily: "var(--font-poppins)",
       }}
