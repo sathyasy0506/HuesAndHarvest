@@ -12,10 +12,11 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import CloseIcon from "@mui/icons-material/Close";
 import { ENDPOINTS } from "../../api/config";
 import NoProductsImg from "../../assets/images/no-product-found.webp";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Loader from "../Load";
 
 const Shop = () => {
+  const location = useLocation();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [priceRange, setPriceRange] = useState([0, 0]);
@@ -32,6 +33,12 @@ const Shop = () => {
       .toLowerCase()
       .replace(/\s+/g, "-") // spaces → hyphens
       .replace(/[^\w-]+/g, ""); // remove special characters
+
+  useEffect(() => {
+    if (location.state?.category && location.state.category !== "all") {
+      setSelectedCategories([location.state.category]);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     fetch(ENDPOINTS.LIST_PRODUCTS)
@@ -150,7 +157,7 @@ const Shop = () => {
             },
             "& .MuiSlider-rail": {
               opacity: 0.3,
-              backgroundColor: "var(--card-color)",
+              backgroundColor: "var(--cards-bg)",
             },
           }}
         />
@@ -184,7 +191,7 @@ const Shop = () => {
                 className="flex items-center gap-3 cursor-pointer px-3 py-2 rounded-xl hover:shadow-md transition-shadow duration-200"
                 style={{
                   fontFamily: "var(--font-poppins)",
-                  backgroundColor: "var(--card-color)",
+                  backgroundColor: "var(--cards-bg)",
                   width: "fit-content",
                 }}
               >
@@ -258,7 +265,7 @@ const Shop = () => {
                 className="flex items-center gap-3 cursor-pointer px-3 py-2 rounded-xl hover:shadow-md transition-shadow duration-200"
                 style={{
                   fontFamily: "var(--font-poppins)",
-                  backgroundColor: "var(--card-color)",
+                  backgroundColor: "var(--cards-bg)",
                   width: "fit-content",
                 }}
               >
@@ -357,7 +364,7 @@ const Shop = () => {
     <div
       className="min-h-screen px-4 sm:px-6 py-8 mt-0"
       style={{
-        backgroundColor: "var(--sho-bg-color)",
+        backgroundColor: "var(--secondary-bg)",
         color: "var(--text-color)",
         fontFamily: "var(--font-poppins)",
       }}
@@ -387,7 +394,7 @@ const Shop = () => {
                   displayEmpty
                   sx={{
                     borderRadius: "17px",
-                    backgroundColor: "var(--card-color)",
+                    backgroundColor: "var(--cards-bg)",
                     color: "var(--text-color)",
                     fontWeight: 500,
                     px: 2,

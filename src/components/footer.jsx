@@ -8,7 +8,7 @@ import {
   Facebook,
   Twitter,
 } from "lucide-react";
-import Silk from "./Home/Silk";
+import Silk from "./Background/Silk";
 import logo from "../assets/images/H&H.png";
 
 const Footer = forwardRef((props, ref) => {

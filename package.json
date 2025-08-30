@@ -24,6 +24,8 @@
     "react-animated-cursor": "^2.11.2",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.20.1",
+    "react-slick": "^0.31.0",
+    "slick-carousel": "^1.8.1",
     "three": "^0.179.1"
   },
   "devDependencies": {
