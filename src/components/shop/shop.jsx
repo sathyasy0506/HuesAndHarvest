@@ -46,7 +46,7 @@ const Shop = () => {
       .then((data) => {
         const prods = data.products || [];
         setProducts(prods);
-        setCategories(data.Categories || []);
+        setCategories(data.categories || []);
 
         if (prods.length > 0) {
           const prices = prods.map((p) => Number(p.price));
