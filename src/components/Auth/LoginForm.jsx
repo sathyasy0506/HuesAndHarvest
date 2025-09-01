@@ -1,19 +1,45 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
+import { showToast } from "../Common/Toaster"; // import the global toaster
 
-const LoginForm = ({ formData, handleInputChange, handleSubmit, isLoading, onForgotPassword }) => {
+const LoginForm = ({ onForgotPassword, onSwitchToSignUp }) => {
+  const { login } = useAuth(); // get login function
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setErrorMessage("");
+
+    const result = await login(email, password);
+
+    setIsLoading(false);
+    if (!result.success) {
+      setErrorMessage(result.message);
+    } else {
+      // ✅ Show toaster on successful login
+      showToast("Login successful!", "success");
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 font-outfit">
       <div>
-        <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-color)" }}>
+        <label
+          className="block text-sm font-medium mb-2"
+          style={{ color: "var(--text-color)" }}
+        >
           Email address
         </label>
         <input
           type="email"
-          value={formData.email}
-          onChange={(e) => handleInputChange("email", e.target.value)}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="w-full px-3 py-3 rounded-lg transition-colors focus:outline-none"
           style={{
             borderColor: "var(--primary-color)",
@@ -27,7 +53,10 @@ const LoginForm = ({ formData, handleInputChange, handleSubmit, isLoading, onFor
 
       <div>
         <div className="flex justify-between items-center mb-2">
-          <label className="block text-sm font-medium" style={{ color: "var(--text-color)" }}>
+          <label
+            className="block text-sm font-medium"
+            style={{ color: "var(--text-color)" }}
+          >
             Password
           </label>
           <button
@@ -42,8 +71,8 @@ const LoginForm = ({ formData, handleInputChange, handleSubmit, isLoading, onFor
         <div className="relative">
           <input
             type={showPassword ? "text" : "password"}
-            value={formData.password}
-            onChange={(e) => handleInputChange("password", e.target.value)}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full px-3 py-3 pr-12 rounded-lg transition-colors focus:outline-none"
             style={{
               borderColor: "var(--primary-color)",
@@ -59,7 +88,10 @@ const LoginForm = ({ formData, handleInputChange, handleSubmit, isLoading, onFor
             onClick={() => setShowPassword(!showPassword)}
           >
             {showPassword ? (
-              <EyeOff className="h-5 w-5" style={{ color: "var(--text-color)" }} />
+              <EyeOff
+                className="h-5 w-5"
+                style={{ color: "var(--text-color)" }}
+              />
             ) : (
               <Eye className="h-5 w-5" style={{ color: "var(--text-color)" }} />
             )}
@@ -67,13 +99,15 @@ const LoginForm = ({ formData, handleInputChange, handleSubmit, isLoading, onFor
         </div>
       </div>
 
+      {errorMessage && <p className="text-sm text-red-500">{errorMessage}</p>}
+
       <button
         type="submit"
         disabled={isLoading}
         className="w-full py-3 px-4 rounded-lg flex items-center justify-center transition-colors duration-200 font-outfit"
         style={{
           backgroundColor: "var(--primary-color)",
-          color: "var(--text-color)",
+          color: "#ffffff",
         }}
       >
         {isLoading ? (
@@ -82,6 +116,20 @@ const LoginForm = ({ formData, handleInputChange, handleSubmit, isLoading, onFor
           "Log In"
         )}
       </button>
+
+      <div className="text-center mt-4">
+        <p className="text-sm" style={{ color: "var(--text-color)" }}>
+          Don't have an account yet?{" "}
+          <button
+            type="button"
+            className="font-medium underline transition-colors"
+            style={{ color: "var(--primary-color)" }}
+            onClick={onSwitchToSignUp}
+          >
+            Sign up
+          </button>
+        </p>
+      </div>
     </form>
   );
 };

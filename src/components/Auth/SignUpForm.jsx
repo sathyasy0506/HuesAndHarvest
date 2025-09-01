@@ -1,26 +1,64 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext"; // path may vary
+import { showToast } from "../Common/Toaster";
 
-const SignUpForm = ({
-  formData,
-  handleInputChange,
-  handleSubmit,
-  isLoading,
-}) => {
+const SignUpForm = ({ onSwitchToLogin }) => {
+  const { register } = useAuth();
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const onSubmit = (e) => {
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       setPasswordError("Passwords do not match");
       return;
     }
     setPasswordError("");
-    handleSubmit(e);
+    setIsLoading(true);
+
+    const result = await register({
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      confirmPassword: formData.confirmPassword,
+    });
+
+    setIsLoading(false);
+
+    if (result.success) {
+      showToast("Registered successfully!", "success");
+      // Optionally, you can reset the form or switch to login
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+      onSwitchToLogin(); // if you want to auto-switch to login
+    } else {
+      setErrorMessage(result.message);
+      showToast(result.message, "error");
+    }
   };
 
+  // Render function for password fields
   const renderInput = (
     label,
     type,
@@ -71,12 +109,12 @@ const SignUpForm = ({
   );
 
   return (
-    <form onSubmit={onSubmit} className="space-y-6 font-outfit">
+    <form onSubmit={handleSubmit} className="space-y-6 font-outfit">
       <div className="grid grid-cols-2 gap-4">
-        {["First Name", "Last Name"].map((label, idx) => {
-          const name = label.toLowerCase().replace(" ", "");
+        {["First Name", "Last Name"].map((label) => {
+          const key = label === "First Name" ? "firstName" : "lastName";
           return (
-            <div key={name}>
+            <div key={key}>
               <label
                 className="block text-sm font-medium mb-2"
                 style={{ color: "var(--text-color)" }}
@@ -85,8 +123,8 @@ const SignUpForm = ({
               </label>
               <input
                 type="text"
-                value={formData[name]}
-                onChange={(e) => handleInputChange(name, e.target.value)}
+                value={formData[key]}
+                onChange={(e) => handleInputChange(key, e.target.value)}
                 placeholder={label}
                 required
                 className="w-full px-3 py-3 rounded-lg transition-colors focus:outline-none"
@@ -147,6 +185,7 @@ const SignUpForm = ({
       </div>
 
       {passwordError && <p className="text-sm text-red-500">{passwordError}</p>}
+      {errorMessage && <p className="text-sm text-red-500">{errorMessage}</p>}
 
       <button
         type="submit"
@@ -156,7 +195,7 @@ const SignUpForm = ({
         }`}
         style={{
           backgroundColor: "var(--primary-color)",
-          color: "var(--text-color)",
+          color: "#ffffff",
         }}
       >
         {isLoading ? (
@@ -165,6 +204,20 @@ const SignUpForm = ({
           "Create an account"
         )}
       </button>
+
+      <div className="text-center mt-4">
+        <p className="text-sm" style={{ color: "var(--text-color)" }}>
+          Already have an account?{" "}
+          <button
+            type="button"
+            className="font-medium underline transition-colors"
+            style={{ color: "var(--primary-color)" }}
+            onClick={onSwitchToLogin}
+          >
+            Login
+          </button>
+        </p>
+      </div>
     </form>
   );
 };
