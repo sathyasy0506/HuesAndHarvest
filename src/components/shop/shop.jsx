@@ -10,7 +10,7 @@ import Button from "@mui/material/Button";
 import TransitEnterexitIcon from "@mui/icons-material/TransitEnterexit";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import CloseIcon from "@mui/icons-material/Close";
-import { ENDPOINTS } from "../../api/config";
+import { ENDPOINTS } from "../../api/api";
 import NoProductsImg from "../../assets/images/no-product-found.webp";
 import { useNavigate, useLocation } from "react-router-dom";
 import Loader from "../Load";
@@ -41,12 +41,12 @@ const Shop = () => {
   }, [location.state]);
 
   useEffect(() => {
-    fetch(ENDPOINTS.LIST_PRODUCTS)
+    fetch(ENDPOINTS.LIST_PRODUCTS())
       .then((res) => res.json())
       .then((data) => {
         const prods = data.products || [];
         setProducts(prods);
-        setCategories(data.categories || []);
+        setCategories(data.Categories || []);
 
         if (prods.length > 0) {
           const prices = prods.map((p) => Number(p.price));

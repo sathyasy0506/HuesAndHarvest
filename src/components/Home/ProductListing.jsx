@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import { ENDPOINTS } from "../../api/api";
 const ProductListing = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,10 +18,9 @@ const ProductListing = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch(
-          "https://admin.huesandharvest.com/api/list_products.php",
-          { credentials: "include" }
-        );
+        const res = await fetch(ENDPOINTS.LIST_PRODUCTS(), {
+          credentials: "include",
+        });
         const data = await res.json();
         if (data.success) {
           setProducts(data.products);

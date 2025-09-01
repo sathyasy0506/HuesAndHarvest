@@ -17,7 +17,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import Loader from "../Load";
-
+import { ENDPOINTS } from "../../api/api";
 // FeatureCard Component
 const FeatureCard = ({ Icon, title, description }) => (
   <div className="flex items-start space-x-4">
@@ -171,9 +171,7 @@ function ProductPage() {
   useEffect(() => {
     if (!productId) return;
 
-    fetch(
-      `https://admin.huesandharvest.com/api/get_product.php?id=${productId}`
-    )
+    fetch(ENDPOINTS.GET_PRODUCT(productId))
       .then((res) => res.json())
       .then((data) => setProduct(data))
       .catch((err) => console.error(err));
@@ -182,7 +180,7 @@ function ProductPage() {
   useEffect(() => {
     if (!productId) return;
 
-    fetch(`https://admin.huesandharvest.com/api/product_reviews.php?id=${productId}`)
+    fetch(ENDPOINTS.PRODUCT_REVIEWS(productId))
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {

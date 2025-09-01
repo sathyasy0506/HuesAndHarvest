@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Instagram, Heart, MessageCircle } from "lucide-react";
 import axios from "axios";
+import { ENDPOINTS } from "../../api/api";
 
 const InstagramFeed = () => {
   const [instagramPosts, setInstagramPosts] = useState([]);
@@ -9,9 +10,7 @@ const InstagramFeed = () => {
   // Fetch initial posts
   const fetchPosts = async () => {
     try {
-      const res = await axios.get(
-        "https://admin.huesandharvest.com/api/instagram.php"
-      );
+      const res = await axios.get(ENDPOINTS.INSTAGRAM_FEED());
       if (res.data && res.data.data) {
         const sortedPosts = res.data.data
           .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
@@ -26,9 +25,7 @@ const InstagramFeed = () => {
   // Refresh counts + check for new posts
   const refreshData = async () => {
     try {
-      const res = await axios.get(
-        "https://admin.huesandharvest.com/api/instagram.php"
-      );
+      const res = await axios.get(ENDPOINTS.INSTAGRAM_FEED);
       if (res.data && res.data.data) {
         const latestPosts = res.data.data
           .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
