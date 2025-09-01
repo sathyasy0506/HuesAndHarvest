@@ -2,36 +2,68 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Instagram, Heart, MessageCircle } from "lucide-react";
 import axios from "axios";
+import { ENDPOINTS } from "../../api/api";
 
 const InstagramFeed = () => {
   const [instagramPosts, setInstagramPosts] = useState([]);
 
-  // Function to fetch Instagram posts
-  const fetchPosts = () => {
-    axios
-      .get("https://admin.huesandharvest.com/api/instagram.php")
-      .then((res) => {
-        if (res.data && res.data.data) {
-          // Sort posts by timestamp descending (assuming post has timestamp) and take first 6
-          const sortedPosts = res.data.data
-            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-            .slice(0, 6);
-          setInstagramPosts(sortedPosts);
-        }
-      })
-      .catch((err) => console.error("Error fetching Instagram posts:", err));
+  // Fetch initial posts
+  const fetchPosts = async () => {
+    try {
+      const res = await axios.get(ENDPOINTS.INSTAGRAM_FEED());
+      if (res.data && res.data.data) {
+        const sortedPosts = res.data.data
+          .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+          .slice(0, 6);
+        setInstagramPosts(sortedPosts);
+      }
+    } catch (err) {
+      console.error("Error fetching Instagram posts:", err);
+    }
+  };
+
+  // Refresh counts + check for new posts
+  const refreshData = async () => {
+    try {
+      const res = await axios.get(ENDPOINTS.INSTAGRAM_FEED);
+      if (res.data && res.data.data) {
+        const latestPosts = res.data.data
+          .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+          .slice(0, 6);
+
+        setInstagramPosts((prevPosts) => {
+          const prevIds = new Set(prevPosts.map((p) => p.id));
+          const updated = prevPosts.map((p) => {
+            const match = latestPosts.find((lp) => lp.id === p.id);
+            return match
+              ? {
+                  ...p,
+                  like_count: match.like_count,
+                  comments_count: match.comments_count,
+                }
+              : p;
+          });
+
+          // Add any new posts not seen before
+          const newOnes = latestPosts.filter((lp) => !prevIds.has(lp.id));
+          return [...newOnes, ...updated].slice(0, 6); // keep max 6
+        });
+      }
+    } catch (err) {
+      console.error("Error refreshing Instagram data:", err);
+    }
   };
 
   useEffect(() => {
-    fetchPosts();
-    // Poll every 5 seconds (100ms is too frequent)
-    const interval = setInterval(fetchPosts, 5000);
+    fetchPosts(); // Initial load
+    const interval = setInterval(refreshData, 10000); // refresh every 10s
     return () => clearInterval(interval);
   }, []);
 
   return (
     <section className="py-20 lg:py-32 bg-transparent">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -44,7 +76,7 @@ const InstagramFeed = () => {
               className="text-4xl lg:text-6xl font-bold primary-text"
               style={{ fontFamily: "var(--font-outfit)" }}
             >
-              @husesandharvest
+              @huesandharvest
             </h2>
           </div>
           <p
@@ -61,9 +93,8 @@ const InstagramFeed = () => {
           {instagramPosts.map((post, index) => (
             <motion.div
               key={post.id}
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: index * 0.1 }}
               whileHover={{ scale: 1.05 }}
               className="group cursor-pointer relative aspect-square"
@@ -73,11 +104,23 @@ const InstagramFeed = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <img
-                  src={post.media_url}
-                  alt={`Instagram post ${index + 1}`}
-                  className="w-full h-full object-cover rounded-2xl"
-                />
+                {post.media_type === "VIDEO" ? (
+                  <video
+                    src={post.media_url}
+                    muted
+                    autoPlay
+                    loop
+                    playsInline
+                    poster={post.thumbnail_url}
+                    className="w-full h-full object-cover rounded-2xl"
+                  />
+                ) : (
+                  <img
+                    src={post.media_url}
+                    alt={`Instagram post ${index + 1}`}
+                    className="w-full h-full object-cover rounded-2xl"
+                  />
+                )}
 
                 {/* Hover Overlay */}
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl flex items-center justify-center">
@@ -105,7 +148,7 @@ const InstagramFeed = () => {
           className="text-center mt-12"
         >
           <a
-            href="https://www.instagram.com/husesandharvest/"
+            href="https://www.instagram.com/huesandharvest/"
             target="_blank"
             rel="noopener noreferrer"
           >

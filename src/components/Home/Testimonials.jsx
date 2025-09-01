@@ -3,6 +3,7 @@ import Slider from "react-slick";
 import { Users } from "lucide-react";
 import StarIcon from "@mui/icons-material/Star";
 import { motion } from "framer-motion";
+import { ENDPOINTS } from "../../api/api";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 30 },
@@ -17,7 +18,7 @@ const RatingStars = ({ rating }) => (
       i < rating ? (
         <StarIcon key={i} style={{ color: "#facc15" }} />
       ) : (
-        <StarIcon  key={i} style={{ color: "#d1d5db" }} />
+        <StarIcon key={i} style={{ color: "#d1d5db" }} />
       )
     )}
   </div>
@@ -27,7 +28,7 @@ const Testimonials = () => {
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-    fetch("https://admin.huesandharvest.com/api/reviews.php")
+    fetch(ENDPOINTS.REVIEWS())
       .then((res) => res.json())
       .then((data) => setReviews(data))
       .catch((err) => console.error("Error fetching reviews:", err));

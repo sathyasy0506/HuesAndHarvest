@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import { ENDPOINTS } from "../../api/api";
 const categories = [
   {
     name: "All",
@@ -32,7 +32,7 @@ const ProductCategories = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("https://admin.huesandharvest.com/api/list_products.php")
+    fetch(ENDPOINTS.LIST_PRODUCTS())
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {

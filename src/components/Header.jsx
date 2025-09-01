@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import LogoDark from "../assets/images/dark.png";
 import { Search, ShoppingBag, User, Sun, Moon, X } from "lucide-react";
-
+import { ENDPOINTS } from "../api/api";
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
@@ -25,9 +25,7 @@ const Header = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(
-          "https://admin.huesandharvest.com/api/list_products.php"
-        );
+        const response = await fetch(ENDPOINTS.LIST_PRODUCTS());
         const data = await response.json();
         // Map to only include id, name, price, image
         const formatted = data.products.map((p) => ({
