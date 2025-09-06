@@ -1,43 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Loader from "../Load";
 import LoginForm from "./LoginForm";
 import SignUpForm from "./SignUpForm";
 import ForgotPasswordForm from "./ForgetPasswordForm";
-import Silk from "../Background/Silk"; // your silk component
+import Silk from "../Background/Silk";
 import Logo from "../../assets/images/form.png";
 
 const AuthPage = () => {
-  const [mode, setMode] = useState("login"); // login | signup | forgot
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const [loading, setLoading] = useState(true);
+  const [mode, setMode] = useState("login");
 
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = async () => {
-    setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsLoading(false);
-
-    if (mode === "login") console.log("Login", formData);
-    if (mode === "signup") {
-      if (formData.password !== formData.confirmPassword) {
-        alert("Passwords do not match!");
-        return;
-      }
-      console.log("SignUp", formData);
-    }
-    if (mode === "forgot") {
-      alert("Password reset link sent to " + formData.email);
-    }
-  };
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1500); // simulate loading
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="relative min-h-screen -mt-16 pt-16">
@@ -61,7 +37,6 @@ const AuthPage = () => {
             borderColor: "var(--primary-color)",
           }}
         >
-          {/* Logo + Title */}
           <div className="text-center mb-8">
             <img src={Logo} alt="Logo" className="mx-auto w-52 mb-2" />
             <h1
@@ -77,87 +52,26 @@ const AuthPage = () => {
           </div>
 
           {mode === "login" && (
-            <>
-              <LoginForm
-                formData={formData}
-                handleInputChange={handleInputChange}
-                handleSubmit={(e) => {
-                  e.preventDefault();
-                  handleSubmit();
-                }}
-                isLoading={isLoading}
-                onForgotPassword={() => setMode("forgot")}
-              />
-              <div className="text-center mt-4">
-                <p className="text-sm" style={{ color: "var(--text-color)" }}>
-                  Don't have an account yet?{" "}
-                  <button
-                    type="button"
-                    onClick={() => setMode("signup")}
-                    className="font-medium underline transition-colors"
-                    style={{
-                      color: "var(--primary-color)",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.color = "var(--hover-color)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.color = "var(--primary-color)")
-                    }
-                  >
-                    Sign up
-                  </button>
-                </p>
-              </div>
-            </>
-          )}
-
-          {mode === "signup" && (
-            <>
-              <SignUpForm
-                formData={formData}
-                handleInputChange={handleInputChange}
-                handleSubmit={(e) => {
-                  e.preventDefault();
-                  handleSubmit();
-                }}
-                isLoading={isLoading}
-              />
-              <div className="text-center mt-4">
-                <p className="text-sm" style={{ color: "var(--text-color)" }}>
-                  Already have an account?{" "}
-                  <button
-                    type="button"
-                    onClick={() => setMode("login")}
-                    className="font-medium underline transition-colors"
-                    style={{
-                      color: "var(--primary-color)",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.color = "var(--hover-color)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.color = "var(--primary-color)")
-                    }
-                  >
-                    Login
-                  </button>
-                </p>
-              </div>
-            </>
-          )}
-
-          {mode === "forgot" && (
-            <ForgotPasswordForm
-              email={formData.email}
-              setEmail={(value) => handleInputChange("email", value)}
-              handleSubmit={handleSubmit}
-              isLoading={isLoading}
-              onBack={() => setMode("login")}
+            <LoginForm
+              onForgotPassword={() => setMode("forgot")}
+              onSwitchToSignUp={() => setMode("signup")}
             />
+          )}
+          {mode === "signup" && (
+            <SignUpForm onSwitchToLogin={() => setMode("login")} />
+          )}
+          {mode === "forgot" && (
+            <ForgotPasswordForm onBack={() => setMode("login")} />
           )}
         </div>
       </div>
+
+      {/* Loader overlay */}
+      {loading && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-[var(--bg-color)]">
+          <Loader />
+        </div>
+      )}
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import LogoDark from "../assets/images/dark.png";
 import { Search, ShoppingBag, User, Sun, Moon, X } from "lucide-react";
 import { ENDPOINTS } from "../api/api";
+
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
@@ -108,9 +109,6 @@ const Header = () => {
       ? true
       : location.pathname === path;
 
-  // Determine header colors based on scroll state
-  // const headerBgColor = isScrolled ? "bg-yellow-500" : "bg-transparent";
-
   const headerTextColor = isScrolled
     ? "text-white"
     : darkMode
@@ -171,11 +169,15 @@ const Header = () => {
               ref={searchContainerRef}
             >
               {showSearch ? (
-                <div className="absolute right-0 top-0 bg-white dark:bg-gray-800 rounded-md shadow-lg z-50 border border-gray-200 dark:border-gray-700">
+                <div
+                  className="absolute right-0 top-0 bg-white  rounded-md shadow-lg z-50 border border-gray-200 dark:border-gray-700"
+                  style={{ backgroundColor: "var(--sho-bg-color)" }}
+                >
                   <div className="flex items-center p-1">
                     <input
                       type="text"
-                      className="w-64 p-2 rounded outline-none text-black dark:text-white dark:bg-gray-800"
+                      className="w-64 p-2 rounded outline-none text-black dark:text-white"
+                      style={{ backgroundColor: "var(--sho-bg-color)" }}
                       placeholder="Search products..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -374,12 +376,23 @@ const Header = () => {
 
       {/* Mobile Search Overlay */}
       {showSearch && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-start justify-center pt-20 md:hidden">
-          <div className="w-full max-w-md mx-4 bg-white dark:bg-gray-800 rounded-lg shadow-xl">
+        <div
+          className="fixed inset-0 z-50 flex items-start justify-center pt-20 md:hidden"
+          style={{
+            backgroundColor: "rgba(35, 69, 65, 0.6)", // same as desktop semi-transparent
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
+          }}
+        >
+          <div
+            className="w-full max-w-md mx-4 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700"
+            style={{ backgroundColor: "var(--sho-bg-color)" }}
+          >
             <div className="flex items-center p-4 border-b border-gray-200 dark:border-gray-700">
               <input
                 type="text"
-                className="flex-1 p-2 rounded outline-none text-black dark:text-white dark:bg-gray-800"
+                className="flex-1 p-2 rounded outline-none text-black dark:text-white"
+                style={{ backgroundColor: "var(--sho-bg-color)" }}
                 placeholder="Search products..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -402,11 +415,11 @@ const Header = () => {
                     key={product.id}
                     className="flex items-center gap-3 p-3 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                     onClick={() => {
+                      setShowSearch(false);
+                      setSearchTerm("");
                       navigate(`/product/${slugify(product.name)}`, {
                         state: { id: product.id },
                       });
-                      setShowSearch(false);
-                      setSearchTerm("");
                     }}
                   >
                     <img

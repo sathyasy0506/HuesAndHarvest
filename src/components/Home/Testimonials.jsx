@@ -13,12 +13,12 @@ const fadeInUp = {
 
 // RatingStars component
 const RatingStars = ({ rating }) => (
-  <div className="flex items-center space-x-1 mb-4">
+  <div className="flex items-center space-x-1 mb-3 sm:mb-4">
     {[...Array(5)].map((_, i) =>
       i < rating ? (
-        <StarIcon key={i} style={{ color: "#facc15" }} />
+        <StarIcon key={i} style={{ color: "#facc15", fontSize: "20px" }} />
       ) : (
-        <StarIcon key={i} style={{ color: "#d1d5db" }} />
+        <StarIcon key={i} style={{ color: "#d1d5db", fontSize: "20px" }} />
       )
     )}
   </div>
@@ -39,29 +39,30 @@ const Testimonials = () => {
   const settings = {
     dots: true,
     infinite: true,
-    speed: 600,
+    speed: 500,
     slidesToShow: 3,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 4000,
+    autoplaySpeed: 3500,
     responsive: [
       {
-        breakpoint: 1024, // tablets
+        breakpoint: 1280, // large laptops
         settings: { slidesToShow: 2 },
       },
       {
-        breakpoint: 640, // mobile
+        breakpoint: 768, // tablets
         settings: { slidesToShow: 1 },
       },
     ],
   };
 
   return (
-    <section className="py-20 bg-transparent">
+    <section className="py-16 sm:py-20 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div className="text-center mb-16" {...fadeInUp}>
+        {/* Section Heading */}
+        <motion.div className="text-center mb-10 sm:mb-16" {...fadeInUp}>
           <h2
-            className="text-4xl lg:text-5xl font-bold mb-6"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6"
             style={{
               color: "var(--text-color)",
               fontFamily: "var(--font-outfit)",
@@ -70,7 +71,7 @@ const Testimonials = () => {
             What Our Customers Say
           </h2>
           <p
-            className="text-xl max-w-2xl mx-auto"
+            className="text-base sm:text-lg lg:text-xl max-w-2xl mx-auto"
             style={{
               color: "var(--muted-text)",
               fontFamily: "var(--font-poppins)",
@@ -81,40 +82,47 @@ const Testimonials = () => {
           </p>
         </motion.div>
 
+        {/* Reviews Slider */}
         <Slider {...settings}>
           {reviews.map((review) => (
-            <div key={review.id} className="px-3">
+            <div key={review.id} className="px-2 sm:px-3">
               <motion.div
-                className="p-8 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300"
+                className="p-4 sm:p-6 md:p-8 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between"
                 style={{
                   backgroundColor: "var(--cards-bg)",
                   color: "var(--text-color)",
                   fontFamily: "var(--font-poppins)",
-                  height: "100%",
                 }}
                 whileHover={{ y: -5 }}
               >
-                <RatingStars rating={review.rating} />
-                <p
-                  className="mb-6 leading-relaxed italic"
-                  style={{ color: "var(--muted-text)" }}
-                >
-                  "{review.review}"
-                </p>
+                <div>
+                  <RatingStars rating={review.rating} />
+                  <p
+                    className="mb-4 sm:mb-6 leading-relaxed italic text-sm sm:text-base"
+                    style={{ color: "var(--muted-text)" }}
+                  >
+                    "
+                    {review.review.length > 150
+                      ? review.review.slice(0, 150) + "..."
+                      : review.review}
+                    "
+                  </p>
+                </div>
 
-                <div className="flex items-center space-x-3">
+                {/* Reviewer Info */}
+                <div className="flex items-center space-x-3 mt-auto">
                   <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center"
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shrink-0"
                     style={{ backgroundColor: "var(--secondary-bg)" }}
                   >
                     <Users
-                      className="w-6 h-6"
+                      className="w-5 h-5 sm:w-6 sm:h-6"
                       style={{ color: "var(--accent-color)" }}
                     />
                   </div>
                   <div>
                     <div
-                      className="font-semibold"
+                      className="font-semibold text-sm sm:text-base"
                       style={{
                         color: "var(--text-color)",
                         fontFamily: "var(--font-outfit)",
@@ -123,7 +131,7 @@ const Testimonials = () => {
                       {review.reviewer}
                     </div>
                     <div
-                      className="text-sm"
+                      className="text-xs sm:text-sm"
                       style={{ color: "var(--muted-text)" }}
                     >
                       {review.date_created}

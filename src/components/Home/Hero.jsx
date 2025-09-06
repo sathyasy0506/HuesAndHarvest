@@ -7,7 +7,7 @@ const Hero = () => {
   return (
     <section
       className="relative overflow-x-hidden overflow-y-hidden min-h-screen
-                 -mt-16 md:-mt-20 lg:-mt-40
+                 mt-16 md:-mt-8 lg:-mt-20
                  pt-40 md:pt-52 lg:pt-[140px]
                  pb-24 md:pb-32 lg:pb-10"
     >
