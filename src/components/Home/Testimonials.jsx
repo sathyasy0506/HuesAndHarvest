@@ -83,11 +83,11 @@ const Testimonials = () => {
         </motion.div>
 
         {/* Reviews Slider */}
-        <Slider {...settings}>
+        <Slider {...settings} key={reviews.length}>
           {reviews.map((review) => (
-            <div key={review.id} className="px-2 sm:px-3">
+            <div key={review.id} className="px-2 sm:px-3 w-full">
               <motion.div
-                className="p-4 sm:p-6 md:p-8 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between"
+                className="p-4 sm:p-6 md:p-8 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 h-full flex flex-col justify-between w-full"
                 style={{
                   backgroundColor: "var(--cards-bg)",
                   color: "var(--text-color)",
@@ -101,15 +101,10 @@ const Testimonials = () => {
                     className="mb-4 sm:mb-6 leading-relaxed italic text-sm sm:text-base"
                     style={{ color: "var(--muted-text)" }}
                   >
-                    "
-                    {review.review.length > 150
-                      ? review.review.slice(0, 150) + "..."
-                      : review.review}
-                    "
+                    "{review.review}"
                   </p>
                 </div>
 
-                {/* Reviewer Info */}
                 <div className="flex items-center space-x-3 mt-auto">
                   <div
                     className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shrink-0"
