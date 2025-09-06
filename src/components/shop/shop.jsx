@@ -14,6 +14,7 @@ import { ENDPOINTS } from "../../api/api";
 import NoProductsImg from "../../assets/images/no-product-found.webp";
 import { useNavigate, useLocation } from "react-router-dom";
 import Loader from "../Load";
+import Gradient from "../Background/Gradient";
 
 const Shop = () => {
   const location = useLocation();
@@ -361,207 +362,199 @@ const Shop = () => {
   }
 
   return (
-    <div
-      className="min-h-screen px-4 sm:px-6 py-8 mt-0"
-      style={{
-        backgroundColor: "var(--secondary-bg)",
-        color: "var(--text-color)",
-        fontFamily: "var(--font-poppins)",
-      }}
-    >
+    <Gradient>
+      {" "}
       <div
-        className="max-w-7xl mx-auto rounded-2xl shadow-sm p-6 relative"
-        style={{ backgroundColor: "var(--bg-color)" }}
+        className="min-h-screen px-4 sm:px-6 py-8 mt-16 bg-transparent"
+        style={{
+          color: "var(--text-color)",
+          fontFamily: "var(--font-poppins)",
+        }}
       >
-        <div className="flex flex-col lg:grid lg:grid-cols-4 gap-8 relative">
-          <div
-            className="hidden lg:block absolute left-[25%] border-r border-dashed"
-            style={{ borderColor: "grey", height: "100%", top: 0 }}
-          ></div>
-
-          {/* Sticky Filters */}
-          <aside className="hidden lg:block pr-6 sticky top-28 h-fit z-10 bg-[var(--bg-color)]">
-            {renderFilters()}
-          </aside>
-
-          {/* Product Grid */}
-          <main className="lg:col-span-3 w-full">
-            <div className="flex justify-between mb-4 lg:justify-end items-center gap-4">
-              <FormControl size="small" sx={{ minWidth: 90 }}>
-                <Select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  displayEmpty
-                  sx={{
-                    borderRadius: "17px",
-                    backgroundColor: "var(--cards-bg)",
-                    color: "var(--text-color)",
-                    fontWeight: 500,
-                    px: 2,
-                    py: 0.5,
-                    "& .MuiOutlinedInput-notchedOutline": { border: "none" },
-                    "& .MuiSelect-icon": { color: "var(--primary-color)" },
-                  }}
-                >
-                  <MenuItem value="default">Sort By</MenuItem>
-                  <MenuItem value="priceLowHigh">Price: Low to High</MenuItem>
-                  <MenuItem value="priceHighLow">Price: High to Low</MenuItem>
-                  <MenuItem value="nameAZ">Name: A-Z</MenuItem>
-                  <MenuItem value="nameZA">Name: Z-A</MenuItem>
-                </Select>
-              </FormControl>
-
-              <div className="lg:hidden">
-                <Button
-                  variant="contained"
-                  onClick={() => setOpenFilters(true)}
-                  startIcon={<FilterListIcon />}
-                  sx={{
-                    backgroundColor: "var(--primary-color)",
-                    color: "var(--bg-color)",
-                    borderRadius: "17px",
-                    textTransform: "none",
-                    px: 4,
-                    py: 1.4,
-                    fontWeight: 500,
-                    boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
-                    "&:hover": {
-                      backgroundColor: "darkgreen",
-                      boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-                    },
-                  }}
-                >
-                  Filters
-                </Button>
-              </div>
-            </div>
-
-            {/* Scrollable Product Cards */}
+        <div className="max-w-7xl mx-auto rounded-2xl shadow-sm p-6 relative bg-transparent">
+          <div className="flex flex-col lg:grid lg:grid-cols-4 gap-8 relative">
             <div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pr-2"
-              style={{
-                minHeight: "70vh", // adjust height as needed
-                maxHeight: "85vh", // adjust height as needed
-                overflowY: "auto",
-              }}
-            >
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map((p) => (
-                  <div
-                    key={p.id}
-                    className="rounded-xl p-5 shadow-sm hover:shadow-md transition flex flex-col cursor-pointer"
-                    style={{
-                      opacity: p.stock_status === "outofstock" ? 0.6 : 1,
+              className="hidden lg:block absolute left-[25%] border-r border-dashed"
+              style={{ borderColor: "grey", height: "100%", top: 0 }}
+            ></div>
+
+            {/* Sticky Filters */}
+            <aside className="hidden lg:block pr-6 sticky top-28 h-fit z-10 bg-transparent">
+              {renderFilters()}
+            </aside>
+
+            {/* Product Grid */}
+            <main className="lg:col-span-3 w-full">
+              <div className="flex justify-between mb-4 lg:justify-end items-center gap-4">
+                <FormControl size="small" sx={{ minWidth: 90 }}>
+                  <Select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    displayEmpty
+                    sx={{
+                      borderRadius: "17px",
+                      backgroundColor: "var(--cards-bg)",
+                      color: "var(--text-color)",
+                      fontWeight: 500,
+                      px: 2,
+                      py: 0.5,
+                      "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+                      "& .MuiSelect-icon": { color: "var(--primary-color)" },
                     }}
-                    // In your Shop component
-                    onClick={() =>
-                      navigate(`/product/${slugify(p.name)}`, {
-                        state: { id: p.id },
-                      })
-                    }
                   >
-                    {/* Image */}
+                    <MenuItem value="default">Sort By</MenuItem>
+                    <MenuItem value="priceLowHigh">Price: Low to High</MenuItem>
+                    <MenuItem value="priceHighLow">Price: High to Low</MenuItem>
+                    <MenuItem value="nameAZ">Name: A-Z</MenuItem>
+                    <MenuItem value="nameZA">Name: Z-A</MenuItem>
+                  </Select>
+                </FormControl>
+
+                <div className="lg:hidden">
+                  <Button
+                    variant="contained"
+                    onClick={() => setOpenFilters(true)}
+                    startIcon={<FilterListIcon />}
+                    sx={{
+                      backgroundColor: "var(--primary-color)",
+                      color: "var(--bg-color)",
+                      borderRadius: "17px",
+                      textTransform: "none",
+                      px: 4,
+                      py: 1.4,
+                      fontWeight: 500,
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+                      "&:hover": {
+                        backgroundColor: "darkgreen",
+                        boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+                      },
+                    }}
+                  >
+                    Filters
+                  </Button>
+                </div>
+              </div>
+
+              {/* Product Grid - Removed scrollable container */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pr-2">
+                {filteredProducts.length > 0 ? (
+                  filteredProducts.map((p) => (
                     <div
-                      className="aspect-square flex items-center justify-center mb-4 bg-gray-50 dark:bg-gray-200 rounded-lg"
+                      key={p.id}
+                      className="rounded-xl p-5 shadow-sm hover:shadow-md transition flex flex-col cursor-pointer"
                       style={{
-                        filter:
-                          p.stock_status === "outofstock"
-                            ? "grayscale(100%)"
-                            : "none",
+                        opacity: p.stock_status === "outofstock" ? 0.6 : 1,
                       }}
+                      // In your Shop component
+                      onClick={() =>
+                        navigate(`/product/${slugify(p.name)}`, {
+                          state: { id: p.id },
+                        })
+                      }
                     >
-                      <img
-                        src={p.image}
-                        alt={p.name}
-                        className="max-h-72 object-contain"
+                      {/* Image */}
+                      <div
+                        className="aspect-square flex items-center justify-center mb-4 bg-gray-50 dark:bg-gray-200 rounded-lg"
                         style={{
                           filter:
                             p.stock_status === "outofstock"
                               ? "grayscale(100%)"
                               : "none",
                         }}
-                      />
-                    </div>
-
-                    {/* Product Info */}
-                    <h3
-                      className="font-semibold text-sm mb-2"
-                      style={{
-                        color: "var(--text-color)",
-                        fontFamily: "var(--font-poppins)",
-                        lineHeight: 1.2,
-                      }}
-                    >
-                      {p.name}
-                    </h3>
-
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="text-base font-semibold"
-                          style={{ color: "var(--primary-color)" }}
-                        >
-                          ₹ {Number(p.price).toFixed(2)}
-                        </span>
-                        <span
-                          className="text-xs line-through"
-                          style={{ color: "var(--text-color)" }}
-                        >
-                          ₹ {Number(p.oldPrice).toFixed(2)}
-                        </span>
+                      >
+                        <img
+                          src={p.image}
+                          alt={p.name}
+                          className="max-h-72 object-contain"
+                          style={{
+                            filter:
+                              p.stock_status === "outofstock"
+                                ? "grayscale(100%)"
+                                : "none",
+                          }}
+                        />
                       </div>
-                    </div>
 
-                    {/* Shop Now Button */}
-                    <div className="flex justify-center items-center h-full">
-                      <button
-                        className="relative w-full px-4 py-2 flex items-center justify-center transition"
+                      {/* Product Info */}
+                      <h3
+                        className="font-semibold text-sm mb-2"
                         style={{
-                          backgroundColor: "var(--primary-color)",
-                          color: "var(--bg-color)",
+                          color: "var(--text-color)",
                           fontFamily: "var(--font-poppins)",
-                          fontWeight: 500,
-                          borderTopLeftRadius: "16px",
-                          borderTopRightRadius: "6px",
-                          borderBottomRightRadius: "16px",
-                          borderBottomLeftRadius: "6px",
-                          pointerEvents:
-                            p.stock_status === "outofstock" ? "none" : "auto",
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation(); // prevent card click
-                          navigate(`/product/${slugify(p.name)}`, {
-                            state: { id: p.id },
-                          });
+                          lineHeight: 1.2,
                         }}
                       >
-                        <span>Shop Now</span>
-                      </button>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="col-span-full flex flex-col items-center justify-start h-80">
-                  <img
-                    src={NoProductsImg} // imported image
-                    alt="No products found"
-                    className="max-h-full object-contain mt-4"
-                  />
-                </div>
-              )}
-            </div>
-          </main>
-        </div>
-      </div>
+                        {p.name}
+                      </h3>
 
-      <Dialog
-        open={openFilters}
-        onClose={() => setOpenFilters(false)}
-        fullWidth
-      >
-        <DialogContent>{renderFilters()}</DialogContent>
-      </Dialog>
-    </div>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="text-base font-semibold"
+                            style={{ color: "var(--primary-color)" }}
+                          >
+                            ₹ {Number(p.price).toFixed(2)}
+                          </span>
+                          <span
+                            className="text-xs line-through"
+                            style={{ color: "var(--text-color)" }}
+                          >
+                            ₹ {Number(p.oldPrice).toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Shop Now Button */}
+                      <div className="flex justify-center items-center h-full">
+                        <button
+                          className="relative w-full px-4 py-2 flex items-center justify-center transition"
+                          style={{
+                            backgroundColor: "var(--primary-color)",
+                            color: "var(--bg-color)",
+                            fontFamily: "var(--font-poppins)",
+                            fontWeight: 500,
+                            borderTopLeftRadius: "16px",
+                            borderTopRightRadius: "6px",
+                            borderBottomRightRadius: "16px",
+                            borderBottomLeftRadius: "6px",
+                            pointerEvents:
+                              p.stock_status === "outofstock" ? "none" : "auto",
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation(); // prevent card click
+                            navigate(`/product/${slugify(p.name)}`, {
+                              state: { id: p.id },
+                            });
+                          }}
+                        >
+                          <span>Shop Now</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-full flex flex-col items-center justify-start h-80">
+                    <img
+                      src={NoProductsImg} // imported image
+                      alt="No products found"
+                      className="max-h-full object-contain mt-4"
+                    />
+                  </div>
+                )}
+              </div>
+            </main>
+          </div>
+        </div>
+
+        <Dialog
+          open={openFilters}
+          onClose={() => setOpenFilters(false)}
+          fullWidth
+        >
+          <DialogContent>{renderFilters()}</DialogContent>
+        </Dialog>
+      </div>
+    </Gradient>
   );
 };
 

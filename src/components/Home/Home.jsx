@@ -9,6 +9,7 @@ import ProductCategories from "./ProductCategories";
 import InstagramFeed from "./InstagramFeed";
 import ProductListing from "./ProductListing";
 import Gradient from "../Background/Gradient";
+import FeaturedProduct from "./FeaturedProduct";
 
 const Home = () => {
   return (
@@ -21,6 +22,7 @@ const Home = () => {
           <ProductListing />
           <ProductCategories />
           <Features />
+          <FeaturedProduct />
           <Process />
           <Testimonials />
           <InstagramFeed />

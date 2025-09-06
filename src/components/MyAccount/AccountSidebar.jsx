@@ -17,16 +17,16 @@ const AccountSidebar = ({ activeSection, setActiveSection }) => {
     { id: "profile", label: "Profile", icon: User },
     { id: "orders", label: "Orders", icon: Package },
     { id: "addresses", label: "Addresses", icon: MapPin },
-    { id: "payments", label: "Payment Methods", icon: CreditCard },
-    { id: "wishlist", label: "Wishlist", icon: Heart },
-    { id: "notifications", label: "Notifications", icon: Bell },
+    // { id: "payments", label: "Payment Methods", icon: CreditCard },
+    // { id: "wishlist", label: "Wishlist", icon: Heart },
+    // { id: "notifications", label: "Notifications", icon: Bell },
     { id: "security", label: "Security", icon: Shield },
-    { id: "settings", label: "Settings", icon: Settings },
+    // { id: "settings", label: "Settings", icon: Settings },
     { id: "help", label: "Help & Support", icon: HelpCircle },
   ];
 
   return (
-    <div className="card-bg rounded-2xl p-6 h-fit sticky top-8">
+    <div className="card-bg rounded-2xl p-6 h-fit sticky top-28">
       <div className="flex items-center space-x-3 mb-8">
         <div className="w-12 h-12 gradient-header rounded-full flex items-center justify-center">
           <User className="w-6 h-6 text-white" />
@@ -36,9 +36,9 @@ const AccountSidebar = ({ activeSection, setActiveSection }) => {
             className="font-semibold primary-text"
             style={{ fontFamily: "var(--font-outfit)" }}
           >
-            John Doe
+            Madhav
           </h3>
-          <p className="text-sm muted-text">Premium Member</p>
+          {/* <p className="text-sm muted-text">Premium Member</p> */}
         </div>
       </div>
 
@@ -71,7 +71,7 @@ const AccountSidebar = ({ activeSection, setActiveSection }) => {
           style={{ color: "var(--error-color)" }}
         >
           <LogOut className="w-5 h-5" />
-          <span className="font-medium">Sign Out</span>
+          <span className="font-medium">Log Out</span>
         </button>
       </div>
     </div>
