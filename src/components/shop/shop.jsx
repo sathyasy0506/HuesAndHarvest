@@ -15,6 +15,13 @@ import NoProductsImg from "../../assets/images/no-product-found.webp";
 import { useNavigate, useLocation } from "react-router-dom";
 import Loader from "../Load";
 import Gradient from "../Background/Gradient";
+import { ArrowUpRight } from "lucide-react";
+
+const bgColors = ["#ffeae2", "#e9f7e4", "#fff9e6", "#ffe9ef"];
+
+function getRandomBg() {
+  return bgColors[Math.floor(Math.random() * bgColors.length)];
+}
 
 const Shop = () => {
   const location = useLocation();
@@ -26,14 +33,14 @@ const Shop = () => {
   const [sortBy, setSortBy] = useState("default");
   const [openFilters, setOpenFilters] = useState(false);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true); // Added loading state
-  const [selectedStockStatuses, setSelectedStockStatuses] = useState([]); // [] = all
+  const [loading, setLoading] = useState(true);
+  const [selectedStockStatuses, setSelectedStockStatuses] = useState([]);
 
   const slugify = (name) =>
     name
       .toLowerCase()
-      .replace(/\s+/g, "-") // spaces → hyphens
-      .replace(/[^\w-]+/g, ""); // remove special characters
+      .replace(/\s+/g, "-")
+      .replace(/[^\w-]+/g, "");
 
   useEffect(() => {
     if (location.state?.category && location.state.category !== "all") {
@@ -56,7 +63,7 @@ const Shop = () => {
           setPriceLimits([minPrice, maxPrice]);
           setPriceRange([minPrice, maxPrice]);
         }
-        setLoading(false); // Stop loading after fetch
+        setLoading(false);
       })
       .catch((err) => {
         console.error("Error fetching products:", err);
@@ -65,7 +72,7 @@ const Shop = () => {
   }, []);
 
   const filteredProducts = useMemo(() => {
-    if (loading) return []; // Return empty array while loading
+    if (loading) return [];
 
     return products
       .filter((p) => {
@@ -82,7 +89,6 @@ const Shop = () => {
         return categoryMatch && priceMatch && stockMatch;
       })
       .sort((a, b) => {
-        // Apply stock-priority only for default sort
         if (sortBy === "default") {
           const getStockPriority = (p) => {
             if (
@@ -90,15 +96,14 @@ const Shop = () => {
               (!p.stock_quantity || p.stock_quantity >= 10)
             )
               return 0;
-            if (p.stock_status === "instock" && p.stock_quantity < 10) return 1; // low stock
-            return 2; // out of stock
+            if (p.stock_status === "instock" && p.stock_quantity < 10) return 1;
+            return 2;
           };
 
           const stockDiff = getStockPriority(a) - getStockPriority(b);
           if (stockDiff !== 0) return stockDiff;
         }
 
-        // Apply user-selected sort
         if (sortBy === "priceLowHigh") return a.price - b.price;
         if (sortBy === "priceHighLow") return b.price - a.price;
         if (sortBy === "nameAZ") return a.name.localeCompare(b.name);
@@ -196,7 +201,6 @@ const Shop = () => {
                   width: "fit-content",
                 }}
               >
-                {/* Hidden Checkbox */}
                 <input
                   type="checkbox"
                   checked={isSelected}
@@ -212,7 +216,6 @@ const Shop = () => {
                   className="hidden"
                 />
 
-                {/* Custom Checkbox */}
                 <span
                   className={`w-5 h-5 flex items-center justify-center rounded-md border-2 transition-all duration-300
               ${
@@ -237,7 +240,6 @@ const Shop = () => {
                   </svg>
                 </span>
 
-                {/* Category Label */}
                 <span className="font-medium text-[var(--text-color)] whitespace-nowrap">
                   {cat}
                 </span>
@@ -321,14 +323,13 @@ const Shop = () => {
         </div>
       </div>
 
-      {/* Reset Filters */}
       {filtersApplied && (
         <Button
           variant="contained"
           onClick={() => {
             setSelectedCategories([]);
             setPriceRange([...priceLimits]);
-            setSelectedStockStatuses([]); // reset stock filter
+            setSelectedStockStatuses([]);
           }}
           sx={{
             mt: 3,
@@ -356,7 +357,6 @@ const Shop = () => {
     </div>
   );
 
-  // Show loader while data is being fetched
   if (loading) {
     return <Loader />;
   }
@@ -378,12 +378,10 @@ const Shop = () => {
               style={{ borderColor: "grey", height: "100%", top: 0 }}
             ></div>
 
-            {/* Sticky Filters */}
             <aside className="hidden lg:block pr-6 sticky top-28 h-fit z-10 bg-transparent">
               {renderFilters()}
             </aside>
 
-            {/* Product Grid */}
             <main className="lg:col-span-3 w-full">
               <div className="flex justify-between mb-4 lg:justify-end items-center gap-4">
                 <FormControl size="small" sx={{ minWidth: 90 }}>
@@ -435,99 +433,89 @@ const Shop = () => {
                 </div>
               </div>
 
-              {/* Product Grid - Removed scrollable container */}
+              {/* Product Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pr-2">
                 {filteredProducts.length > 0 ? (
-                  filteredProducts.map((p) => (
+                  filteredProducts.map((product) => (
                     <div
-                      key={p.id}
-                      className="rounded-xl p-5 shadow-sm hover:shadow-md transition flex flex-col cursor-pointer"
-                      style={{
-                        opacity: p.stock_status === "outofstock" ? 0.6 : 1,
-                      }}
-                      // In your Shop component
+                      key={product.id}
+                      className="flex-shrink-0 w-full flex flex-col cursor-pointer"
                       onClick={() =>
-                        navigate(`/product/${slugify(p.name)}`, {
-                          state: { id: p.id },
+                        navigate(`/product/${slugify(product.name)}`, {
+                          state: { id: product.id },
                         })
                       }
+                      style={{
+                        opacity:
+                          product.stock_status === "outofstock" ? 0.6 : 1,
+                      }}
                     >
-                      {/* Image */}
+                      {/* Image with random background */}
                       <div
-                        className="aspect-square flex items-center justify-center mb-4 bg-gray-50 dark:bg-gray-200 rounded-lg"
+                        className="w-full aspect-square rounded-2xl flex items-center justify-center overflow-hidden p-4"
                         style={{
+                          backgroundColor: getRandomBg(),
                           filter:
-                            p.stock_status === "outofstock"
+                            product.stock_status === "outofstock"
                               ? "grayscale(100%)"
                               : "none",
                         }}
                       >
                         <img
-                          src={p.image}
-                          alt={p.name}
-                          className="max-h-72 object-contain"
-                          style={{
-                            filter:
-                              p.stock_status === "outofstock"
-                                ? "grayscale(100%)"
-                                : "none",
-                          }}
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-contain"
                         />
                       </div>
 
-                      {/* Product Info */}
-                      <h3
-                        className="font-semibold text-sm mb-2"
-                        style={{
-                          color: "var(--text-color)",
-                          fontFamily: "var(--font-poppins)",
-                          lineHeight: 1.2,
-                        }}
-                      >
-                        {p.name}
-                      </h3>
+                      {/* Details */}
+                      <div className="mt-4 p-2 flex flex-col gap-2">
+                        <h3 className="text-lg">{product.name}</h3>
 
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className="text-base font-semibold"
-                            style={{ color: "var(--primary-color)" }}
-                          >
-                            ₹ {Number(p.price).toFixed(2)}
-                          </span>
-                          <span
-                            className="text-xs line-through"
-                            style={{ color: "var(--text-color)" }}
-                          >
-                            ₹ {Number(p.oldPrice).toFixed(2)}
-                          </span>
+                        {/* Prices and Quantity */}
+                        <div className="flex items-center justify-between mt-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg font-medium">
+                              ₹ {Number(product.price).toFixed(2)}
+                            </span>
+                            <span className="line-through text-gray-400">
+                              ₹ {Number(product.oldPrice).toFixed(2)}
+                            </span>
+                          </div>
+
+                          {/* Quantity */}
+                          <div className="flex items-center gap-3 border rounded-full border-gray-300">
+                            <button className="px-2 py-1 rounded-[50px] border border-gray-300">
+                              –
+                            </button>
+                            <span className="text-sm">1kg</span>
+                            <button className="px-2 py-1 rounded-[50px] border border-gray-300">
+                              +
+                            </button>
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Shop Now Button */}
-                      <div className="flex justify-center items-center h-full">
+                        {/* Shop Now button */}
                         <button
-                          className="relative w-full px-4 py-2 flex items-center justify-center transition"
-                          style={{
-                            backgroundColor: "var(--primary-color)",
-                            color: "var(--bg-color)",
-                            fontFamily: "var(--font-poppins)",
-                            fontWeight: 500,
-                            borderTopLeftRadius: "16px",
-                            borderTopRightRadius: "6px",
-                            borderBottomRightRadius: "16px",
-                            borderBottomLeftRadius: "6px",
-                            pointerEvents:
-                              p.stock_status === "outofstock" ? "none" : "auto",
-                          }}
+                          className="relative mt-4 w-full bg-[#EFEFEF] rounded-[15px] py-3 px-5 font-medium hover:bg-gray-200 transition"
                           onClick={(e) => {
-                            e.stopPropagation(); // prevent card click
-                            navigate(`/product/${slugify(p.name)}`, {
-                              state: { id: p.id },
+                            e.stopPropagation();
+                            navigate(`/product/${slugify(product.name)}`, {
+                              state: { id: product.id },
                             });
                           }}
+                          disabled={product.stock_status === "outofstock"}
                         >
-                          <span>Shop Now</span>
+                          <span className="block text-center">
+                            {product.stock_status === "outofstock"
+                              ? "Out of Stock"
+                              : "Shop Now"}
+                          </span>
+                          {product.stock_status !== "outofstock" && (
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-white shadow">
+                              <ArrowUpRight size={16} />
+                            </span>
+                          )}
                         </button>
                       </div>
                     </div>
@@ -535,7 +523,7 @@ const Shop = () => {
                 ) : (
                   <div className="col-span-full flex flex-col items-center justify-start h-80">
                     <img
-                      src={NoProductsImg} // imported image
+                      src={NoProductsImg}
                       alt="No products found"
                       className="max-h-full object-contain mt-4"
                     />
@@ -550,8 +538,37 @@ const Shop = () => {
           open={openFilters}
           onClose={() => setOpenFilters(false)}
           fullWidth
+          maxWidth="xs"
+          PaperProps={{
+            style: {
+              borderRadius: "20px",
+              padding: "16px",
+              backgroundColor: "var(--bg-color)",
+              color: "var(--text-color)",
+            },
+          }}
         >
-          <DialogContent>{renderFilters()}</DialogContent>
+          <DialogContent>
+            {renderFilters()}
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={() => setOpenFilters(false)}
+              startIcon={<TransitEnterexitIcon />}
+              sx={{
+                mt: 4,
+                py: 1.5,
+                borderRadius: "14px",
+                textTransform: "none",
+                fontWeight: 500,
+                backgroundColor: "var(--primary-color)",
+                color: "var(--bg-color)",
+                "&:hover": { backgroundColor: "darkgreen" },
+              }}
+            >
+              Apply Filters
+            </Button>
+          </DialogContent>
         </Dialog>
       </div>
     </Gradient>
