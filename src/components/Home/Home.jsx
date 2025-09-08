@@ -10,6 +10,7 @@ import InstagramFeed from "./InstagramFeed";
 import ProductListing from "./ProductListing";
 import Gradient from "../Background/Gradient";
 import FeaturedProduct from "./FeaturedProduct";
+import Promotion from "./Promtion";
 
 const Home = () => {
   return (
@@ -20,6 +21,7 @@ const Home = () => {
           <Hero />
           <BrandStory />
           <ProductListing />
+          <Promotion />
           <ProductCategories />
           <Features />
           <FeaturedProduct />

@@ -75,7 +75,7 @@ const Process = () => {
         </div>
 
         {/* Steps */}
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className="grid gap-12">
           {steps.map((step, index) => {
             const IconComponent = step.icon;
             const isEven = index % 2 === 0;
@@ -83,13 +83,28 @@ const Process = () => {
             return (
               <div
                 key={index}
-                className={`flex ${
+                className={`flex flex-col ${
                   isEven ? "lg:flex-row" : "lg:flex-row-reverse"
                 } items-center gap-8 group`}
               >
+                {/* Image */}
+                <div className="flex-1 w-full">
+                  <div className="relative overflow-hidden rounded-2xl group-hover:scale-105 transition-transform duration-500">
+                    <img
+                      src={step.image}
+                      alt={step.title}
+                      className="w-full h-auto max-h-72 object-cover"
+                    />
+                    <div
+                      className="absolute inset-0"
+                      style={{ backgroundColor: "rgba(0,0,0,0.25)" }}
+                    ></div>
+                  </div>
+                </div>
+
                 {/* Content */}
-                <div className="flex-1 space-y-4">
-                  <div className="flex items-center space-x-4">
+                <div className="flex-1 space-y-4 text-center lg:text-left">
+                  <div className="flex items-center justify-center lg:justify-start space-x-4">
                     <div
                       className="w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
                       style={{ backgroundColor: "var(--accent-color)" }}
@@ -121,21 +136,6 @@ const Process = () => {
                     {step.description}
                   </p>
                 </div>
-
-                {/* Image */}
-                <div className="flex-1">
-                  <div className="relative overflow-hidden rounded-2xl group-hover:scale-105 transition-transform duration-500">
-                    <img
-                      src={step.image}
-                      alt={step.title}
-                      className="w-full h-64 object-cover"
-                    />
-                    <div
-                      className="absolute inset-0"
-                      style={{ backgroundColor: "rgba(0,0,0,0.25)" }}
-                    ></div>
-                  </div>
-                </div>
               </div>
             );
           })}
@@ -144,9 +144,10 @@ const Process = () => {
         {/* Stats */}
         <div className="text-center mt-16">
           <div
-            className="inline-flex items-center space-x-8 backdrop-blur-sm rounded-2xl p-6"
-            style={{ backgroundColor: "var(--card-color)" }}
+            className="flex flex-col sm:flex-row items-center justify-center sm:space-x-8 space-y-6 sm:space-y-0 backdrop-blur-sm rounded-2xl p-6"
+            style={{ backgroundColor: "var(--cards-bg)" }}
           >
+            {/* Item 1 */}
             <div className="text-center">
               <div
                 className="text-3xl font-bold"
@@ -158,10 +159,14 @@ const Process = () => {
                 Fresh Guarantee
               </div>
             </div>
+
+            {/* Divider */}
             <div
-              className="w-px h-12"
+              className="hidden sm:block w-px h-12"
               style={{ backgroundColor: "var(--border-color)" }}
             ></div>
+
+            {/* Item 2 */}
             <div className="text-center">
               <div
                 className="text-3xl font-bold"
@@ -173,10 +178,14 @@ const Process = () => {
                 Organic
               </div>
             </div>
+
+            {/* Divider */}
             <div
-              className="w-px h-12"
+              className="hidden sm:block w-px h-12"
               style={{ backgroundColor: "var(--border-color)" }}
             ></div>
+
+            {/* Item 3 */}
             <div className="text-center">
               <div
                 className="text-3xl font-bold"

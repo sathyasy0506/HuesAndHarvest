@@ -1,36 +1,38 @@
-import React, { useEffect, useState, useRef } from "react";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import React, { useRef, useEffect, useState } from "react";
+import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { ENDPOINTS } from "../../api/api";
-const ProductListing = () => {
+import { useNavigate } from "react-router-dom";
+
+// Predefined background colors
+const bgColors = ["#ffeae2", "#e9f7e4", "#fff9e6", "#ffe9ef"];
+
+function getRandomBg() {
+  return bgColors[Math.floor(Math.random() * bgColors.length)];
+}
+
+function slugify(name) {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "");
+}
+
+function ProductListing() {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
   const navigate = useNavigate();
 
-  const slugify = (name) =>
-    name
-      .toLowerCase()
-      .replace(/\s+/g, "-")
-      .replace(/[^\w-]+/g, "");
-
-  // Fetch products from your PHP API
+  // Fetch products from API
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch(ENDPOINTS.LIST_PRODUCTS(), {
-          credentials: "include",
-        });
+        const res = await fetch(ENDPOINTS.LIST_PRODUCTS());
         const data = await res.json();
         if (data.success) {
           setProducts(data.products);
-        } else {
-          console.error("API error:", data.message);
         }
       } catch (error) {
-        console.error("Fetch failed:", error);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching products:", error);
       }
     };
 
@@ -38,191 +40,132 @@ const ProductListing = () => {
   }, []);
 
   const scroll = (direction) => {
-    if (scrollRef.current && scrollRef.current.firstChild) {
-      const cardWidth = scrollRef.current.firstChild.offsetWidth + 24;
+    if (scrollRef.current) {
+      const scrollAmount = 300;
       scrollRef.current.scrollBy({
-        left: direction === "left" ? -cardWidth * 4 : cardWidth * 4,
+        left: direction === "left" ? -scrollAmount : scrollAmount,
         behavior: "smooth",
       });
     }
   };
 
-  if (loading) {
-    return (
-      <section className="py-20 bg-transparent">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <h2
-            className="text-2xl font-bold text-center"
-            style={{
-              color: "var(--text-color)",
-              fontFamily: "var(--font-outfit)",
-            }}
-          >
-            Loading products...
-          </h2>
-        </div>
-      </section>
-    );
-  }
-
   return (
-    <section className="py-20 bg-transparent">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative">
-        <h2
-          className="text-4xl font-extrabold text-center mb-12"
-          style={{
-            color: "var(--text-color)",
-            fontFamily: "var(--font-outfit)",
-          }}
-        >
-          Explore Our Collection
-        </h2>
+    <section className="w-full px-6 py-12">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row items-center justify-between mb-10 gap-4 md:gap-0">
+          <div className="text-center w-full flex justify-center flex-col gap-4">
+            <p className="text-gray-400 uppercase tracking-wide text-sm">
+              Exclusive Hues & Harvest
+            </p>
+            <h2 className="text-2xl md:text-3xl mt-1">
+              BEST SELLER’S OF MONTH
+            </h2>
+          </div>
 
-        {/* Scroll Buttons */}
-        <button
-          onClick={() => scroll("left")}
-          className="absolute left-0 top-1/2 -translate-y-1/2 p-3 rounded-full shadow-md hover:shadow-xl z-20 hidden lg:flex"
-          style={{ backgroundColor: "var(--sho-bg-color)" }}
-          aria-label="Scroll left"
-        >
-          <ChevronLeft
-            className="w-6 h-6"
-            style={{ color: "var(--text-color)" }}
-          />
-        </button>
-        <button
-          onClick={() => scroll("right")}
-          className="absolute right-0 top-1/2 -translate-y-1/2 p-3 rounded-full shadow-md hover:shadow-xl z-20 hidden lg:flex"
-          style={{ backgroundColor: "var(--sho-bg-color)" }}
-          aria-label="Scroll right"
-        >
-          <ChevronRight
-            className="w-6 h-6"
-            style={{ color: "var(--text-color)" }}
-          />
-        </button>
-
-        {/* Show All */}
-        <div className="flex justify-end mb-6">
           <button
             onClick={() => navigate("/shop")}
-            className="flex items-center gap-2 cursor-pointer transition-transform duration-200 ease-in-out hover:scale-105"
-            style={{
-              backgroundColor: "transparent",
-              border: "none",
-              color: "var(--primary-color)",
-              fontFamily: "var(--font-outfit)",
-              fontWeight: 600,
-              padding: 0,
-            }}
+            className="flex items-center gap-2 border border-gray-400 rounded-full px-4 py-2 text-sm font-medium hover:bg-gray-100 transition whitespace-nowrap flex-shrink-0"
           >
-            <span className="text-lg font-bold">Show All Products</span>
-            <ArrowRight
-              className="w-4 h-4 transform -rotate-45"
-              style={{ color: "var(--primary-color)" }}
-            />
+            ALL COLLECTIONS <ArrowUpRight size={16} />
           </button>
         </div>
 
-        {/* Product Scroll */}
-        <div
-          ref={scrollRef}
-          className="flex gap-6 overflow-x-auto py-4 scroll-smooth snap-x snap-mandatory scrollbar-hide"
-        >
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="snap-start flex-shrink-0 w-[300px] rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 relative group overflow-hidden cursor-pointer"
-              style={{
-                backgroundColor: "var(--cards-bg)",
-                fontFamily: "var(--font-poppins)",
-              }}
-              onClick={() =>
-                navigate(`/product/${slugify(product.name)}`, {
-                  state: { id: product.id },
-                })
-              }
-            >
-              {/* Image */}
-              <div className="relative h-64">
-                <div className="relative h-64 rounded-xl bg-gray-300 flex items-center justify-center">
+        {/* Scrollable Products */}
+        <div className="relative">
+          {/* Left Scroll Button */}
+          <button
+            onClick={() => scroll("left")}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition"
+          >
+            <ChevronLeft size={24} />
+          </button>
+
+          {/* Right Scroll Button */}
+          <button
+            onClick={() => scroll("right")}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition"
+          >
+            <ChevronRight size={24} />
+          </button>
+
+          {/* Product Container */}
+          <div
+            ref={scrollRef}
+            className="flex gap-6 overflow-x-auto scroll-smooth py-2 scrollbar-hide"
+          >
+            {products.map((product) => (
+              <div
+                key={product.id}
+                className="flex-shrink-0 w-72 flex flex-col cursor-pointer"
+                onClick={() =>
+                  navigate(`/product/${slugify(product.name)}`, {
+                    state: { id: product.id },
+                  })
+                }
+              >
+                {/* Image with random background */}
+                <div
+                  className="w-full aspect-square rounded-2xl flex items-center justify-center overflow-hidden p-4"
+                  style={{ backgroundColor: getRandomBg() }}
+                >
                   <img
                     src={product.image}
                     alt={product.name}
-                    loading="lazy"
-                    className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-contain"
                   />
                 </div>
 
-                {product.stock_status === "outofstock" && (
-                  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">
-                      Out of Stock
-                    </span>
-                  </div>
-                )}
-              </div>
+                {/* Details */}
+                <div className="mt-4 p-2 flex flex-col gap-2">
+                  <h3 className="text-lg">{product.name}</h3>
 
-              {/* Info */}
-              <div className="p-5 flex flex-col justify-between">
-                <div className="mb-4">
-                  <h3
-                    className="text-lg font-bold mb-1"
-                    style={{ color: "var(--text-color)" }}
-                  >
-                    {product.name}
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="text-xl font-bold"
-                      style={{ color: "var(--accent-color)" }}
-                    >
-                      ₹{product.price}
-                    </span>
-                    {product.oldPrice > product.price && (
-                      <span
-                        className="line-through"
-                        style={{ color: "var(--muted-text)" }}
-                      >
-                        ₹{product.oldPrice}
+                  {/* Prices and Quantity */}
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-medium">
+                        ₹ {product.price}.00
                       </span>
-                    )}
-                  </div>
-                </div>
+                      <span className="line-through text-gray-400">
+                        ₹ {product.oldPrice}.00
+                      </span>
+                    </div>
 
-                {/* Shop Now Button */}
-                <button
-                  disabled={product.stock_status === "outofstock"}
-                  className="px-4 py-2 transition-all duration-300 flex items-center justify-between rounded-md w-full font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{
-                    backgroundColor: "var(--accent-color)",
-                    color: "var(--white)",
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent card click
-                    navigate(`/product/${slugify(product.name)}`, {
-                      state: { id: product.id },
-                    });
-                  }}
-                >
-                  <span>Shop Now</span>
-                  <div
-                    className="w-6 h-6 rounded-full flex items-center justify-center ml-2"
-                    style={{ backgroundColor: "var(--white)" }}
-                  >
-                    <ArrowRight
-                      className="w-3 h-3 transform -rotate-45"
-                      style={{ color: "var(--accent-color)" }}
-                    />
+                    {/* Quantity */}
+                    <div className="flex items-center gap-3 border rounded-full border-gray-300">
+                      <button className="px-2 py-1 rounded-[50px] border border-gray-300">
+                        –
+                      </button>
+                      <span className="text-sm">1kg</span>
+                      <button className="px-2 py-1 rounded-[50px] border border-gray-300">
+                        +
+                      </button>
+                    </div>
                   </div>
-                </button>
+
+                  {/* Shop Now button */}
+                  <button
+                    className="relative mt-4 w-full bg-[#EFEFEF] rounded-[15px] py-3 px-5 font-medium hover:bg-gray-200 transition"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering card click
+                      navigate(`/product/${slugify(product.name)}`, {
+                        state: { id: product.id },
+                      });
+                    }}
+                  >
+                    <span className="block text-center">Shop Now</span>
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-white shadow">
+                      <ArrowUpRight size={16} />
+                    </span>
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>
   );
-};
+}
 
 export default ProductListing;
