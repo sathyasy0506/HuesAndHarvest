@@ -11,6 +11,8 @@ import ProductListing from "./ProductListing";
 import Gradient from "../Background/Gradient";
 import FeaturedProduct from "./FeaturedProduct";
 import Promotion from "./Promtion";
+import FreshInsights from "./FreshInsights";
+import FreshnessSection from "./FreshnessSection";
 
 const Home = () => {
   return (
@@ -29,6 +31,8 @@ const Home = () => {
           <Testimonials />
           <InstagramFeed />
           <Newsletter />
+          <FreshnessSection />
+          <FreshInsights />
         </Gradient>
       </div>
     </>
