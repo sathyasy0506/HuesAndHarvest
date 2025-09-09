@@ -23,7 +23,7 @@ const FreshInsights = () => {
         <div className="flex gap-6">
           {/* Column 1 (523 × 505) */}
           <div
-            className="w-[523px] h-[505px] rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden bg-cover bg-center"
+            className="w-[523px] h-[505px] rounded-2xl p-10 flex flex-col justify-between relative overflow-hidden bg-cover bg-center"
             style={{
               backgroundImage:
                 "url('https://images.pexels.com/photos/2228587/pexels-photo-2228587.jpeg?_gl=1*fgonwz*_ga*MTIwMzc1OTY5Ni4xNzU3MzI4ODY4*_ga_8JE65Q40S6*czE3NTczMzE0ODIkbzIkZzEkdDE3NTczMzE2MTYkajUyJGwwJGgw')",
@@ -48,8 +48,6 @@ const FreshInsights = () => {
                 </span>
               </button>
             </div>
-            {/* overlay */}
-            <div className="absolute inset-0 bg-black/30"></div>
           </div>
 
           {/* Column 2 (356 × 505) */}
@@ -74,7 +72,7 @@ const FreshInsights = () => {
 
             {/* Bottom Content (321 × 182) */}
             <div className="w-[321px] h-[182px] rounded-2xl border-[1px] border-black-950 flex flex-col justify-center items-center p-6">
-              <h4 className="text-center font-semibold uppercase text-lg mb-3">
+              <h4 className="text-center  uppercase text-lg mb-3">
                 Let’s explore <br /> together
               </h4>
               <button className="flex items-center gap-2 border px-5 py-2 rounded-full text-sm hover:bg-gray-100 transition">

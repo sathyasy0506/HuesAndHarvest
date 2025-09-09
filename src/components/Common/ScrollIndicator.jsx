@@ -61,7 +61,7 @@ export default function ScrollIndicator({ footerRef }) {
         }`}
       >
         <div className="rotate-180">
-          <Mouse size={28} color="#FFD700" className="animate-bounce-smooth" />
+          <Mouse size={28} color="gray" className="animate-bounce-smooth" />
         </div>
       </div>
     </div>

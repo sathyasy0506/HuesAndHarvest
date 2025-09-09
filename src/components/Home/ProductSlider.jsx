@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ENDPOINTS } from "../../api/api";
 
 // --- helpers -------------------------------------------------
-const bgColors = ["#ffeae2", "#e9f7e4", "#fff9e6", "#ffe9ef"];
+const bgColors = ["#ffffff"];
 const getRandomBg = () => bgColors[Math.floor(Math.random() * bgColors.length)];
 
 const slugify = (name) =>
@@ -28,9 +28,20 @@ function ProductCard({ product, onClick, emphasized }) {
       style={{ width: 250, height: 380 }}
       onClick={onClick}
     >
+      {/* Combo Badge */}
+      <div className="absolute top-3 left-3 z-20">
+        <span className="bg-[#C6B560] text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+          Combo
+        </span>
+      </div>
+
       {/* White blurry overlay for side cards */}
+      {/* Green blurry overlay for side cards */}
       {!emphasized && (
-        <div className="absolute inset-0 bg-white/60 backdrop-blur-sm rounded-2xl z-10"></div>
+        <div
+          className="absolute inset-0 backdrop-blur-sm rounded-2xl z-10"
+          style={{ backgroundColor: "rgba(84, 136, 109, 0.6)" }} // #54886D with 60% opacity
+        ></div>
       )}
 
       {/* image */}
@@ -46,33 +57,20 @@ function ProductCard({ product, onClick, emphasized }) {
       </div>
 
       {/* details */}
-      <div className="flex flex-col flex-1 p-3 gap-2 relative z-20">
-        <h3 className="text-lg">{product.name}</h3>
+      <div className="flex flex-col flex-1 p-3 gap-2 relative z-20 items-center">
+        <h3 className="text-lg text-red-800">{product.name}</h3>
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium">₹ {product.price}.00</span>
-            <span className="line-through text-gray-400 text-xs">
+            <span className="line-through text-red-400 text-xs">
               ₹ {product.oldPrice}.00
             </span>
-          </div>
-
-          <div className="flex items-center gap-2 border rounded-full border-gray-300 text-xs">
-            <button className="px-1 py-0 rounded-full border border-gray-300">
-              –
-            </button>
-            <span className="text-xs">1kg</span>
-            <button className="px-1 py-0 rounded-full border border-gray-300">
-              +
-            </button>
           </div>
         </div>
 
         <button className="relative mt-auto w-full bg-[#EFEFEF] rounded-[15px] py-2 px-4 font-medium hover:bg-gray-200 transition">
           <span className="block text-center">Shop Now</span>
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-full bg-white shadow">
-            <ArrowUpRight size={16} />
-          </span>
         </button>
       </div>
     </div>
@@ -227,7 +225,6 @@ export default function ProductCylinderCarousel() {
           ))}
         </div>
 
-        {/* Navigation Buttons (side-aligned like screenshot) */}
         {/* Navigation Buttons (very close to center card) */}
 
         <button
@@ -247,9 +244,7 @@ export default function ProductCylinderCarousel() {
         </button>
       </div>
       <div className="text-center mt-6">
-        <h2 className="text-xl tracking-wide text-white ">
-          Combo Products
-        </h2>
+        <h2 className="text-xl tracking-wide text-white ">Combo Products</h2>
       </div>
     </section>
   );

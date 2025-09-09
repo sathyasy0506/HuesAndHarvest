@@ -52,8 +52,8 @@ function ProductListing({ excludeId }) {
   };
 
   return (
-    <section className="w-full px-6 py-12">
-      <div className="max-w-7xl mx-auto">
+    <section className="w-full  py-12">
+      <div className=" mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row items-center justify-between mb-10 gap-4 md:gap-0">
           <div className="text-center w-full flex justify-center flex-col gap-4">

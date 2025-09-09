@@ -267,7 +267,7 @@ function ProductPage() {
 
               {/* Main Image Container */}
               <div
-                className="relative flex-1 p-4 rounded-xl flex items-center justify-center"
+                className="relative flex-1 p-0 rounded-xl flex items-center justify-center aspect-square"
                 style={{ backgroundColor: randomBgColor }}
               >
                 <img

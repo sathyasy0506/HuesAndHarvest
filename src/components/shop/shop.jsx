@@ -15,6 +15,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Loader from "../Load";
 import Gradient from "../Background/Gradient";
 import { ArrowUpRight } from "lucide-react";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 const bgColors = ["#ffeae2", "#e9f7e4", "#fff9e6", "#ffe9ef"];
 
@@ -34,7 +36,6 @@ const Shop = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [selectedStockStatuses, setSelectedStockStatuses] = useState([]);
-  const [productBgMap, setProductBgMap] = useState({});
 
   const slugify = (name) =>
     name
@@ -47,21 +48,6 @@ const Shop = () => {
       setSelectedCategories([location.state.category]);
     }
   }, [location.state]);
-
-  useEffect(() => {
-    if (products.length > 0) {
-      const newBgMap = {};
-      products.forEach((p) => {
-        // If background already exists, keep it
-        if (productBgMap[p.id]) {
-          newBgMap[p.id] = productBgMap[p.id];
-        } else {
-          newBgMap[p.id] = getRandomBg();
-        }
-      });
-      setProductBgMap(newBgMap);
-    }
-  }, [products]); // run only when products list updates
 
   useEffect(() => {
     fetch(ENDPOINTS.LIST_PRODUCTS())
@@ -180,26 +166,34 @@ const Shop = () => {
           {categories.map((cat) => {
             const isSelected = selectedCategories.includes(cat);
             return (
-              <label
+              <FormControlLabel
                 key={cat}
-                className="flex items-center gap-3 cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  className={`w-4 h-4 border-gray-400 rounded accent-green-800`}
-                  checked={isSelected}
-                  onChange={() => {
-                    if (isSelected) {
-                      setSelectedCategories(
-                        selectedCategories.filter((c) => c !== cat)
-                      );
-                    } else {
-                      setSelectedCategories([...selectedCategories, cat]);
-                    }
-                  }}
-                />
-                <span>{cat}</span>
-              </label>
+                control={
+                  <Checkbox
+                    checked={isSelected}
+                    disabled={false} // toggle this when needed
+                    onChange={() => {
+                      if (isSelected) {
+                        setSelectedCategories(
+                          selectedCategories.filter((c) => c !== cat)
+                        );
+                      } else {
+                        setSelectedCategories([...selectedCategories, cat]);
+                      }
+                    }}
+                    sx={{
+                      color: "#9ca3af", // default gray (tailwind gray-400)
+                      "&.Mui-checked": {
+                        color: "#166434", // green tick
+                      },
+                      "&.Mui-disabled": {
+                        color: "#9ca3af", // gray when disabled
+                      },
+                    }}
+                  />
+                }
+                label={cat}
+              />
             );
           })}
         </div>
@@ -212,31 +206,36 @@ const Shop = () => {
           {["instock", "outofstock"].map((status) => {
             const isSelected = selectedStockStatuses.includes(status);
             return (
-              <label
+              <FormControlLabel
                 key={status}
-                className="flex items-center gap-3 cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  className={`w-4 h-4 border-gray-400 rounded accent-green-800 `}
-                  checked={isSelected}
-                  onChange={() => {
-                    if (isSelected) {
-                      setSelectedStockStatuses(
-                        selectedStockStatuses.filter((s) => s !== status)
-                      );
-                    } else {
-                      setSelectedStockStatuses([
-                        ...selectedStockStatuses,
-                        status,
-                      ]);
-                    }
-                  }}
-                />
-                <span>
-                  {status === "instock" ? "In Stock" : "Out of Stock"}
-                </span>
-              </label>
+                control={
+                  <Checkbox
+                    checked={isSelected}
+                    onChange={() => {
+                      if (isSelected) {
+                        setSelectedStockStatuses(
+                          selectedStockStatuses.filter((s) => s !== status)
+                        );
+                      } else {
+                        setSelectedStockStatuses([
+                          ...selectedStockStatuses,
+                          status,
+                        ]);
+                      }
+                    }}
+                    sx={{
+                      color: "#9ca3af", // default gray (tailwind gray-400)
+                      "&.Mui-checked": {
+                        color: "#166434", // green tick
+                      },
+                      "&.Mui-disabled": {
+                        color: "#9ca3af", // gray when disabled
+                      },
+                    }}
+                  />
+                }
+                label={status === "instock" ? "In Stock" : "Out of Stock"}
+              />
             );
           })}
         </div>
@@ -332,12 +331,11 @@ const Shop = () => {
         {/* Main Card Container */}
         <div className="max-w-7xl mx-auto rounded-2xl shadow-sm p-6 relative bg-white flex h-[80vh]">
           {/* Filters Sidebar */}
-          <aside className="hidden lg:block w-1/4 border-r">
+          <aside className="hidden lg:block w-1/4 border-r border-dashed border-gray-300">
             <div className="sticky top-0 overflow-y-auto p-4">
               {renderFilters()}
             </div>
           </aside>
-
           {/* Product Grid Section */}
           <main className="lg:w-3/4 w-full pl-6 overflow-y-auto">
             <div className="lg:hidden mb-4">
@@ -370,7 +368,7 @@ const Shop = () => {
                     <div
                       className="w-full aspect-square rounded-2xl flex items-center justify-center overflow-hidden p-4"
                       style={{
-                        backgroundColor: productBgMap[product.id] || "#fff", // use fixed bg
+                        backgroundColor: getRandomBg(),
                         filter:
                           product.stock_status === "outofstock"
                             ? "grayscale(100%)"
