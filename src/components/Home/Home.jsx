@@ -13,6 +13,10 @@ import FeaturedProduct from "./FeaturedProduct";
 import Promotion from "./Promtion";
 import FreshInsights from "./FreshInsights";
 import FreshnessSection from "./FreshnessSection";
+import CaProductListing from "./CaProductListing";
+import ProductCarousel from "./ProductCarousel";
+import ProductSlider from "./ProductSlider";
+import ProductShowcase from "./ProductShowcase";
 
 const Home = () => {
   return (
@@ -21,18 +25,22 @@ const Home = () => {
       <div className="-mt-16 overflow-hidden">
         <Gradient>
           <Hero />
-          <BrandStory />
+          <ProductCategories />
           <ProductListing />
           <Promotion />
-          <ProductCategories />
+          <ProductShowcase />
           <Features />
-          <FeaturedProduct />
-          <Process />
-          <Testimonials />
-          <InstagramFeed />
-          <Newsletter />
+          <CaProductListing />
           <FreshnessSection />
+          <FeaturedProduct />
+          <Testimonials />
           <FreshInsights />
+          <InstagramFeed />
+          {/* <BrandStory /> */}
+          {/* <Process /> */}
+          {/* <ProductCarousel /> */}
+          {/* <ProductSlider /> */}
+          {/* <Newsletter /> */}
         </Gradient>
       </div>
     </>

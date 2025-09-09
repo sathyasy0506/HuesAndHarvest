@@ -37,7 +37,7 @@ const Gradient = ({ children }) => {
               width: `${blob.size}px`,
               height: `${blob.size}px`,
               background: `radial-gradient(circle,
-                var(--dark-gold-color) 0%,
+                #166434 0%,
                 rgba(184, 134, 11, 0.12) 25%,   /* reduced gradient spread */
                 transparent 60%)`,
               filter: "blur(50px)", // slightly stronger blur
@@ -54,7 +54,7 @@ const Gradient = ({ children }) => {
             width: "650px", // bigger
             height: "650px",
             background: `radial-gradient(circle,
-              var(--dark-gold-color) 0%,
+              #166434 0%,
               rgba(184, 134, 11, 0.12) 25%,
               transparent 60%)`,
             filter: "blur(60px)",
@@ -68,7 +68,7 @@ const Gradient = ({ children }) => {
             width: "750px", // bigger
             height: "750px",
             background: `radial-gradient(circle,
-              var(--dark-gold-color) 0%,
+              #166434 0%,
               rgba(184, 134, 11, 0.12) 25%,
               transparent 60%)`,
             filter: "blur(70px)",

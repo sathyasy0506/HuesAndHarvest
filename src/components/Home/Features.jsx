@@ -1,112 +1,44 @@
 import React from "react";
-import { motion } from "framer-motion";
-import { Leaf, Shield, Heart, Truck } from "lucide-react";
-
-const fadeInUp = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6 },
-};
-
-const staggerContainer = {
-  animate: { transition: { staggerChildren: 0.1 } },
-};
+import icon1 from "../../assets/images/ic1.png"; // for Home Made & Chemical Free
+import icon2 from "../../assets/images/ic2.png"; // for Traditional
 
 const Features = () => {
-  const features = [
-    {
-      icon: <Leaf className="w-8 h-8" />,
-      title: "100% Organic",
-      description:
-        "Certified organic ingredients sourced from sustainable farms",
-    },
-    {
-      icon: <Shield className="w-8 h-8" />,
-      title: "No Preservatives",
-      description: "Pure, natural ingredients with no artificial additives",
-    },
-    {
-      icon: <Heart className="w-8 h-8" />,
-      title: "Made with Love",
-      description: "Small-batch production ensuring quality in every bite",
-    },
-    {
-      icon: <Truck className="w-8 h-8" />,
-      title: "Fresh Delivery",
-      description: "Fast shipping to ensure maximum freshness and quality",
-    },
-  ];
-
   return (
-    <section className="py-20 bg-transparent">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div className="text-center mb-16" {...fadeInUp}>
-          <h2
-            className="text-4xl lg:text-5xl font-bold mb-6"
-            style={{
-              color: "var(--text-color)",
-              fontFamily: "var(--font-outfit)",
-            }}
-          >
-            Why Choose Us
-          </h2>
-          <p
-            className="text-xl max-w-2xl mx-auto"
-            style={{
-              color: "var(--muted-text)",
-              fontFamily: "var(--font-poppins)",
-            }}
-          >
-            We're committed to delivering exceptional quality while caring for
-            our planet and community.
-          </p>
-        </motion.div>
+    <section className="py-16 bg-white text-center">
+      {/* Heading */}
+      <h3 className="text-gray-400 uppercase tracking-wide mb-2">
+        Hues & Harvest
+      </h3>
+      <h2 className=" text-gray-500 text-3xl mb-12">WHY WE ARE SPECIAL?</h2>
 
-        <motion.div
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
-          variants={staggerContainer}
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
-        >
-          {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              className="text-center p-8 rounded-2xl transition-all duration-300 group"
-              style={{
-                backgroundColor: "var(--cards-bg)",
-                boxShadow: `0 1px 3px var(--shadow-color)`,
-              }}
-              variants={fadeInUp}
-              whileHover={{ y: -5 }}
-            >
-              <div
-                className="mb-4 group-hover:scale-110 transition-transform duration-300 flex justify-center"
-                style={{ color: "var(--accent-color)" }}
-              >
-                {feature.icon}
-              </div>
-              <h3
-                className="text-xl font-bold mb-3"
-                style={{
-                  color: "var(--text-color)",
-                  fontFamily: "var(--font-outfit)",
-                }}
-              >
-                {feature.title}
-              </h3>
-              <p
-                className="leading-relaxed"
-                style={{
-                  color: "var(--muted-text)",
-                  fontFamily: "var(--font-poppins)",
-                }}
-              >
-                {feature.description}
-              </p>
-            </motion.div>
-          ))}
-        </motion.div>
+      {/* Cards using flex */}
+      <div className="flex flex-col md:flex-row justify-center items-center gap-8">
+        {/* Card 1 */}
+        <div className="bg-white shadow-lg rounded-2xl p-6 hover:shadow-xl transition w-[267px] h-[220px] flex flex-col items-center justify-center">
+          <img src={icon1} alt="Home Made" className="w-12 h-12 mb-4" />
+          <h4 className=" text-gray-500 text-lg  mb-2">Home Made </h4>
+          <p className="text-gray-500 text-sm text-center">
+            Delicious foods made with fresh ingredients, served hot and fast!
+          </p>
+        </div>
+
+        {/* Card 2 (Highlighted) */}
+        <div className="bg-[#EB3257] text-white shadow-lg rounded-2xl p-6 hover:shadow-xl transition w-[267px] h-[220px] flex flex-col items-center justify-center">
+          <img src={icon2} alt="Traditional" className="w-12 h-12 mb-4" />
+          <h4 className="text-lg  mb-2">Traditional</h4>
+          <p className="text-sm text-center">
+            Delicious foods made with fresh ingredients, served hot and fast!
+          </p>
+        </div>
+
+        {/* Card 3 */}
+        <div className="bg-white shadow-lg rounded-2xl p-6 hover:shadow-xl transition w-[267px] h-[220px] flex flex-col items-center justify-center">
+          <img src={icon1} alt="Chemical Free" className="w-12 h-12 mb-4" />
+          <h4 className=" text-gray-500 text-lg  mb-2">Chemical Free</h4>
+          <p className="text-gray-500 text-sm text-center">
+            Delicious foods made with fresh ingredients, served hot and fast!
+          </p>
+        </div>
       </div>
     </section>
   );

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Minus,
@@ -20,6 +20,9 @@ import Loader from "../Load";
 import { ENDPOINTS } from "../../api/api";
 import Gradient from "../Background/Gradient";
 import { Star } from "lucide-react";
+import ProductListing from "../Home/ProductListing";
+
+const bgColors = ["#ffeae2", "#e9f7e4", "#fff9e6", "#ffe9ef"];
 
 // FeatureCard Component
 const FeatureCard = ({ Icon, title, description }) => (
@@ -27,7 +30,7 @@ const FeatureCard = ({ Icon, title, description }) => (
     <div className="flex-shrink-0">
       <div
         className="w-12 h-12 rounded-full flex items-center justify-center"
-        style={{ backgroundColor: "var(--cards-bg)" }}
+        style={{ border: "1px solid #D8DFD9" }}
       >
         <Icon className="w-6 h-6" style={{ color: "var(--primary-color)" }} />
       </div>
@@ -55,20 +58,20 @@ const InfoCard = ({ Icon, text, highlight }) => (
     className="rounded-2xl p-6"
     style={{
       borderTopRightRadius: "6rem",
-      backgroundColor: "#d7f0e6",
+      backgroundColor: "#FAFBF9",
     }}
   >
     <div className="flex items-start space-x-3">
-      <Icon className="w-6 h-6 mt-1" style={{ color: "#6cae8f" }} />
+      <Icon className="w-10 h-10" style={{ color: "#343A36" }} />
       <p
-        className="font-medium"
+        className="font-normal text-[14px]"
         style={{
           color: "#2a5d4f",
           fontFamily: "var(--font-poppins)",
         }}
       >
         {text}{" "}
-        <span className="font-bold" style={{ color: "#6cae8f" }}>
+        <span className="" style={{ color: "#060606" }}>
           {highlight}
         </span>
       </p>
@@ -147,6 +150,9 @@ function ProductPage() {
   const [product, setProduct] = useState(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [reviews, setReviews] = useState([]);
+  const randomBgColor = useMemo(() => {
+    return bgColors[Math.floor(Math.random() * bgColors.length)];
+  }, []);
 
   // Get the product ID from navigation state
   const location = useLocation();
@@ -235,15 +241,15 @@ function ProductPage() {
       >
         <div className="w-full max-w-7xl flex flex-col gap-8 md:gap-16">
           {/* Top Section */}
-          <div className="flex flex-col md:flex-row items-start gap-8 md:gap-10">
-            {/* Image */}
-            <div className="w-full md:w-1/2 flex flex-col md:flex-row gap-4">
-              {/* Gallery */}
-              <div className="flex md:flex-col flex-row gap-2 justify-center md:justify-start order-2 md:order-1">
+          <div className="flex flex-col md:flex-row items-start gap-8 md:gap-20">
+            {/* Image Section */}
+            <div className="w-full md:w-1/2 flex flex-row gap-4">
+              {/* Gallery Images - Left */}
+              <div className="flex flex-col gap-2 justify-start">
                 {images.map((img, i) => (
                   <div
                     key={i}
-                    className={`w-16 h-16 rounded-lg overflow-hidden cursor-pointer border-2 ${
+                    className={`w-14 h-14 rounded-lg overflow-hidden cursor-pointer border-2 ${
                       i === selectedImageIndex
                         ? "border-var(--primary-color)"
                         : "border-transparent"
@@ -259,18 +265,20 @@ function ProductPage() {
                 ))}
               </div>
 
-              {/* Main Image with Navigation */}
-              <div className="relative flex-1 aspect-square rounded-xl overflow-hidden order-1 md:order-2">
+              {/* Main Image Container */}
+              <div
+                className="relative flex-1 p-4 rounded-xl flex items-center justify-center"
+                style={{ backgroundColor: randomBgColor }}
+              >
                 <img
                   src={images[selectedImageIndex]}
                   alt={product.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-auto max-h-[400px] object-contain rounded-lg"
                 />
 
                 {/* Left Arrow */}
                 <button
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full shadow
-             bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full shadow bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
                   onClick={() =>
                     setSelectedImageIndex((prev) =>
                       prev === 0 ? images.length - 1 : prev - 1
@@ -285,8 +293,7 @@ function ProductPage() {
 
                 {/* Right Arrow */}
                 <button
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full shadow
-             bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full shadow bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
                   onClick={() =>
                     setSelectedImageIndex((prev) =>
                       prev === images.length - 1 ? 0 : prev + 1
@@ -304,136 +311,63 @@ function ProductPage() {
             {/* Product Details */}
             <div className="w-full md:w-1/2 flex flex-col gap-4 md:gap-6 justify-center">
               <div className="flex gap-3 flex-col">
-                <h1
-                  className="text-2xl sm:text-3xl font-semibold"
-                  style={{ color: "var(--text-color)" }}
-                >
+                <h2 className="text-3xl lg:text-4xl text-gray-900">
                   {product.name}
-                </h1>
+                </h2>
+                <p className="text-lg leading-relaxed text-gray-600">
+                  {product.short_description || product.description}
+                </p>
+              </div>
 
-                {/* Ratings & Reviews Count */}
-                {reviewsCount > 0 && (
-                  <div className="flex items-center gap-3 mt-2">
-                    <StarRating rating={Math.round(averageRating)} />
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                      ({reviewsCount} reviews)
+              <div className="flex flex-wrap items-center gap- justify-center md:justify-start">
+                {/* Price */}
+                <div className="flex items-center gap-2">
+                  <span className="text-[23px] text-gray-900">₹{newPrice}</span>
+                  {oldPrice > 0 && (
+                    <span className="text-[20px] line-through text-gray-400">
+                      ₹{oldPrice}
                     </span>
-                  </div>
-                )}
-
-                <p
-                  className="mt-2 text-base sm:text-lg"
-                  style={{ color: "var(--text-color)" }}
-                >
-                  {product.short_description}
-                </p>
+                  )}
+                  {discount > 0 && (
+                    <span className="px-3 py-1 rounded-full bg-red-10 border text-red-300 text-sm font-medium">
+                      {discount}% offer
+                    </span>
+                  )}
+                </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3 justify-center md:justify-start">
-                <span
-                  className="text-2xl sm:text-3xl font-bold"
-                  style={{ color: "var(--text-color)" }}
-                >
-                  ₹{newPrice}
-                </span>
-
-                {oldPrice > 0 && (
-                  <span
-                    className="line-through text-sm sm:text-lg"
-                    style={{ color: "var(--text-color)" }}
-                  >
-                    ₹{oldPrice}
-                  </span>
-                )}
-
-                {discount > 0 && (
-                  <span className="px-3 py-1 rounded-full text-sm font-semibold error-badge">
-                    {discount}% OFF
-                  </span>
-                )}
-              </div>
-
-              {/* Stock and Quantity Row */}
-              <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-8 mt-2">
-                {/* Stock Status */}
-                <p
-                  className={`font-medium ${
-                    product.stock_quantity === 0
-                      ? "text-red-600"
-                      : product.stock_quantity < 10
-                      ? "text-orange-500"
-                      : "text-green-600"
-                  }`}
-                  style={{ fontFamily: "var(--font-poppins)" }}
-                >
-                  {stockMessage}
-                </p>
-
-                {/* Quantity Selector (hidden if out of stock) */}
-                {product.stock_quantity > 0 && (
-                  <div className="flex items-center gap-2 border rounded-full px-2 py-1">
+              {/* Buttons */}
+              <div className="space-y-4 w-[379px]">
+                {/* Row 1: Quantity + Add to Cart */}
+                <div className="flex items-center gap-4 w-full">
+                  {/* Quantity Selector */}
+                  <div className="flex items-center border rounded-full overflow-hidden flex-1">
                     <button
-                      onClick={() =>
-                        setQuantity((prev) => (prev > 1 ? prev - 1 : 1))
-                      }
-                      className="p-1"
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      className="w-10 h-10 flex items-center justify-center text-lg text-gray-700 border-r border-gray-300 rounded-full"
                     >
-                      <RemoveIcon fontSize="small" />
+                      -
                     </button>
-                    <span className="font-medium text-base sm:text-lg px-2">
+                    <span className="px-4 text-[15px] font-medium text-gray-900">
                       {quantity}
                     </span>
                     <button
-                      onClick={() =>
-                        setQuantity((prev) =>
-                          prev < product.stock_quantity ? prev + 1 : prev
-                        )
-                      }
-                      className="p-1"
+                      onClick={() => setQuantity((q) => q + 1)}
+                      className="w-10 h-10 flex items-center justify-center text-lg text-gray-700 border-l border-gray-300 rounded-full"
                     >
-                      <AddIcon fontSize="small" />
+                      +
                     </button>
                   </div>
-                )}
-              </div>
 
-              {/* Buttons Column */}
-              <div className="flex flex-col gap-4 mt-4">
-                <button
-                  className={`flex items-center justify-center gap-2 px-6 py-3 shadow transition-all duration-200 ${
-                    product.stock_quantity === 0
-                      ? "filter grayscale cursor-not-allowed opacity-70"
-                      : "hover:opacity-80"
-                  }`}
-                  style={{
-                    backgroundColor: "var(--primary-color)",
-                    color: "var(--bg-color)",
-                    borderTopLeftRadius: "16px",
-                    borderTopRightRadius: "8px",
-                    borderBottomLeftRadius: "8px",
-                    borderBottomRightRadius: "16px",
-                  }}
-                  disabled={product.stock_quantity === 0}
-                >
-                  <ShoppingCart size={20} />
-                  Add to Cart
-                </button>
-                <button
-                  className={`px-6 py-3 border transition-all duration-200 ${
-                    product.stock_quantity === 0
-                      ? "filter grayscale cursor-not-allowed opacity-70"
-                      : "hover:opacity-80"
-                  }`}
-                  style={{
-                    borderColor: "var(--primary-color)",
-                    color: "var(--primary-color)",
-                    borderTopLeftRadius: "16px",
-                    borderTopRightRadius: "8px",
-                    borderBottomLeftRadius: "8px",
-                    borderBottomRightRadius: "16px",
-                  }}
-                  disabled={product.stock_quantity === 0}
-                >
+                  {/* Add to Cart */}
+                  <button className="flex items-center justify-center gap-2 bg-gray-800 text-white py-3 rounded-full text-[12px] flex-[2]">
+                    <ShoppingCart size={20} />
+                    Add to Cart
+                  </button>
+                </div>
+
+                {/* Row 2: Buy Now */}
+                <button className="w-full border border-gray-800 py-2 rounded-full text-[20px] text-gray-900">
                   Buy Now
                 </button>
               </div>
@@ -487,12 +421,12 @@ function ProductPage() {
               className="lg:w-1/3 flex flex-col gap-6 md:gap-8 p-0 rounded-2xl"
               style={{
                 borderTopRightRadius: "6rem",
-                backgroundColor: "var(--cards-bg)",
+                backgroundColor: "#EFF5ED",
               }}
             >
               <div className="rounded-2xl p-4 md:p-6 flex-1 flex justify-between flex-col gap-6">
                 <InfoCard
-                  Icon={Clock}
+                  Icon={Truck}
                   text="We Delivery on Next Day from"
                   highlight="10:00 AM to 08:00 PM"
                 />
@@ -500,7 +434,7 @@ function ProductPage() {
                 <div>
                   <h2
                     style={{ color: "var(--text-color)" }}
-                    className="text-xl font-bold mb-4"
+                    className="text-xl  mb-4"
                   >
                     Product Description
                   </h2>
@@ -518,7 +452,7 @@ function ProductPage() {
                 <div>
                   <h2
                     style={{ color: "var(--text-color)" }}
-                    className="text-xl font-bold mb-4"
+                    className="text-xl mb-4"
                   >
                     Additional information
                   </h2>
@@ -556,75 +490,30 @@ function ProductPage() {
               Ratings & Reviews
             </h2>
 
-            {/* Ratings Bar Graph */}
-            {reviews.length > 0 && (
-              <div
-                className="rounded-2xl p-4 md:p-6 mb-6 md:mb-8 shadow-md flex flex-col gap-4"
-                style={{ backgroundColor: "var(--cards-bg)" }}
-              >
-                <div className="flex flex-col md:flex-row gap-4 md:gap-6">
-                  {/* Average Rating Circle */}
-                  <div className="w-full md:w-1/4 flex items-center justify-center">
-                    <AverageRatingCircle rating={averageRating} />
-                  </div>
-
-                  {/* Star Graph */}
-                  <div className="w-full md:w-3/4 flex flex-col gap-3 justify-center">
-                    {[5, 4, 3, 2, 1].map((star) => {
-                      const percentage =
-                        (reviews.filter((r) => r.stars === star).length /
-                          reviews.length) *
-                        100;
-                      return (
-                        <div key={star} className="flex items-center gap-3">
-                          <span className="w-5 text-gray-700 dark:text-gray-300">
-                            {star}
-                          </span>
-                          <div className="flex-1 h-3 rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-700">
-                            <div
-                              className="h-3 rounded-xl"
-                              style={{
-                                width: `${percentage}%`,
-                                backgroundColor: "var(--primary-color)",
-                              }}
-                            ></div>
-                          </div>
-                          <span className="w-10 text-right text-sm text-gray-700 dark:text-gray-400">
-                            {Math.round(percentage)}%
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Review Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            {/* Review List */}
+            <div className="space-y-6">
               {reviews.length === 0 ? (
-                <p className="text-gray-500 dark:text-gray-400 col-span-2 text-center py-8">
+                <p className="text-gray-500 dark:text-gray-400 text-center py-8">
                   No reviews yet
                 </p>
               ) : (
                 reviews.slice(0, 6).map((r, i) => (
                   <div
                     key={i}
-                    className="rounded-2xl p-4 md:p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
-                    style={{ backgroundColor: "var(--cards-bg)" }}
+                    className="border-b border-gray-200 dark:border-gray-700 pb-4"
                   >
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3 gap-2">
-                      <h4 className="font-semibold text-gray-900 dark:text-white">
+                    <div className="flex items-center gap-3 mb-2">
+                      <img
+                        src="https://shop.huesandharvest.com/wp-content/uploads/2025/09/profile-picture.png"
+                        alt="Profile"
+                        className="w-6 h-6 rounded-full object-cover"
+                      />
+                      <span className="text-gray-900 dark:text-white font-medium">
                         {r.name}
-                      </h4>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                        {r.date}
                       </span>
-                    </div>
-                    <div className="flex mb-2">
                       <StarRating rating={r.stars} />
                     </div>
-                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed line-clamp-4">
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed pl-10">
                       {r.review}
                     </p>
                   </div>
@@ -677,30 +566,32 @@ function ProductPage() {
                   <h3 className="text-xl md:text-2xl font-bold mb-4 text-gray-900 dark:text-white">
                     All Reviews
                   </h3>
-                  <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+
+                  {/* Review List in Modal */}
+                  <div className="flex-1 overflow-y-auto space-y-6 pr-2">
                     {reviews.slice(0, modalVisibleCount).map((r, index) => (
                       <div
                         key={index}
-                        className="rounded-2xl p-4 shadow-md w-full"
-                        style={{ backgroundColor: "var(--cards-bg)" }}
+                        className="border-b border-gray-200 dark:border-gray-700 pb-4"
                       >
-                        <div className="flex flex-col md:flex-row md:justify-between mb-2 gap-2">
-                          <h4 className="font-semibold text-gray-900 dark:text-white">
+                        <div className="flex items-center gap-3 mb-2">
+                          <img
+                            src="https://shop.huesandharvest.com/wp-content/uploads/2025/09/profile-picture.png"
+                            alt="Profile"
+                            className="w-6 h-6 rounded-full object-cover"
+                          />
+                          <span className="text-gray-900 dark:text-white font-medium">
                             {r.name}
-                          </h4>
-                          <span className="text-sm text-gray-500 dark:text-gray-400">
-                            {r.date}
                           </span>
-                        </div>
-                        <div className="flex mb-2">
                           <StarRating rating={r.stars} />
                         </div>
-                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed pl-10">
                           {r.review}
                         </p>
                       </div>
                     ))}
                   </div>
+
                   {modalVisibleCount < reviews.length && (
                     <div className="mt-4 text-center">
                       <button
@@ -726,6 +617,7 @@ function ProductPage() {
           </div>
         </div>
       </div>
+      <ProductListing excludeId={productId} />
     </Gradient>
   );
 }
