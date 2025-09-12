@@ -21,6 +21,7 @@ import { ENDPOINTS } from "../../api/api";
 import Gradient from "../Background/Gradient";
 import { Star } from "lucide-react";
 import ProductListing from "../Home/ProductListing";
+import { showToast } from "../Common/Toaster"; // ✅ import this
 
 const bgColors = ["#ffeae2", "#e9f7e4", "#fff9e6", "#ffe9ef"];
 
@@ -99,6 +100,8 @@ const StarRating = ({ rating }) => {
   );
 };
 
+// Inside ProductPage component
+
 const AverageRatingCircle = ({ rating }) => {
   const radius = 40; // circle radius
   const stroke = 6; // stroke width
@@ -153,6 +156,44 @@ function ProductPage() {
   const randomBgColor = useMemo(() => {
     return bgColors[Math.floor(Math.random() * bgColors.length)];
   }, []);
+
+  const handleAddToCart = async () => {
+    const token = localStorage.getItem("hh_token"); // 🔐 token from localStorage
+    if (!token) {
+      showToast("Please login first to add items to cart.", "error");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "https://admin.huesandharvest.com/api/add-to-cart.php",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            token,
+            product_id: product.id,
+            quantity,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        console.log("Cart updated:", data);
+        showToast("✅ Item added to cart!", "success");
+        // Optionally update cart state in React if you have global cart context
+      } else {
+        console.error("Cart error:", data);
+        showToast("❌ " + (data.message || "Could not add item"), "error");
+      }
+    } catch (err) {
+      console.error("Error adding to cart:", err);
+      showToast("❌ Something went wrong.", "error");
+    }
+  };
 
   // Get the product ID from navigation state
   const location = useLocation();
@@ -359,8 +400,10 @@ function ProductPage() {
                     </button>
                   </div>
 
-                  {/* Add to Cart */}
-                  <button className="flex items-center justify-center gap-2 bg-gray-800 text-white py-3 rounded-full text-[12px] flex-[2]">
+                  <button
+                    onClick={handleAddToCart}
+                    className="flex items-center justify-center gap-2 bg-gray-800 text-white py-3 rounded-full text-[12px] flex-[2]"
+                  >
                     <ShoppingCart size={20} />
                     Add to Cart
                   </button>

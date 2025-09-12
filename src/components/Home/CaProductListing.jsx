@@ -82,7 +82,8 @@ function CaProductListing() {
 
   const scroll = (direction) => {
     if (scrollRef.current) {
-      const scrollAmount = 300;
+      const cardWidth = scrollRef.current.offsetWidth / 4; // exactly 4 per view
+      const scrollAmount = cardWidth * 4; // jump one "page"
       scrollRef.current.scrollBy({
         left: direction === "left" ? -scrollAmount : scrollAmount,
         behavior: "smooth",
@@ -162,12 +163,13 @@ function CaProductListing() {
           {/* Product Container */}
           <div
             ref={scrollRef}
-            className="flex gap-6 overflow-x-auto scroll-smooth py-2 scrollbar-hide"
+            className="flex overflow-x-auto scroll-smooth py-2 scrollbar-hide"
+            style={{ scrollSnapType: "x mandatory" }}
           >
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
-                className="flex-shrink-0 w-72 flex flex-col cursor-pointer"
+                className="flex-shrink-0 w-1/4 px-3 flex flex-col cursor-pointer snap-start"
                 onClick={() =>
                   navigate(`/product/${slugify(product.name)}`, {
                     state: { id: product.id },

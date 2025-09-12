@@ -123,7 +123,6 @@ const Hero = () => {
           <Mouse className="w-6 h-6 -rotate-180" />
         </motion.div>
         <span className="text-white text-sm">|</span>
-
       </div>
     </section>
   );

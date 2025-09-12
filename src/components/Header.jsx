@@ -101,7 +101,9 @@ const Header = () => {
 
   const navigation = [
     { name: "HOME", path: "/" },
-    { name: "SHOP", path: "/shop" },
+    { name: "SNACKS", path: "/shop" },
+    { name: "COMBOS", path: "/shop" },
+    { name: "ABOUT", path: "/about" },
   ];
 
   const isActive = (path) =>

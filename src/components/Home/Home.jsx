@@ -18,6 +18,7 @@ import ProductCarousel from "./ProductCarousel";
 import ProductSlider from "./ProductSlider";
 import ProductShowcase from "./ProductShowcase";
 
+
 const Home = () => {
   return (
     <>

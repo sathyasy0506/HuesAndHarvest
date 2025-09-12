@@ -1,45 +1,112 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Camera, Edit3, Save, X } from "lucide-react";
+
+const BASE_URL = "https://admin.huesandharvest.com/api/";
 
 const ProfileSection = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [formData, setFormData] = useState({
-    firstName: "Madhav",
-    lastName: "Sreekumar",
-    email: "madhav.sreekumar@example.com",
-    phone: "+1 (555) 123-4567",
-    birthDate: "1990-05-15",
-    bio: "Passionate about tech and minimalist design. Love discovering new products and brands.",
+    firstName: "",
+    lastName: "",
+    email: "",
   });
 
-  const [passwordData, setPasswordData] = useState({
-    oldPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const handleSave = () => {
-    if (
-      passwordData.newPassword &&
-      passwordData.newPassword !== passwordData.confirmPassword
-    ) {
-      alert("New password and confirm password do not match!");
+  // ✅ Fetch profile data on mount
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("hh_token");
+        if (!token) return;
+
+        const res = await fetch(`${BASE_URL}profile.php`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          setFormData({
+            firstName: data.user.first_name || "",
+            lastName: data.user.last_name || "",
+            email: data.user.email || "",
+          });
+          setProfilePhoto(data.user.avatar || null);
+        }
+      } catch (err) {
+        console.error("Profile fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  // ✅ Handle Save (update-profile.php)
+  // ✅ Handle Save (update-profile.php)
+  const handleSave = async () => {
+    if (!currentPassword) {
+      alert("Please enter your password to update profile.");
       return;
     }
-    setIsEditing(false);
-    // TODO: Save logic here, e.g., API call
-    console.log("Profile Data:", formData);
-    console.log("Password Data:", passwordData);
-    console.log("Profile Photo:", profilePhoto);
+
+    try {
+      const token = localStorage.getItem("hh_token");
+      const formDataToSend = new FormData();
+      formDataToSend.append("first_name", formData.firstName);
+      formDataToSend.append("last_name", formData.lastName);
+      formDataToSend.append("password", currentPassword);
+
+      if (profilePhoto instanceof File) {
+        formDataToSend.append("avatar", profilePhoto);
+      }
+
+      const res = await fetch(`${BASE_URL}update-profile.php`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ secure with JWT
+        },
+        body: formDataToSend,
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        alert("Profile updated successfully!");
+        setIsEditing(false);
+        setCurrentPassword(""); // ✅ Clear password after success
+        setFormData({
+          firstName: data.user.first_name,
+          lastName: data.user.last_name,
+          email: data.user.email,
+        });
+        setProfilePhoto(data.user.avatar);
+      } else {
+        alert(data.message || "Profile update failed");
+      }
+    } catch (err) {
+      console.error("Update error:", err);
+      alert("Error updating profile");
+    }
   };
 
+  // ✅ Handle Photo Change (store File for upload)
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setProfilePhoto(URL.createObjectURL(file));
+      setProfilePhoto(file); // keep actual File for upload
     }
   };
+
+  if (loading) {
+    return <p className="text-center">Loading profile...</p>;
+  }
 
   return (
     <div className="space-y-8">
@@ -52,17 +119,16 @@ const ProfileSection = () => {
               <div className="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center overflow-hidden">
                 {profilePhoto ? (
                   <img
-                    src={profilePhoto}
+                    src={
+                      profilePhoto instanceof File
+                        ? URL.createObjectURL(profilePhoto)
+                        : profilePhoto
+                    }
                     alt="Profile"
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span
-                    className="text-2xl font-bold"
-                    style={{ fontFamily: "var(--font-outfit)" }}
-                  >
-                    MS
-                  </span>
+                  <span className="text-2xl font-bold">MS</span>
                 )}
               </div>
               {isEditing && (
@@ -78,11 +144,8 @@ const ProfileSection = () => {
               )}
             </div>
             <div>
-              <h1
-                className="text-3xl font-bold"
-                style={{ fontFamily: "var(--font-outfit)" }}
-              >
-                {formData.firstName}
+              <h1 className="text-3xl font-bold">
+                {formData.firstName} {formData.lastName}
               </h1>
             </div>
           </div>
@@ -102,10 +165,7 @@ const ProfileSection = () => {
 
       {/* Profile Form */}
       <div className="card-bg rounded-2xl p-8 space-y-6">
-        <h2
-          className="text-2xl font-bold primary-text mb-6"
-          style={{ fontFamily: "var(--font-outfit)" }}
-        >
+        <h2 className="text-2xl font-bold primary-text mb-6">
           Personal Information
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -144,99 +204,39 @@ const ProfileSection = () => {
             <input
               type="email"
               value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              disabled={!isEditing}
-              className="w-full input-field px-4 py-3 rounded-xl transition-colors"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium primary-text mb-2">
-              Phone
-            </label>
-            <input
-              type="tel"
-              value={formData.phone}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
-              disabled={!isEditing}
-              className="w-full input-field px-4 py-3 rounded-xl transition-colors"
+              disabled
+              className="w-full input-field px-4 py-3 rounded-xl bg-gray-100 cursor-not-allowed"
             />
           </div>
         </div>
 
-        {/* Change Password Section */}
+        {/* Confirm with Password */}
         {isEditing && (
           <div className="mt-6">
-            <h2
-              className="text-2xl font-bold primary-text mb-4"
-              style={{ fontFamily: "var(--font-outfit)" }}
-            >
-              Change Password
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium primary-text mb-2">
-                  Old Password
-                </label>
-                <input
-                  type="password"
-                  value={passwordData.oldPassword}
-                  onChange={(e) =>
-                    setPasswordData({
-                      ...passwordData,
-                      oldPassword: e.target.value,
-                    })
-                  }
-                  className="w-full input-field px-4 py-3 rounded-xl transition-colors"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium primary-text mb-2">
-                  New Password
-                </label>
-                <input
-                  type="password"
-                  value={passwordData.newPassword}
-                  onChange={(e) =>
-                    setPasswordData({
-                      ...passwordData,
-                      newPassword: e.target.value,
-                    })
-                  }
-                  className="w-full input-field px-4 py-3 rounded-xl transition-colors"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium primary-text mb-2">
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  value={passwordData.confirmPassword}
-                  onChange={(e) =>
-                    setPasswordData({
-                      ...passwordData,
-                      confirmPassword: e.target.value,
-                    })
-                  }
-                  className="w-full input-field px-4 py-3 rounded-xl transition-colors"
-                />
-              </div>
-            </div>
+            <label className="block text-sm font-medium primary-text mb-2">
+              Enter Password to Confirm Changes
+            </label>
+            <input
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              className="w-full input-field px-4 py-3 rounded-xl transition-colors"
+            />
           </div>
         )}
 
         {isEditing && (
           <div className="mt-8 flex justify-end space-x-4">
             <button
-              onClick={() => setIsEditing(false)}
+              onClick={() => {
+                setIsEditing(false);
+                setCurrentPassword(""); // ✅ Clear password on cancel
+              }}
               className="secondary-button px-6 py-3 rounded-xl"
             >
               Cancel
             </button>
+
             <button
               onClick={handleSave}
               className="primary-button px-6 py-3 rounded-xl flex items-center space-x-2"
