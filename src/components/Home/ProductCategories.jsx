@@ -9,7 +9,7 @@ const categories = [
     description: "All products in one place",
     image:
       "https://images.pexels.com/photos/4109743/pexels-photo-4109743.jpeg?auto=compress&cs=tinysrgb&w=800",
-    key: "",
+    key: "", // keep empty since it's not a real category
   },
   {
     name: "Spicy & Bold",
@@ -47,7 +47,7 @@ const ProductCategories = () => {
             total += count;
           });
 
-          counts["all"] = total;
+          counts.total = total; // store separately
           setProductCounts(counts);
         }
       })
@@ -119,7 +119,10 @@ const ProductCategories = () => {
                       className="text-sm font-medium"
                       style={{ fontFamily: "var(--font-poppins)" }}
                     >
-                      {productCounts[category.key] ?? 0} Products
+                      {category.name === "All"
+                        ? productCounts.total ?? 0
+                        : productCounts[category.key] ?? 0}{" "}
+                      Products
                     </span>
                   </div>
                 </div>

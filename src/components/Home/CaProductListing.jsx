@@ -17,10 +17,22 @@ function slugify(name) {
     .replace(/[^\w-]+/g, "");
 }
 
-function ProductListing({ excludeId }) {
+function CaProductListing() {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [activeCategory, setActiveCategory] = useState(null);
+
+  const [showLeft, setShowLeft] = useState(false);
+  const [showRight, setShowRight] = useState(false);
+
   const scrollRef = useRef(null);
   const navigate = useNavigate();
+
+  // Map API categories to display labels
+  const categoryLabels = {
+    spicy: "Spicy",
+    sweetssssss: "Sweet",
+  };
 
   // Fetch products from API
   useEffect(() => {
@@ -29,9 +41,11 @@ function ProductListing({ excludeId }) {
         const res = await fetch(ENDPOINTS.LIST_PRODUCTS());
         const data = await res.json();
         if (data.success) {
-          // filter out the current product
-          const filtered = data.products.filter((p) => p.id !== excludeId);
-          setProducts(filtered);
+          setProducts(data.products);
+          setCategories(data.Categories || []);
+          if (data.Categories && data.Categories.length > 0) {
+            setActiveCategory(data.Categories[0]); // default select first category
+          }
         }
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -39,11 +53,37 @@ function ProductListing({ excludeId }) {
     };
 
     fetchProducts();
-  }, [excludeId]);
+  }, []);
+
+  // Update scroll button visibility
+  const updateScrollButtons = () => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const { scrollLeft, scrollWidth, clientWidth } = container;
+
+    setShowLeft(scrollLeft > 0);
+    setShowRight(scrollLeft + clientWidth < scrollWidth);
+  };
+
+  useEffect(() => {
+    updateScrollButtons();
+    const container = scrollRef.current;
+    if (!container) return;
+
+    container.addEventListener("scroll", updateScrollButtons);
+    window.addEventListener("resize", updateScrollButtons);
+
+    return () => {
+      container.removeEventListener("scroll", updateScrollButtons);
+      window.removeEventListener("resize", updateScrollButtons);
+    };
+  }, [products, activeCategory]);
 
   const scroll = (direction) => {
     if (scrollRef.current) {
-      const scrollAmount = 300;
+      const cardWidth = scrollRef.current.offsetWidth / 4; // exactly 4 per view
+      const scrollAmount = cardWidth * 4; // jump one "page"
       scrollRef.current.scrollBy({
         left: direction === "left" ? -scrollAmount : scrollAmount,
         behavior: "smooth",
@@ -51,9 +91,14 @@ function ProductListing({ excludeId }) {
     }
   };
 
+  // Filter products by category
+  const filteredProducts = activeCategory
+    ? products.filter((p) => p.category === activeCategory)
+    : products;
+
   return (
-    <section className="w-full  py-12">
-      <div className=" mx-auto">
+    <section className="w-full px-6 py-12">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row items-center justify-between mb-10 gap-4 md:gap-0">
           <div className="text-center w-full flex justify-center flex-col gap-4">
@@ -65,12 +110,24 @@ function ProductListing({ excludeId }) {
             </h2>
           </div>
 
-          <button
-            onClick={() => navigate("/shop")}
-            className="flex items-center gap-2 border border-gray-400 rounded-full px-4 py-2 text-sm font-medium hover:bg-gray-100 transition whitespace-nowrap flex-shrink-0"
-          >
-            ALL COLLECTIONS <ArrowUpRight size={16} />
-          </button>
+          {/* Category Toggle */}
+          <div className="flex rounded-full border border-[#4b3832] bg-[#4b3832] overflow-hidden p-[2px]">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`w-28 py-1 text-base font-medium flex items-center justify-center transition-all
+        ${
+          activeCategory === cat
+            ? "bg-white text-[#4b3832]"
+            : "bg-[#4b3832] text-white border border-[#4b3832]"
+        }
+        rounded-full`}
+              >
+                {categoryLabels[cat] || cat}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Scrollable Products */}
@@ -78,7 +135,13 @@ function ProductListing({ excludeId }) {
           {/* Left Scroll Button */}
           <button
             onClick={() => scroll("left")}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition"
+            disabled={!showLeft}
+            className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow transition
+              ${
+                showLeft
+                  ? "bg-white hover:bg-gray-100"
+                  : "bg-gray-200 cursor-not-allowed opacity-50"
+              }`}
           >
             <ChevronLeft size={24} />
           </button>
@@ -86,7 +149,13 @@ function ProductListing({ excludeId }) {
           {/* Right Scroll Button */}
           <button
             onClick={() => scroll("right")}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition"
+            disabled={!showRight}
+            className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow transition
+              ${
+                showRight
+                  ? "bg-white hover:bg-gray-100"
+                  : "bg-gray-200 cursor-not-allowed opacity-50"
+              }`}
           >
             <ChevronRight size={24} />
           </button>
@@ -94,12 +163,13 @@ function ProductListing({ excludeId }) {
           {/* Product Container */}
           <div
             ref={scrollRef}
-            className="flex gap-6 overflow-x-auto scroll-smooth py-2 scrollbar-hide"
+            className="flex overflow-x-auto scroll-smooth py-2 scrollbar-hide"
+            style={{ scrollSnapType: "x mandatory" }}
           >
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <div
                 key={product.id}
-                className="flex-shrink-0 w-72 flex flex-col cursor-pointer"
+                className="flex-shrink-0 w-1/4 px-3 flex flex-col cursor-pointer snap-start"
                 onClick={() =>
                   navigate(`/product/${slugify(product.name)}`, {
                     state: { id: product.id },
@@ -170,4 +240,4 @@ function ProductListing({ excludeId }) {
   );
 }
 
-export default ProductListing;
+export default CaProductListing;

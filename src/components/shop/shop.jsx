@@ -9,12 +9,20 @@ import DialogContent from "@mui/material/DialogContent";
 import Button from "@mui/material/Button";
 import TransitEnterexitIcon from "@mui/icons-material/TransitEnterexit";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import CloseIcon from "@mui/icons-material/Close";
 import { ENDPOINTS } from "../../api/api";
 import NoProductsImg from "../../assets/images/no-product-found.webp";
 import { useNavigate, useLocation } from "react-router-dom";
 import Loader from "../Load";
 import Gradient from "../Background/Gradient";
+import { ArrowUpRight } from "lucide-react";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
+
+const bgColors = ["#ffeae2", "#e9f7e4", "#fff9e6", "#ffe9ef"];
+
+function getRandomBg() {
+  return bgColors[Math.floor(Math.random() * bgColors.length)];
+}
 
 const Shop = () => {
   const location = useLocation();
@@ -26,14 +34,14 @@ const Shop = () => {
   const [sortBy, setSortBy] = useState("default");
   const [openFilters, setOpenFilters] = useState(false);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true); // Added loading state
-  const [selectedStockStatuses, setSelectedStockStatuses] = useState([]); // [] = all
+  const [loading, setLoading] = useState(true);
+  const [selectedStockStatuses, setSelectedStockStatuses] = useState([]);
 
   const slugify = (name) =>
     name
       .toLowerCase()
-      .replace(/\s+/g, "-") // spaces → hyphens
-      .replace(/[^\w-]+/g, ""); // remove special characters
+      .replace(/\s+/g, "-")
+      .replace(/[^\w-]+/g, "");
 
   useEffect(() => {
     if (location.state?.category && location.state.category !== "all") {
@@ -56,7 +64,7 @@ const Shop = () => {
           setPriceLimits([minPrice, maxPrice]);
           setPriceRange([minPrice, maxPrice]);
         }
-        setLoading(false); // Stop loading after fetch
+        setLoading(false);
       })
       .catch((err) => {
         console.error("Error fetching products:", err);
@@ -65,7 +73,7 @@ const Shop = () => {
   }, []);
 
   const filteredProducts = useMemo(() => {
-    if (loading) return []; // Return empty array while loading
+    if (loading) return [];
 
     return products
       .filter((p) => {
@@ -82,7 +90,6 @@ const Shop = () => {
         return categoryMatch && priceMatch && stockMatch;
       })
       .sort((a, b) => {
-        // Apply stock-priority only for default sort
         if (sortBy === "default") {
           const getStockPriority = (p) => {
             if (
@@ -90,15 +97,14 @@ const Shop = () => {
               (!p.stock_quantity || p.stock_quantity >= 10)
             )
               return 0;
-            if (p.stock_status === "instock" && p.stock_quantity < 10) return 1; // low stock
-            return 2; // out of stock
+            if (p.stock_status === "instock" && p.stock_quantity < 10) return 1;
+            return 2;
           };
 
           const stockDiff = getStockPriority(a) - getStockPriority(b);
           if (stockDiff !== 0) return stockDiff;
         }
 
-        // Apply user-selected sort
         if (sortBy === "priceLowHigh") return a.price - b.price;
         if (sortBy === "priceHighLow") return b.price - a.price;
         if (sortBy === "nameAZ") return a.name.localeCompare(b.name);
@@ -122,24 +128,12 @@ const Shop = () => {
     selectedStockStatuses.length > 0;
 
   const renderFilters = () => (
-    <div>
-      <h2
-        className="font-semibold text-lg mb-6"
-        style={{ fontFamily: "var(--font-poppins)" }}
-      >
-        Filters
-      </h2>
+    <div className="p-3">
+      <h2 className="font-semibold text-lg mb-6">Filters</h2>
 
       {/* Price Slider */}
-      <div className="mb-6">
-        <Typography
-          gutterBottom
-          className="font-medium mb-2"
-          style={{
-            fontFamily: "var(--font-poppins)",
-            color: "var(--text-color)",
-          }}
-        >
+      <div className="mb-6 ">
+        <Typography gutterBottom className="font-medium mb-2">
           Price Range
         </Typography>
         <Slider
@@ -151,21 +145,15 @@ const Shop = () => {
           max={priceLimits[1]}
           step={1}
           sx={{
-            color: "var(--primary-color)",
+            mx: 1,
+            color: "#166434",
             "& .MuiSlider-thumb": {
               borderRadius: "50%",
-              backgroundColor: "var(--primary-color)",
-            },
-            "& .MuiSlider-rail": {
-              opacity: 0.3,
-              backgroundColor: "var(--cards-bg)",
             },
           }}
         />
-        <div
-          className="flex justify-between text-sm mt-2"
-          style={{ color: "var(--text-color)" }}
-        >
+
+        <div className="flex justify-between text-sm mt-2">
           <span>₹{priceRange[0]}</span>
           <span>₹{priceRange[1]}</span>
         </div>
@@ -173,385 +161,307 @@ const Shop = () => {
 
       {/* Category Filter */}
       <div>
-        <h3
-          className="font-medium mb-3"
-          style={{
-            fontFamily: "var(--font-poppins)",
-            color: "var(--text-color)",
-          }}
-        >
-          Category
-        </h3>
-
-        <div className="flex flex-col gap-2 w-max">
+        <h3 className="font-medium mb-3">Category</h3>
+        <div className="flex flex-col gap-2">
           {categories.map((cat) => {
             const isSelected = selectedCategories.includes(cat);
             return (
-              <label
+              <FormControlLabel
                 key={cat}
-                className="flex items-center gap-3 cursor-pointer px-3 py-2 rounded-xl hover:shadow-md transition-shadow duration-200"
-                style={{
-                  fontFamily: "var(--font-poppins)",
-                  backgroundColor: "var(--cards-bg)",
-                  width: "fit-content",
-                }}
-              >
-                {/* Hidden Checkbox */}
-                <input
-                  type="checkbox"
-                  checked={isSelected}
-                  onChange={() => {
-                    if (isSelected) {
-                      setSelectedCategories(
-                        selectedCategories.filter((c) => c !== cat)
-                      );
-                    } else {
-                      setSelectedCategories([...selectedCategories, cat]);
-                    }
-                  }}
-                  className="hidden"
-                />
-
-                {/* Custom Checkbox */}
-                <span
-                  className={`w-5 h-5 flex items-center justify-center rounded-md border-2 transition-all duration-300
-              ${
-                isSelected
-                  ? "bg-[var(--primary-color)] border-[var(--primary-color)]"
-                  : "border-gray-400"
-              }`}
-                >
-                  <svg
-                    className={`w-3 h-3 text-[var(--bg-color)] transition-transform duration-300 ease-out
-                ${isSelected ? "animate-bounce-tick scale-100" : "scale-0"}`}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={3}
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </span>
-
-                {/* Category Label */}
-                <span className="font-medium text-[var(--text-color)] whitespace-nowrap">
-                  {cat}
-                </span>
-              </label>
+                control={
+                  <Checkbox
+                    checked={isSelected}
+                    disabled={false} // toggle this when needed
+                    onChange={() => {
+                      if (isSelected) {
+                        setSelectedCategories(
+                          selectedCategories.filter((c) => c !== cat)
+                        );
+                      } else {
+                        setSelectedCategories([...selectedCategories, cat]);
+                      }
+                    }}
+                    sx={{
+                      color: "#9ca3af", // default gray (tailwind gray-400)
+                      "&.Mui-checked": {
+                        color: "#166434", // green tick
+                      },
+                      "&.Mui-disabled": {
+                        color: "#9ca3af", // gray when disabled
+                      },
+                    }}
+                  />
+                }
+                label={cat}
+              />
             );
           })}
         </div>
       </div>
 
+      {/* Stock Filter */}
       <div className="mt-6 mb-6">
-        <h3
-          className="font-medium mb-3"
-          style={{
-            fontFamily: "var(--font-poppins)",
-            color: "var(--text-color)",
-          }}
-        >
-          Stock Status
-        </h3>
-        <div className="flex flex-col gap-2 w-max">
+        <h3 className="font-medium mb-3">Stock Status</h3>
+        <div className="flex flex-col gap-2">
           {["instock", "outofstock"].map((status) => {
             const isSelected = selectedStockStatuses.includes(status);
             return (
-              <label
+              <FormControlLabel
                 key={status}
-                className="flex items-center gap-3 cursor-pointer px-3 py-2 rounded-xl hover:shadow-md transition-shadow duration-200"
-                style={{
-                  fontFamily: "var(--font-poppins)",
-                  backgroundColor: "var(--cards-bg)",
-                  width: "fit-content",
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={isSelected}
-                  onChange={() => {
-                    if (isSelected) {
-                      setSelectedStockStatuses(
-                        selectedStockStatuses.filter((s) => s !== status)
-                      );
-                    } else {
-                      setSelectedStockStatuses([
-                        ...selectedStockStatuses,
-                        status,
-                      ]);
-                    }
-                  }}
-                  className="hidden"
-                />
-
-                <span
-                  className={`w-5 h-5 flex items-center justify-center rounded-md border-2 transition-all duration-300
-              ${
-                isSelected
-                  ? "bg-[var(--primary-color)] border-[var(--primary-color)]"
-                  : "border-gray-400"
-              }`}
-                >
-                  <svg
-                    className={`w-3 h-3 text-[var(--bg-color)] transition-transform duration-300 ease-out
-                ${isSelected ? "animate-bounce-tick scale-100" : "scale-0"}`}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={3}
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </span>
-
-                <span className="font-medium text-[var(--text-color)] whitespace-nowrap">
-                  {status === "instock" ? "In Stock" : "Out of Stock"}
-                </span>
-              </label>
+                control={
+                  <Checkbox
+                    checked={isSelected}
+                    onChange={() => {
+                      if (isSelected) {
+                        setSelectedStockStatuses(
+                          selectedStockStatuses.filter((s) => s !== status)
+                        );
+                      } else {
+                        setSelectedStockStatuses([
+                          ...selectedStockStatuses,
+                          status,
+                        ]);
+                      }
+                    }}
+                    sx={{
+                      color: "#9ca3af", // default gray (tailwind gray-400)
+                      "&.Mui-checked": {
+                        color: "#166434", // green tick
+                      },
+                      "&.Mui-disabled": {
+                        color: "#9ca3af", // gray when disabled
+                      },
+                    }}
+                  />
+                }
+                label={status === "instock" ? "In Stock" : "Out of Stock"}
+              />
             );
           })}
         </div>
       </div>
 
-      {/* Reset Filters */}
       {filtersApplied && (
         <Button
           variant="contained"
           onClick={() => {
             setSelectedCategories([]);
             setPriceRange([...priceLimits]);
-            setSelectedStockStatuses([]); // reset stock filter
+            setSelectedStockStatuses([]);
           }}
-          sx={{
-            mt: 3,
-            px: 3,
-            py: 1.5,
-            borderRadius: "14px",
-            textTransform: "none",
-            fontWeight: 500,
-            background: "rgba(255, 99, 99, 0.85)",
-            color: "var(--text-color)",
-            display: "flex",
-            alignItems: "center",
-            gap: 0.3,
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
-            "&:hover": {
-              background: "rgba(255, 99, 99, 0.95)",
-              boxShadow: "0 6px 25px rgba(0, 0, 0, 0.25)",
-            },
-          }}
+          sx={{ mt: 3 }}
         >
-          <span>Reset Filters</span>
-          <CloseIcon fontSize="small" />
+          Reset Filters
         </Button>
       )}
     </div>
   );
 
-  // Show loader while data is being fetched
   if (loading) {
     return <Loader />;
   }
 
   return (
     <Gradient>
-      {" "}
-      <div
-        className="min-h-screen px-4 sm:px-6 py-8 mt-16 bg-transparent"
-        style={{
-          color: "var(--text-color)",
-          fontFamily: "var(--font-poppins)",
-        }}
-      >
-        <div className="max-w-7xl mx-auto rounded-2xl shadow-sm p-6 relative bg-transparent">
-          <div className="flex flex-col lg:grid lg:grid-cols-4 gap-8 relative">
-            <div
-              className="hidden lg:block absolute left-[25%] border-r border-dashed"
-              style={{ borderColor: "grey", height: "100%", top: 0 }}
-            ></div>
+      <div className="min-h-screen px-4 sm:px-6 py-8 mt-16 bg-transparent">
+        {/* Breadcrumb + Sort (OUTSIDE main card) */}
+        <div className="max-w-7xl mx-auto mb-6 flex justify-between items-center">
+          {/* Breadcrumb pill */}
+          <nav className="text-sm text-gray-600 bg-white px-5 py-2 rounded-full shadow-sm">
+            Home &gt; All Products
+          </nav>
 
-            {/* Sticky Filters */}
-            <aside className="hidden lg:block pr-6 sticky top-28 h-fit z-10 bg-transparent">
+          {/* Sort pill */}
+          <div className="bg-white rounded-full shadow-sm">
+            <FormControl
+              size="small"
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "9999px", // pill shape
+                  paddingRight: "6px",
+                  "& fieldset": {
+                    border: "none", // remove border
+                  },
+                  "&:hover fieldset": {
+                    border: "none", // remove border on hover
+                  },
+                  "&.Mui-focused fieldset": {
+                    border: "none", // remove border on focus
+                  },
+                },
+                "& .MuiSelect-select": {
+                  padding: "6px 16px",
+                  maxWidth: "150px",
+                  minWidth: "140px",
+                  textAlign: "center",
+                  display: "flex",
+                  justifyContent: "center",
+                },
+                "& .MuiSelect-icon": {
+                  right: "8px", // keep dropdown arrow aligned
+                },
+              }}
+            >
+              <Select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                displayEmpty
+                renderValue={(selected) => {
+                  if (selected === "default") {
+                    return <span className="text-gray-500">Sort By</span>;
+                  }
+                  return selected === "priceLowHigh"
+                    ? "Price: Low → High"
+                    : selected === "priceHighLow"
+                    ? "Price: High → Low"
+                    : selected === "nameAZ"
+                    ? "Name: A-Z"
+                    : "Name: Z-A";
+                }}
+              >
+                <MenuItem value="priceLowHigh">Price: Low → High</MenuItem>
+                <MenuItem value="priceHighLow">Price: High → Low</MenuItem>
+                <MenuItem value="nameAZ">Name: A-Z</MenuItem>
+                <MenuItem value="nameZA">Name: Z-A</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+        </div>
+
+        {/* Main Card Container */}
+        <div className="max-w-7xl mx-auto rounded-2xl shadow-sm p-6 relative bg-white flex h-[80vh]">
+          {/* Filters Sidebar */}
+          <aside className="hidden lg:block w-1/4 border-r border-dashed border-gray-300">
+            <div className="sticky top-0 overflow-y-auto p-4">
               {renderFilters()}
-            </aside>
+            </div>
+          </aside>
+          {/* Product Grid Section */}
+          <main className="lg:w-3/4 w-full pl-6 overflow-y-auto">
+            <div className="lg:hidden mb-4">
+              <Button
+                variant="contained"
+                onClick={() => setOpenFilters(true)}
+                startIcon={<FilterListIcon />}
+              >
+                Filters
+              </Button>
+            </div>
 
             {/* Product Grid */}
-            <main className="lg:col-span-3 w-full">
-              <div className="flex justify-between mb-4 lg:justify-end items-center gap-4">
-                <FormControl size="small" sx={{ minWidth: 90 }}>
-                  <Select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    displayEmpty
-                    sx={{
-                      borderRadius: "17px",
-                      backgroundColor: "var(--cards-bg)",
-                      color: "var(--text-color)",
-                      fontWeight: 500,
-                      px: 2,
-                      py: 0.5,
-                      "& .MuiOutlinedInput-notchedOutline": { border: "none" },
-                      "& .MuiSelect-icon": { color: "var(--primary-color)" },
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pr-2">
+              {filteredProducts.length > 0 ? (
+                filteredProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className="flex-shrink-0 w-full flex flex-col cursor-pointer"
+                    onClick={() =>
+                      navigate(`/product/${slugify(product.name)}`, {
+                        state: { id: product.id },
+                      })
+                    }
+                    style={{
+                      opacity: product.stock_status === "outofstock" ? 0.6 : 1,
                     }}
                   >
-                    <MenuItem value="default">Sort By</MenuItem>
-                    <MenuItem value="priceLowHigh">Price: Low to High</MenuItem>
-                    <MenuItem value="priceHighLow">Price: High to Low</MenuItem>
-                    <MenuItem value="nameAZ">Name: A-Z</MenuItem>
-                    <MenuItem value="nameZA">Name: Z-A</MenuItem>
-                  </Select>
-                </FormControl>
-
-                <div className="lg:hidden">
-                  <Button
-                    variant="contained"
-                    onClick={() => setOpenFilters(true)}
-                    startIcon={<FilterListIcon />}
-                    sx={{
-                      backgroundColor: "var(--primary-color)",
-                      color: "var(--bg-color)",
-                      borderRadius: "17px",
-                      textTransform: "none",
-                      px: 4,
-                      py: 1.4,
-                      fontWeight: 500,
-                      boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
-                      "&:hover": {
-                        backgroundColor: "darkgreen",
-                        boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-                      },
-                    }}
-                  >
-                    Filters
-                  </Button>
-                </div>
-              </div>
-
-              {/* Product Grid - Removed scrollable container */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pr-2">
-                {filteredProducts.length > 0 ? (
-                  filteredProducts.map((p) => (
+                    {/* Image with random background */}
                     <div
-                      key={p.id}
-                      className="rounded-xl p-5 shadow-sm hover:shadow-md transition flex flex-col cursor-pointer"
+                      className="w-full aspect-square rounded-2xl flex items-center justify-center overflow-hidden p-4"
                       style={{
-                        opacity: p.stock_status === "outofstock" ? 0.6 : 1,
+                        backgroundColor: getRandomBg(),
+                        filter:
+                          product.stock_status === "outofstock"
+                            ? "grayscale(100%)"
+                            : "none",
                       }}
-                      // In your Shop component
-                      onClick={() =>
-                        navigate(`/product/${slugify(p.name)}`, {
-                          state: { id: p.id },
-                        })
-                      }
                     >
-                      {/* Image */}
-                      <div
-                        className="aspect-square flex items-center justify-center mb-4 bg-gray-50 dark:bg-gray-200 rounded-lg"
-                        style={{
-                          filter:
-                            p.stock_status === "outofstock"
-                              ? "grayscale(100%)"
-                              : "none",
-                        }}
-                      >
-                        <img
-                          src={p.image}
-                          alt={p.name}
-                          className="max-h-72 object-contain"
-                          style={{
-                            filter:
-                              p.stock_status === "outofstock"
-                                ? "grayscale(100%)"
-                                : "none",
-                          }}
-                        />
-                      </div>
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
 
-                      {/* Product Info */}
-                      <h3
-                        className="font-semibold text-sm mb-2"
-                        style={{
-                          color: "var(--text-color)",
-                          fontFamily: "var(--font-poppins)",
-                          lineHeight: 1.2,
-                        }}
-                      >
-                        {p.name}
-                      </h3>
+                    {/* Details */}
+                    <div className="mt-4 p-2 flex flex-col gap-2">
+                      <h3 className="text-lg">{product.name}</h3>
 
-                      <div className="flex items-center justify-between mb-3">
+                      {/* Prices */}
+                      <div className="flex items-center justify-between mt-1">
                         <div className="flex items-center gap-2">
-                          <span
-                            className="text-base font-semibold"
-                            style={{ color: "var(--primary-color)" }}
-                          >
-                            ₹ {Number(p.price).toFixed(2)}
+                          <span className="text-lg font-medium">
+                            ₹ {Number(product.price).toFixed(2)}
                           </span>
-                          <span
-                            className="text-xs line-through"
-                            style={{ color: "var(--text-color)" }}
-                          >
-                            ₹ {Number(p.oldPrice).toFixed(2)}
+                          <span className="line-through text-gray-400">
+                            ₹ {Number(product.oldPrice).toFixed(2)}
                           </span>
                         </div>
                       </div>
 
-                      {/* Shop Now Button */}
-                      <div className="flex justify-center items-center h-full">
-                        <button
-                          className="relative w-full px-4 py-2 flex items-center justify-center transition"
-                          style={{
-                            backgroundColor: "var(--primary-color)",
-                            color: "var(--bg-color)",
-                            fontFamily: "var(--font-poppins)",
-                            fontWeight: 500,
-                            borderTopLeftRadius: "16px",
-                            borderTopRightRadius: "6px",
-                            borderBottomRightRadius: "16px",
-                            borderBottomLeftRadius: "6px",
-                            pointerEvents:
-                              p.stock_status === "outofstock" ? "none" : "auto",
-                          }}
-                          onClick={(e) => {
-                            e.stopPropagation(); // prevent card click
-                            navigate(`/product/${slugify(p.name)}`, {
-                              state: { id: p.id },
-                            });
-                          }}
-                        >
-                          <span>Shop Now</span>
-                        </button>
-                      </div>
+                      {/* Shop Now button */}
+                      <button
+                        className="relative mt-4 w-full bg-[#EFEFEF] rounded-[15px] py-3 px-5 font-medium hover:bg-gray-200 transition"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/product/${slugify(product.name)}`, {
+                            state: { id: product.id },
+                          });
+                        }}
+                        disabled={product.stock_status === "outofstock"}
+                      >
+                        <span className="block text-center">
+                          {product.stock_status === "outofstock"
+                            ? "Out of Stock"
+                            : "Shop Now"}
+                        </span>
+                        {product.stock_status !== "outofstock" && (
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-white shadow">
+                            <ArrowUpRight size={16} />
+                          </span>
+                        )}
+                      </button>
                     </div>
-                  ))
-                ) : (
-                  <div className="col-span-full flex flex-col items-center justify-start h-80">
-                    <img
-                      src={NoProductsImg} // imported image
-                      alt="No products found"
-                      className="max-h-full object-contain mt-4"
-                    />
                   </div>
-                )}
-              </div>
-            </main>
-          </div>
+                ))
+              ) : (
+                <div className="col-span-full flex flex-col items-center justify-start h-80">
+                  <img
+                    src={NoProductsImg}
+                    alt="No products found"
+                    className="max-h-full object-contain mt-4"
+                  />
+                </div>
+              )}
+            </div>
+          </main>
         </div>
 
+        {/* Filters Dialog (Mobile) */}
         <Dialog
           open={openFilters}
           onClose={() => setOpenFilters(false)}
           fullWidth
+          maxWidth="xs"
+          PaperProps={{
+            style: {
+              borderRadius: "20px",
+              padding: "16px",
+              backgroundColor: "white",
+            },
+          }}
         >
-          <DialogContent>{renderFilters()}</DialogContent>
+          <DialogContent>
+            {renderFilters()}
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={() => setOpenFilters(false)}
+              startIcon={<TransitEnterexitIcon />}
+              sx={{ mt: 4 }}
+            >
+              Apply Filters
+            </Button>
+          </DialogContent>
         </Dialog>
       </div>
     </Gradient>

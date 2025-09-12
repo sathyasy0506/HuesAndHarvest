@@ -6,7 +6,7 @@ import { ENDPOINTS } from "../api/api";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -101,7 +101,9 @@ const Header = () => {
 
   const navigation = [
     { name: "HOME", path: "/" },
-    { name: "SHOP", path: "/shop" },
+    { name: "SNACKS", path: "/shop" },
+    { name: "COMBOS", path: "/shop" },
+    { name: "ABOUT", path: "/about" },
   ];
 
   const isActive = (path) =>

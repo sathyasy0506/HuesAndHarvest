@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Encode+Sans+Expanded:wght@100;200;300;400;500;600;700;800;900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,12 +13,13 @@
   --sho-bg-color: #ffffff;
   --dark-gold-color: #b8860b;
   --font-poppins: 'Poppins', sans-serif;
+  --font-encode: 'Encode Sans Expanded', sans-serif;
   --font-outfit: 'Outfit', sans-serif;
   --black: #000000;
   --white: #ffffff;
 
   /* Additional colors for dashboard */
-  --secondary-bg: #f8fafc;
+  --secondary-bg: #ffffff;
   --border-color: #e2e8f0;
   --muted-text: #64748b;
   --accent-color: #234541;
