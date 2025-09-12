@@ -43,7 +43,8 @@ function ProductListing({ excludeId }) {
 
   const scroll = (direction) => {
     if (scrollRef.current) {
-      const scrollAmount = 300;
+      const cardWidth = scrollRef.current.offsetWidth / 4; // 4 per view
+      const scrollAmount = cardWidth * 4; // jump one "page"
       scrollRef.current.scrollBy({
         left: direction === "left" ? -scrollAmount : scrollAmount,
         behavior: "smooth",
@@ -53,7 +54,7 @@ function ProductListing({ excludeId }) {
 
   return (
     <section className="w-full  py-12">
-      <div className=" mx-auto">
+      <div className=" max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row items-center justify-between mb-10 gap-4 md:gap-0">
           <div className="text-center w-full flex justify-center flex-col gap-4">
@@ -94,12 +95,13 @@ function ProductListing({ excludeId }) {
           {/* Product Container */}
           <div
             ref={scrollRef}
-            className="flex gap-6 overflow-x-auto scroll-smooth py-2 scrollbar-hide"
+            className="flex overflow-x-auto scroll-smooth py-2 scrollbar-hide"
+            style={{ scrollSnapType: "x mandatory" }}
           >
             {products.map((product) => (
               <div
                 key={product.id}
-                className="flex-shrink-0 w-72 flex flex-col cursor-pointer"
+                className="flex-shrink-0 w-1/4 px-3 flex flex-col cursor-pointer snap-start"
                 onClick={() =>
                   navigate(`/product/${slugify(product.name)}`, {
                     state: { id: product.id },
@@ -149,7 +151,7 @@ function ProductListing({ excludeId }) {
                   <button
                     className="relative mt-4 w-full bg-[#EFEFEF] rounded-[15px] py-3 px-5 font-medium hover:bg-gray-200 transition"
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent triggering card click
+                      e.stopPropagation();
                       navigate(`/product/${slugify(product.name)}`, {
                         state: { id: product.id },
                       });

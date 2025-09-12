@@ -1,34 +1,35 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import LogoDark from "../assets/images/dark.png";
-import { Search, ShoppingBag, User, Sun, Moon, X } from "lucide-react";
+import LogoDark from "../assets/images/H&H.png";
+import { Search, ShoppingBag, User, X } from "lucide-react";
 import { ENDPOINTS } from "../api/api";
+import { useAuth } from "../contexts/AuthContext"; // ✅ useAuth
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
+  const [products, setProducts] = useState([]);
   const searchContainerRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
-  const [products, setProducts] = useState([]);
 
-  // Slugify function (same as in Shop component)
+  const { user } = useAuth(); // ✅ check login state
+
+  // Slugify function
   const slugify = (name) =>
     name
       .toLowerCase()
-      .replace(/\s+/g, "-") // spaces → hyphens
-      .replace(/[^\w-]+/g, ""); // remove special characters
+      .replace(/\s+/g, "-")
+      .replace(/[^\w-]+/g, "");
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await fetch(ENDPOINTS.LIST_PRODUCTS());
         const data = await response.json();
-        // Map to only include id, name, price, image
         const formatted = data.products.map((p) => ({
           id: p.id,
           name: p.name,
@@ -40,15 +41,13 @@ const Header = () => {
         console.error("Failed to fetch products:", error);
       }
     };
-
     fetchProducts();
   }, []);
 
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-    }, 300); // 300ms debounce
-
+    }, 300);
     return () => clearTimeout(handler);
   }, [searchTerm]);
 
@@ -67,34 +66,15 @@ const Header = () => {
         setSearchTerm("");
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  useEffect(() => {
-    const storedPreference = localStorage.getItem("darkMode");
-    const initialDarkMode =
-      storedPreference !== null ? JSON.parse(storedPreference) : false;
-    setDarkMode(initialDarkMode);
-  }, []);
-
-  useEffect(() => {
-    const root = document.documentElement;
-    if (darkMode) root.classList.add("dark");
-    else root.classList.remove("dark");
-    localStorage.setItem("darkMode", JSON.stringify(darkMode));
-  }, [darkMode]);
 
   // Scroll listener
   useEffect(() => {
     const handleScroll = () => {
-      const currentScroll = window.scrollY;
-      setIsScrolled(currentScroll > 50);
+      setIsScrolled(window.scrollY > 50);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -113,8 +93,6 @@ const Header = () => {
 
   const headerTextColor = isScrolled
     ? "text-white"
-    : darkMode
-    ? "text-white"
     : location.pathname === "/" ||
       location.pathname === "/home" ||
       location.pathname === "/auth"
@@ -125,9 +103,9 @@ const Header = () => {
     <header
       className="fixed top-0 left-0 w-full z-50"
       style={{
-        backgroundColor: isScrolled ? "rgba(35, 69, 65, 0.6)" : "transparent", // semi-transparent
-        backdropFilter: isScrolled ? "blur(10px)" : "none", // blur effect
-        WebkitBackdropFilter: isScrolled ? "blur(10px)" : "none", // for Safari
+        backgroundColor: isScrolled ? "rgba(35, 69, 65, 0.6)" : "transparent",
+        backdropFilter: isScrolled ? "blur(10px)" : "none",
+        WebkitBackdropFilter: isScrolled ? "blur(10px)" : "none",
         transition: "background-color 0.3s, backdrop-filter 0.3s",
       }}
     >
@@ -138,7 +116,7 @@ const Header = () => {
             <img
               src={LogoDark}
               alt="Hues & Harvest Logo"
-              className="h-40 md:h-44 w-auto"
+              className="h-18 md:h-20 w-auto"
             />
           </Link>
 
@@ -163,23 +141,19 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* RIGHT (Icons + Dark Mode - desktop) */}
+          {/* RIGHT (Icons - desktop) */}
           <div className="hidden md:flex items-center gap-6 relative">
-            {/* Search container - fixed width to prevent layout shift */}
+            {/* Search */}
             <div
               className="relative w-8 h-8 flex items-center justify-center"
               ref={searchContainerRef}
             >
               {showSearch ? (
-                <div
-                  className="absolute right-0 top-0 bg-white  rounded-md shadow-lg z-50 border border-gray-200 dark:border-gray-700"
-                  style={{ backgroundColor: "var(--sho-bg-color)" }}
-                >
+                <div className="absolute right-0 top-0 bg-white rounded-md shadow-lg z-50 border border-gray-200">
                   <div className="flex items-center p-1">
                     <input
                       type="text"
-                      className="w-64 p-2 rounded outline-none text-black dark:text-white"
-                      style={{ backgroundColor: "var(--sho-bg-color)" }}
+                      className="w-64 p-2 rounded outline-none text-black"
                       placeholder="Search products..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -190,18 +164,18 @@ const Header = () => {
                         setShowSearch(false);
                         setSearchTerm("");
                       }}
-                      className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
+                      className="p-2 text-gray-500 hover:text-gray-700"
                     >
                       <X className="w-4 h-4" />
                     </button>
                   </div>
 
                   {searchTerm && filteredProducts.length > 0 && (
-                    <div className="absolute top-full left-0 w-full bg-white dark:bg-gray-800 mt-1 rounded-md shadow-lg max-h-60 overflow-y-auto border border-gray-200 dark:border-gray-700">
+                    <div className="absolute top-full left-0 w-full bg-white mt-1 rounded-md shadow-lg max-h-60 overflow-y-auto border border-gray-200">
                       {filteredProducts.map((product) => (
                         <div
                           key={product.id}
-                          className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                          className="flex items-center gap-2 p-2 hover:bg-gray-100 cursor-pointer"
                           onClick={() => {
                             navigate(`/product/${slugify(product.name)}`, {
                               state: { id: product.id },
@@ -216,10 +190,10 @@ const Header = () => {
                             className="w-10 h-10 object-cover rounded"
                           />
                           <div className="flex flex-col">
-                            <span className="font-medium text-gray-900 dark:text-white">
+                            <span className="font-medium text-gray-900">
                               {product.name}
                             </span>
-                            <span className="text-sm text-gray-500 dark:text-gray-300">
+                            <span className="text-sm text-gray-500">
                               {product.price}
                             </span>
                           </div>
@@ -228,7 +202,7 @@ const Header = () => {
                     </div>
                   )}
                   {searchTerm && filteredProducts.length === 0 && (
-                    <div className="absolute top-full left-0 w-full p-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-300 rounded-md shadow-lg border border-gray-200 dark:border-gray-700">
+                    <div className="absolute top-full left-0 w-full p-2 bg-white text-gray-500 rounded-md shadow-lg border border-gray-200">
                       No products found
                     </div>
                   )}
@@ -243,31 +217,25 @@ const Header = () => {
               )}
             </div>
 
-            <Link to="/cart">
-              <button
-                className={`${headerTextColor} hover:scale-110 transition`}
-              >
-                <ShoppingBag className="w-5 h-5" />
-              </button>
-            </Link>
-            <Link to="/auth">
+            {/* Cart (only if logged in) */}
+            {user && (
+              <Link to="/cart">
+                <button
+                  className={`${headerTextColor} hover:scale-110 transition`}
+                >
+                  <ShoppingBag className="w-5 h-5" />
+                </button>
+              </Link>
+            )}
+
+            {/* User → Auth or Account */}
+            <Link to={user ? "/account" : "/auth"}>
               <button
                 className={`${headerTextColor} hover:scale-110 transition`}
               >
                 <User className="w-5 h-5" />
               </button>
             </Link>
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className={`${headerTextColor} hover:scale-110 transition`}
-              title="Toggle Dark Mode"
-            >
-              {darkMode ? (
-                <Sun className="w-6 h-6" />
-              ) : (
-                <Moon className="w-6 h-6" />
-              )}
-            </button>
           </div>
 
           {/* MOBILE HEADER */}
@@ -304,7 +272,7 @@ const Header = () => {
               <img
                 src={LogoDark}
                 alt="Hues & Harvest Logo"
-                className="h-40 md:h-44 w-auto"
+                className="h-16 md:h-20 w-auto"
               />
             </Link>
 
@@ -315,11 +283,17 @@ const Header = () => {
               >
                 <Search className="w-6 h-6" />
               </button>
-              <button
-                className={`${headerTextColor} hover:scale-110 transition`}
-              >
-                <ShoppingBag className="w-6 h-6" />
-              </button>
+
+              {/* Cart only if logged in */}
+              {user && (
+                <Link to="/cart">
+                  <button
+                    className={`${headerTextColor} hover:scale-110 transition`}
+                  >
+                    <ShoppingBag className="w-6 h-6" />
+                  </button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -327,7 +301,7 @@ const Header = () => {
 
       {/* MOBILE MENU */}
       <div
-        className={`fixed top-20 left-0 w-full h-[calc(100vh-5rem)] z-40 bg-[var(--sho-bg-color)] transform transition-transform duration-300 ease-in-out
+        className={`fixed top-20 left-0 w-full h-[calc(100vh-5rem)] z-40 bg-white transform transition-transform duration-300 ease-in-out
           ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         <nav className="flex flex-col items-center justify-center h-full gap-8">
@@ -338,41 +312,26 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(false)}
               className={`text-2xl font-semibold transition ${
                 isActive(item.path)
-                  ? "text-white scale-105 -translate-y-0.5"
-                  : "text-white"
-              } hover:text-white`}
+                  ? "text-black scale-105 -translate-y-0.5"
+                  : "text-black"
+              } hover:text-black`}
               style={{ fontFamily: "'Poppins', sans-serif" }}
             >
               {item.name}
             </Link>
           ))}
 
-          <button
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="text-2xl font-semibold text-white hover:text-white transition"
-            style={{ fontFamily: "'Poppins', sans-serif" }}
-          >
-            Account
-          </button>
-
-          <button
-            onClick={() => {
-              setDarkMode(!darkMode);
-              setIsMobileMenuOpen(false);
-            }}
-            className="flex items-center gap-2 text-xl font-medium text-white hover:text-white transition"
-            style={{ fontFamily: "'Poppins', sans-serif" }}
-          >
-            {darkMode ? (
-              <>
-                <Sun className="w-6 h-6" /> Light Mode
-              </>
-            ) : (
-              <>
-                <Moon className="w-6 h-6" /> Dark Mode
-              </>
-            )}
-          </button>
+          {/* Account only if logged in */}
+          {user && (
+            <Link
+              to="/account"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-2xl font-semibold text-black hover:text-black transition"
+              style={{ fontFamily: "'Poppins', sans-serif" }}
+            >
+              Account
+            </Link>
+          )}
         </nav>
       </div>
 
@@ -381,20 +340,16 @@ const Header = () => {
         <div
           className="fixed inset-0 z-50 flex items-start justify-center pt-20 md:hidden"
           style={{
-            backgroundColor: "rgba(35, 69, 65, 0.6)", // same as desktop semi-transparent
+            backgroundColor: "rgba(35, 69, 65, 0.6)",
             backdropFilter: "blur(10px)",
             WebkitBackdropFilter: "blur(10px)",
           }}
         >
-          <div
-            className="w-full max-w-md mx-4 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700"
-            style={{ backgroundColor: "var(--sho-bg-color)" }}
-          >
-            <div className="flex items-center p-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="w-full max-w-md mx-4 rounded-lg shadow-xl border border-gray-200 bg-white">
+            <div className="flex items-center p-4 border-b border-gray-200">
               <input
                 type="text"
-                className="flex-1 p-2 rounded outline-none text-black dark:text-white"
-                style={{ backgroundColor: "var(--sho-bg-color)" }}
+                className="flex-1 p-2 rounded outline-none text-black"
                 placeholder="Search products..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -405,7 +360,7 @@ const Header = () => {
                   setShowSearch(false);
                   setSearchTerm("");
                 }}
-                className="ml-2 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
+                className="ml-2 p-2 text-gray-500 hover:text-gray-700"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -415,7 +370,7 @@ const Header = () => {
                 filteredProducts.map((product) => (
                   <div
                     key={product.id}
-                    className="flex items-center gap-3 p-3 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                    className="flex items-center gap-3 p-3 border-b border-gray-100 hover:bg-gray-100 cursor-pointer"
                     onClick={() => {
                       setShowSearch(false);
                       setSearchTerm("");
@@ -430,17 +385,15 @@ const Header = () => {
                       className="w-12 h-12 object-cover rounded"
                     />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900 dark:text-white">
+                      <p className="font-medium text-gray-900">
                         {product.name}
                       </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-300">
-                        {product.price}
-                      </p>
+                      <p className="text-sm text-gray-500">{product.price}</p>
                     </div>
                   </div>
                 ))
               ) : searchTerm ? (
-                <p className="p-4 text-center text-gray-500 dark:text-gray-300">
+                <p className="p-4 text-center text-gray-500">
                   No products found
                 </p>
               ) : null}
