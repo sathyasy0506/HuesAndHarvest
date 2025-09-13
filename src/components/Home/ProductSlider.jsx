@@ -39,8 +39,11 @@ function ProductCard({ product, onClick, emphasized }) {
       {/* Green blurry overlay for side cards */}
       {!emphasized && (
         <div
-          className="absolute inset-0 backdrop-blur-sm rounded-2xl z-10"
-          style={{ backgroundColor: "rgba(84, 136, 109, 0.6)" }} // #54886D with 60% opacity
+          className="absolute inset-0 rounded-2xl z-20"
+          style={{
+            backgroundColor: "rgba(84, 136, 109, 0.6)",
+            backdropFilter: "blur(1000px)", // heavy blur
+          }}
         ></div>
       )}
 

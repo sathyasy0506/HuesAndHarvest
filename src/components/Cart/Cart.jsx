@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Minus, Plus, X, Shield, CreditCard, Truck } from "lucide-react";
 import Gradient from "../Background/Gradient";
+import { useCart } from "../../contexts/CartContext"; // ✅ add this
 
 const BASE_URL = "https://admin.huesandharvest.com/api";
 
@@ -8,6 +9,7 @@ const Cart = () => {
   const [items, setItems] = useState([]);
   const [totals, setTotals] = useState({ subtotal: "0.00", total: "0.00" });
   const [loading, setLoading] = useState(true);
+  const { setCartCount, fetchCartCount } = useCart(); // ✅ get context
 
   const token = localStorage.getItem("hh_token"); // 🔑 Make sure you store token after login
 
@@ -25,6 +27,9 @@ const Cart = () => {
       if (data.success) {
         setItems(data.items);
         setTotals(data.totals);
+
+        // ✅ update global count
+        setCartCount(data.items.reduce((sum, i) => sum + i.quantity, 0));
       } else {
         console.error("Cart fetch failed:", data.message);
       }
@@ -34,6 +39,7 @@ const Cart = () => {
       setLoading(false);
     }
   };
+
   // ✅ Update Quantity
   const updateQuantity = async (productId, action) => {
     let newItems;
@@ -83,7 +89,9 @@ const Cart = () => {
       const data = await res.json();
       if (!data.success) {
         console.error("❌ Backend update failed:", data.message);
-        fetchCart(); // fallback → refresh from server
+        fetchCart(); // fallback → refresh
+      } else {
+        fetchCartCount(); // ✅ update header count
       }
     } catch (err) {
       console.error("⚠️ API error:", err);
@@ -125,6 +133,8 @@ const Cart = () => {
       if (!data.success) {
         console.error("❌ Remove failed:", data.message);
         fetchCart(); // fallback refresh
+      } else {
+        fetchCartCount(); // ✅ update header count
       }
     } catch (err) {
       console.error("⚠️ Remove error:", err);

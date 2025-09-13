@@ -24,6 +24,10 @@ import AboutUs from "./components/AboutUs/AboutUs";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Toaster from "./components/Common/Toaster";
+import { CartProvider } from "./contexts/CartContext";
+import SingleBlog from "./components/Blog/SingleBlog";
+import BlogCard from "./components/Blog/BlogCard";
+import BlogList from "./components/Blog/BlogList";
 
 // ✅ Protected Route Wrapper
 const ProtectedRoute = ({ children, requiresAuth }) => {
@@ -39,61 +43,77 @@ const ProtectedRoute = ({ children, requiresAuth }) => {
 };
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  const [splashDone, setSplashDone] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const footerRef = useRef(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 3000);
+    // ⏳ Ensure splash loader shows for at least 2s
+    const timer = setTimeout(() => setSplashDone(true), 2000);
     return () => clearTimeout(timer);
   }, []);
+
+  // final loader state depends on BOTH
+  const loading = !(splashDone && dataLoaded);
+
+  const handleDataLoaded = () => {
+    setDataLoaded(true);
+  };
 
   return (
     <Router>
       <AuthProvider>
         <ScrollToTop />
-        <GlobalCursor />
-        <div className="min-h-screen flex flex-col relative">
-          <Header />
-          <div className="pt-16 max-w-8xl mx-auto w-full">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<AboutUs />} />
-              <Route path="/shop" element={<Shop />} />
-              <Route path="/product/:productName" element={<ProductPage />} />
-              <Route path="/reviews" element={<RatingsAndReviews />} />
+        <CartProvider>
+          <GlobalCursor />
+          <div className="min-h-screen flex flex-col relative">
+            <Header />
+            <div className="pt-16 max-w-8xl mx-auto w-full">
+              <Routes>
+                <Route
+                  path="/"
+                  element={<Home onDataLoaded={handleDataLoaded} />}
+                />
+                <Route path="/about" element={<AboutUs />} />
+                <Route path="/shop" element={<Shop />} />
+                <Route path="/product/:productName" element={<ProductPage />} />
+                <Route path="/reviews" element={<RatingsAndReviews />} />
+                <Route path="/blog" element={<BlogList />} />
+                <Route path="/blog/:id" element={<SingleBlog />} />
 
-              {/* ✅ Protected Routes */}
-              <Route
-                path="/cart"
-                element={
-                  <ProtectedRoute requiresAuth={true}>
-                    <Cart />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/account"
-                element={
-                  <ProtectedRoute requiresAuth={true}>
-                    <AccountDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/auth"
-                element={
-                  <ProtectedRoute requiresAuth={false}>
-                    <AuthPage />
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
+                {/* ✅ Protected Routes */}
+                <Route
+                  path="/cart"
+                  element={
+                    <ProtectedRoute requiresAuth={true}>
+                      <Cart />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/account"
+                  element={
+                    <ProtectedRoute requiresAuth={true}>
+                      <AccountDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/auth"
+                  element={
+                    <ProtectedRoute requiresAuth={false}>
+                      <AuthPage />
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+            </div>
+            <Footer ref={footerRef} />
+            <ScrollIndicator footerRef={footerRef} />
           </div>
-          <Footer ref={footerRef} />
-          <ScrollIndicator footerRef={footerRef} />
-        </div>
-        <Loader isLoading={loading} />
-        <Toaster />
+          <Loader isLoading={loading} />
+          <Toaster />
+        </CartProvider>
       </AuthProvider>
     </Router>
   );

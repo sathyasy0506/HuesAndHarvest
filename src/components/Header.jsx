@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import LogoDark from "../assets/images/H&H.png";
 import { Search, ShoppingBag, User, X } from "lucide-react";
 import { ENDPOINTS } from "../api/api";
+import { useCart } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext"; // ✅ useAuth
 
 const Header = () => {
@@ -12,10 +13,10 @@ const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
   const [products, setProducts] = useState([]);
+  const { cartCount, fetchCartCount } = useCart(); // ✅ from context
   const searchContainerRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
-
   const { user } = useAuth(); // ✅ check login state
 
   // Slugify function
@@ -44,6 +45,10 @@ const Header = () => {
     fetchProducts();
   }, []);
 
+  const token = localStorage.getItem("hh_token"); // 🔑 stored after login
+
+  // ✅ Fetch Cart Count is imported from useCart context, no need to redeclare here
+
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
@@ -70,6 +75,10 @@ const Header = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (user) fetchCartCount();
+  }, [user, location]);
+
   // Scroll listener
   useEffect(() => {
     const handleScroll = () => {
@@ -84,6 +93,7 @@ const Header = () => {
     { name: "SNACKS", path: "/shop" },
     { name: "COMBOS", path: "/shop" },
     { name: "ABOUT", path: "/about" },
+    { name: "BLOG", path: "/blog" },
   ];
 
   const isActive = (path) =>
@@ -95,7 +105,8 @@ const Header = () => {
     ? "text-white"
     : location.pathname === "/" ||
       location.pathname === "/home" ||
-      location.pathname === "/auth"
+      location.pathname === "/auth" ||
+      location.pathname.startsWith("/blog") // ✅ blogs included
     ? "text-white"
     : "text-black";
 
@@ -219,12 +230,15 @@ const Header = () => {
 
             {/* Cart (only if logged in) */}
             {user && (
-              <Link to="/cart">
-                <button
-                  className={`${headerTextColor} hover:scale-110 transition`}
-                >
-                  <ShoppingBag className="w-5 h-5" />
-                </button>
+              <Link to="/cart" className="relative">
+                <ShoppingBag
+                  className={`${headerTextColor} w-5 h-5 hover:scale-110 transition`}
+                />
+                {cartCount > 0 && (
+                  <span className="absolute -top-[6px] -right-2 bg-red-600 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
               </Link>
             )}
 
@@ -286,12 +300,15 @@ const Header = () => {
 
               {/* Cart only if logged in */}
               {user && (
-                <Link to="/cart">
-                  <button
-                    className={`${headerTextColor} hover:scale-110 transition`}
-                  >
-                    <ShoppingBag className="w-6 h-6" />
-                  </button>
+                <Link to="/cart" className="relative">
+                  <ShoppingBag
+                    className={`${headerTextColor} w-6 h-6 hover:scale-110 transition`}
+                  />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-[6px] -right-2 bg-red-600 text-white text-[9px] font-bold rounded-full w-4 h-4  flex items-center justify-center">
+                      {cartCount}
+                    </span>
+                  )}
                 </Link>
               )}
             </div>

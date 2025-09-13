@@ -8,7 +8,7 @@ const Gradient = ({ children }) => {
     return Array.from({ length: blobCount }, (_, i) => ({
       id: i,
       x: Math.random() < 0.5 ? Math.random() * 20 : 80 + Math.random() * 20,
-      y: Math.random() * 100,
+      y: Math.random() * 80, // ✅ capped at 80%, so no blobs near bottom
       size: Math.random() * 400 + 400, // bigger: 400px – 800px
     }));
   };

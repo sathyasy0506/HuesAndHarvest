@@ -26,6 +26,8 @@ const RatingStars = ({ rating }) => (
 const Testimonials = () => {
   const [reviews, setReviews] = useState([]);
   const scrollRef = useRef(null);
+  const [visibleCount, setVisibleCount] = useState(3);
+  const [page, setPage] = useState(0);
 
   useEffect(() => {
     fetch(ENDPOINTS.REVIEWS())
@@ -34,25 +36,37 @@ const Testimonials = () => {
       .catch((err) => console.error("Error fetching reviews:", err));
   }, []);
 
-  if (!reviews.length) return null;
+  useEffect(() => {
+    const updateVisibleCount = () => {
+      if (window.innerWidth < 640) setVisibleCount(1); // mobile
+      else if (window.innerWidth < 1024) setVisibleCount(2); // tablet
+      else setVisibleCount(3); // desktop
+    };
+    updateVisibleCount();
+    window.addEventListener("resize", updateVisibleCount);
+    return () => window.removeEventListener("resize", updateVisibleCount);
+  }, []);
 
-  // Scroll functions
+  if (!reviews || reviews.length === 0) return null; // ✅ hide if no reviews
+
+  const maxPage = Math.ceil(reviews.length / visibleCount) - 1;
+
+  const scrollToPage = (newPage) => {
+    if (!scrollRef.current) return;
+    const containerWidth = scrollRef.current.offsetWidth;
+    scrollRef.current.scrollTo({
+      left: newPage * containerWidth,
+      behavior: "smooth",
+    });
+    setPage(newPage);
+  };
+
   const scrollLeft = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({
-        left: -scrollRef.current.offsetWidth,
-        behavior: "smooth",
-      });
-    }
+    if (page > 0) scrollToPage(page - 1);
   };
 
   const scrollRight = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({
-        left: scrollRef.current.offsetWidth,
-        behavior: "smooth",
-      });
-    }
+    if (page < maxPage) scrollToPage(page + 1);
   };
 
   return (
@@ -84,22 +98,29 @@ const Testimonials = () => {
         {/* Carousel Container */}
         <div className="relative">
           {/* Left Button */}
-          <button
-            onClick={scrollLeft}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-[var(--secondary-bg)] text-[var(--accent-color)] p-2 rounded-full shadow-md hover:scale-110 transition"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
+          {reviews.length > visibleCount && (
+            <button
+              onClick={scrollLeft}
+              disabled={page === 0}
+              className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-md transition ${
+                page === 0
+                  ? "opacity-40 cursor-not-allowed"
+                  : "bg-[var(--secondary-bg)] text-[var(--accent-color)] hover:scale-110"
+              }`}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+          )}
 
           {/* Scrollable Reviews */}
           <div
             ref={scrollRef}
-            className="overflow-x-auto scrollbar-hide flex space-x-4 snap-x snap-mandatory scroll-smooth"
+            className="overflow-x-hidden flex space-x-6 sm:space-x-8 lg:space-x-[1px] snap-x snap-mandatory scroll-smooth"
           >
             {reviews.map((review) => (
               <motion.div
                 key={review.id}
-                className="snap-center shrink-0 w-full sm:w-[80%] md:w-[45%] lg:w-[30%] px-2"
+                className="snap-center shrink-0 w-full sm:w-1/2 lg:w-1/3 px-2"
                 whileHover={{ y: -5 }}
               >
                 <div
@@ -155,12 +176,19 @@ const Testimonials = () => {
           </div>
 
           {/* Right Button */}
-          <button
-            onClick={scrollRight}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[var(--secondary-bg)] text-[var(--accent-color)] p-2 rounded-full shadow-md hover:scale-110 transition"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
+          {reviews.length > visibleCount && (
+            <button
+              onClick={scrollRight}
+              disabled={page === maxPage}
+              className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-md transition ${
+                page === maxPage
+                  ? "opacity-40 cursor-not-allowed"
+                  : "bg-[var(--secondary-bg)] text-[var(--accent-color)] hover:scale-110"
+              }`}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          )}
         </div>
       </div>
     </section>

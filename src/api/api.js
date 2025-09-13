@@ -10,4 +10,5 @@ export const ENDPOINTS = {
   REVIEWS: () => `${BASE_URL}reviews.php`,
   GET_PRODUCT: (id) => `${BASE_URL}get_product.php?id=${id}`,
   PRODUCT_REVIEWS: (id) => `${BASE_URL}product_reviews.php?id=${id}`,
+  CART_COUNT: (userId) => `${BASE_URL}cart_count.php?user_id=${userId}`, // ✅ new endpoint for cart count
 };
