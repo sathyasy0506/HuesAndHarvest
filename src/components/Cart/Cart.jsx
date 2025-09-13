@@ -1,36 +1,144 @@
 import React, { useEffect, useState } from "react";
 import { Minus, Plus, X, Shield, CreditCard, Truck } from "lucide-react";
 import Gradient from "../Background/Gradient";
+import { useCart } from "../../contexts/CartContext"; // ✅ add this
 
-const BASE_URL = "https://admin.huesandharvest.com/api/";
+const BASE_URL = "https://admin.huesandharvest.com/api";
 
 const Cart = () => {
   const [items, setItems] = useState([]);
+  const [totals, setTotals] = useState({ subtotal: "0.00", total: "0.00" });
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("hh_token");
+  const { setCartCount, fetchCartCount } = useCart(); // ✅ get context
 
-  // Fetch cart on mount
+  const token = localStorage.getItem("hh_token"); // 🔑 Make sure you store token after login
+
+  // Fetch Cart
   const fetchCart = async () => {
     if (!token) return;
-
+    setLoading(true);
     try {
-      const res = await fetch(`${BASE_URL}cart.php`, {
+      const res = await fetch(`${BASE_URL}/cart.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token }),
       });
       const data = await res.json();
-
       if (data.success) {
-        setItems(data.items || []);
+        setItems(data.items);
+        setTotals(data.totals);
+
+        // ✅ update global count
+        setCartCount(data.items.reduce((sum, i) => sum + i.quantity, 0));
       } else {
-        setItems([]);
+        console.error("Cart fetch failed:", data.message);
       }
     } catch (err) {
-      console.error("Fetch cart error:", err);
-      setItems([]);
+      console.error("Cart fetch error:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // ✅ Update Quantity
+  const updateQuantity = async (productId, action) => {
+    let newItems;
+
+    // 1️⃣ Optimistic update in React state
+    setItems((prevItems) => {
+      newItems = prevItems.map((item) =>
+        item.id === productId
+          ? {
+              ...item,
+              quantity:
+                action === "increase"
+                  ? item.quantity + 1
+                  : Math.max(1, item.quantity - 1),
+              subtotal: (
+                parseFloat(item.price) *
+                (action === "increase"
+                  ? item.quantity + 1
+                  : Math.max(1, item.quantity - 1))
+              ).toFixed(2),
+            }
+          : item
+      );
+      return newItems;
+    });
+
+    // 2️⃣ Optimistically update totals
+    setTotals(() => {
+      let newSubtotal = newItems.reduce(
+        (sum, item) => sum + item.quantity * parseFloat(item.price),
+        0
+      );
+      return {
+        subtotal: newSubtotal.toFixed(2),
+        total: newSubtotal.toFixed(2),
+      };
+    });
+
+    // 3️⃣ Update backend immediately
+    try {
+      const res = await fetch(`${BASE_URL}/product_quantity.php`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, product_id: productId, action }),
+      });
+
+      const data = await res.json();
+      if (!data.success) {
+        console.error("❌ Backend update failed:", data.message);
+        fetchCart(); // fallback → refresh
+      } else {
+        fetchCartCount(); // ✅ update header count
+      }
+    } catch (err) {
+      console.error("⚠️ API error:", err);
+      fetchCart();
+    }
+  };
+
+  // ✅ Remove Item
+  const removeItem = async (itemKey) => {
+    let newItems;
+
+    // 1️⃣ Optimistic remove
+    setItems((prevItems) => {
+      newItems = prevItems.filter((item) => item.item_key !== itemKey);
+      return newItems;
+    });
+
+    // 2️⃣ Optimistically update totals
+    setTotals(() => {
+      let newSubtotal = newItems.reduce(
+        (sum, item) => sum + item.quantity * parseFloat(item.price),
+        0
+      );
+      return {
+        subtotal: newSubtotal.toFixed(2),
+        total: newSubtotal.toFixed(2),
+      };
+    });
+
+    // 3️⃣ Update backend immediately
+    try {
+      const res = await fetch(`${BASE_URL}/removecart.php`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, item_key: itemKey }),
+      });
+
+      const data = await res.json();
+      if (!data.success) {
+        console.error("❌ Remove failed:", data.message);
+        fetchCart(); // fallback refresh
+      } else {
+        fetchCartCount(); // ✅ update header count
+      }
+    } catch (err) {
+      console.error("⚠️ Remove error:", err);
+      fetchCart();
     }
   };
 
@@ -38,52 +146,11 @@ const Cart = () => {
     fetchCart();
   }, []);
 
-  // Update product quantity
-  const updateQuantity = async (productId, action) => {
-    try {
-      const res = await fetch(`${BASE_URL}product_quantity.php`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, product_id: productId, action }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setItems(data.items || []);
-      }
-    } catch (err) {
-      console.error("Update quantity error:", err);
-    }
-  };
-
-  // Remove item
-  const removeItem = async (itemKey) => {
-    try {
-      const res = await fetch(`${BASE_URL}removecart.php`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, item_key: itemKey, return_status: true }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        fetchCart(); // refresh cart
-      }
-    } catch (err) {
-      console.error("Remove item error:", err);
-    }
-  };
-
-  // Totals
-  const subtotal = items.reduce(
-    (sum, item) => sum + parseFloat(item.subtotal || 0),
-    0
-  );
-  const total = subtotal;
-
   if (loading) {
     return (
       <Gradient>
         <div className="min-h-screen flex items-center justify-center">
-          <p className="text-lg">Loading cart...</p>
+          <p className="text-lg font-semibold">Loading cart...</p>
         </div>
       </Gradient>
     );
@@ -131,13 +198,13 @@ const Cart = () => {
                         >
                           <img
                             src={item.image}
-                            alt={item.name}
+                            alt={item.title}
                             className="w-24 h-24 sm:w-28 sm:h-28 object-cover rounded-xl shadow-md mx-auto sm:mx-0"
                           />
                           <div className="flex-1">
                             <div className="flex justify-between items-start mb-2">
                               <h3 className="text-lg sm:text-xl font-semibold font-outfit">
-                                {item.name}
+                                {item.title}
                               </h3>
                               <button
                                 onClick={() => removeItem(item.item_key)}
@@ -146,6 +213,7 @@ const Cart = () => {
                                 <X className="w-5 h-5" />
                               </button>
                             </div>
+
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-4 gap-4">
                               <div className="flex items-center border-2 rounded-xl border-card-color w-fit mx-auto sm:mx-0">
                                 <button
@@ -188,6 +256,7 @@ const Cart = () => {
                       <CreditCard className="w-5 h-5" />
                       <span>Multiple Payment Options</span>
                       <Truck className="w-5 h-5" />
+                      <span>Free Shipping</span>
                     </div>
                   </div>
                 </div>
@@ -203,14 +272,13 @@ const Cart = () => {
                   <div className="space-y-3 sm:space-y-4 mb-8 text-sm sm:text-base">
                     <div className="flex justify-between opacity-80">
                       <span>Subtotal ({items.length} items)</span>
-                      <span className="font-semibold">
-                        ₹{subtotal.toFixed(2)}
-                      </span>
+                      <span className="font-semibold">₹{totals.subtotal}</span>
                     </div>
+
                     <hr className="border-card-color" />
                     <div className="flex justify-between text-lg sm:text-2xl font-bold">
                       <span>Total</span>
-                      <span>₹{total.toFixed(2)}</span>
+                      <span>₹{totals.total}</span>
                     </div>
                   </div>
 
@@ -218,7 +286,10 @@ const Cart = () => {
                     Proceed to Secure Checkout
                   </button>
 
-                  <button className="w-full py-2 sm:py-3 rounded-2xl secondary-button mb-4">
+                  <button
+                    className="w-full py-2 sm:py-3 rounded-2xl secondary-button mb-4"
+                    onClick={() => (window.location.href = "/shop")}
+                  >
                     Continue Shopping
                   </button>
 

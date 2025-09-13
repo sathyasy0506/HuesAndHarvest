@@ -3,18 +3,18 @@ import { Truck, ShieldCheck, Headphones, CreditCard } from "lucide-react";
 
 function FreshnessSection() {
   return (
-    <section className="max-w-7xl mx-auto flex flex-col md:flex-row rounded-2xl overflow-hidden justify-center">
+    <section className="max-w-7xl mx-auto flex flex-col md:flex-row rounded-2xl overflow-hidden justify-center bg-transparent">
       {/* Left section (Full Image, Larger Area) */}
-      <div className="md:w-2/3 w-full flex items-center justify-center">
+      <div className="md:w-2/3 w-full flex items-center justify-center bg-transparent">
         <img
-          src="https://shop.huesandharvest.com/wp-content/uploads/2025/09/Group-23664-1.png"
+          src="https://huesandharvest.com/assets/fresh.png"
           alt="Kiwi Promo"
-          className="w-full h-full object-contain"
+          className="w-full h-full object-contain rounded-2xl"
         />
       </div>
 
       {/* Right section (Smaller Area) */}
-      <div className="md:w-1/3 w-full bg-transparent p-8 flex flex-col justify-center space-y-6 mt-12">
+      <div className="md:w-1/3 w-full bg-transparent p-8 flex flex-col justify-center space-y-6 ">
         {/* Item 1 */}
         <div className="flex items-start space-x-4">
           <div className="w-10 h-10 flex items-center justify-center rounded-full border border-black-950 bg-transparent">

@@ -1,10 +1,7 @@
-import React from "react";
+import { useEffect } from "react";
 import Features from "./Features";
-import Process from "./Process";
 import Testimonials from "./Testimonials";
-import Newsletter from "./Newsletter";
 import Hero from "./Hero";
-import BrandStory from "./BrandStory";
 import ProductCategories from "./ProductCategories";
 import InstagramFeed from "./InstagramFeed";
 import ProductListing from "./ProductListing";
@@ -14,37 +11,50 @@ import Promotion from "./Promtion";
 import FreshInsights from "./FreshInsights";
 import FreshnessSection from "./FreshnessSection";
 import CaProductListing from "./CaProductListing";
-import ProductCarousel from "./ProductCarousel";
-import ProductSlider from "./ProductSlider";
 import ProductShowcase from "./ProductShowcase";
 
+const Home = ({ onDataLoaded }) => {
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        // 🔹 Fetch everything in parallel
+        await Promise.all([
+          fetch("/api/products").then((res) => res.json()),
+          fetch("/api/categories").then((res) => res.json()),
+          fetch("/api/insights").then((res) => res.json()),
+          fetch("/api/featured").then((res) => res.json()),
+          fetch("/api/testimonials").then((res) => res.json()),
+          fetch("/api/instagram").then((res) => res.json()),
+          // 👉 Add any other API calls your sections need
+        ]);
+      } catch (error) {
+        console.error("❌ Error loading home data:", error);
+      } finally {
+        // ✅ Always notify App, even if some calls failed
+        onDataLoaded();
+      }
+    };
 
-const Home = () => {
+    fetchAllData();
+  }, [onDataLoaded]);
+
   return (
-    <>
-      {/* Hero without background */}
-      <div className="-mt-16 overflow-hidden">
-        <Gradient>
-          <Hero />
-          <ProductCategories />
-          <ProductListing />
-          <Promotion />
-          <ProductShowcase />
-          <Features />
-          <CaProductListing />
-          <FreshnessSection />
-          <FeaturedProduct />
-          <Testimonials />
-          <FreshInsights />
-          <InstagramFeed />
-          {/* <BrandStory /> */}
-          {/* <Process /> */}
-          {/* <ProductCarousel /> */}
-          {/* <ProductSlider /> */}
-          {/* <Newsletter /> */}
-        </Gradient>
-      </div>
-    </>
+    <div className="-mt-16 overflow-hidden">
+      <Gradient>
+        <Hero />
+        <ProductCategories />
+        <ProductListing />
+        <Promotion />
+        <ProductShowcase />
+        <Features />
+        <CaProductListing />
+        <FreshnessSection />
+        <FeaturedProduct />
+        <Testimonials />
+        <FreshInsights />
+        <InstagramFeed />
+      </Gradient>
+    </div>
   );
 };
 

@@ -22,6 +22,7 @@ import Gradient from "../Background/Gradient";
 import { Star } from "lucide-react";
 import ProductListing from "../Home/ProductListing";
 import { showToast } from "../Common/Toaster"; // ✅ import this
+import { useCart } from "../../contexts/CartContext"; // ✅ import cart context
 
 const bgColors = ["#ffeae2", "#e9f7e4", "#fff9e6", "#ffe9ef"];
 
@@ -148,6 +149,7 @@ const AverageRatingCircle = ({ rating }) => {
 
 function ProductPage() {
   const [quantity, setQuantity] = useState(1);
+  const { setCartCount, fetchCartCount } = useCart(); // ✅ use cart context
   const [showModal, setShowModal] = useState(false);
   const [modalVisibleCount, setModalVisibleCount] = useState(10);
   const [product, setProduct] = useState(null);
@@ -183,8 +185,13 @@ function ProductPage() {
       const data = await response.json();
       if (data.success) {
         console.log("Cart updated:", data);
-        showToast("✅ Item added to cart!", "success");
-        // Optionally update cart state in React if you have global cart context
+        showToast("Item added to cart!", "success");
+
+        // ✅ Option 1: Refresh from backend (safer if stock rules apply)
+        await fetchCartCount();
+
+        // ✅ Option 2 (faster UI): Increment manually
+        // setCartCount((prev) => prev + quantity);
       } else {
         console.error("Cart error:", data);
         showToast("❌ " + (data.message || "Could not add item"), "error");
@@ -274,7 +281,7 @@ function ProductPage() {
   return (
     <Gradient>
       <div
-        className="min-h-screen px-4 sm:px-6 py-8 flex justify-center relative z-1 pt-20 bg-transparent mt-6"
+        className="min-h-screen px-4 sm:px-6 py-8 flex justify-center relative z-1 pt-20 bg-transparent mt-10"
         style={{
           color: "var(--text-color)",
           fontFamily: "var(--font-poppins)",
@@ -360,21 +367,34 @@ function ProductPage() {
                 </p>
               </div>
 
-              <div className="flex flex-wrap items-center gap- justify-center md:justify-start">
-                {/* Price */}
-                <div className="flex items-center gap-2">
-                  <span className="text-[23px] text-gray-900">₹{newPrice}</span>
-                  {oldPrice > 0 && (
-                    <span className="text-[20px] line-through text-gray-400">
-                      ₹{oldPrice}
-                    </span>
-                  )}
-                  {discount > 0 && (
-                    <span className="px-3 py-1 rounded-full bg-red-10 border text-red-300 text-sm font-medium">
-                      {discount}% offer
-                    </span>
-                  )}
-                </div>
+              {/* Price + Stock Badge */}
+              {/* Price Section */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[23px] text-gray-900">₹{newPrice}</span>
+                {oldPrice > 0 && (
+                  <span className="text-[20px] line-through text-gray-400">
+                    ₹{oldPrice}
+                  </span>
+                )}
+                {discount > 0 && (
+                  <span className="px-3 py-1 rounded-full bg-red-100 border text-red-500 text-sm font-medium">
+                    {discount}% OFF
+                  </span>
+                )}
+              </div>
+
+              {/* ✅ Stock Badge just below prices */}
+              <div className="mt-2">
+                {product.stock_quantity === 0 ||
+                product.stock_status === "outofstock" ? (
+                  <span className="px-3 py-1 rounded-full bg-red-500 text-white text-sm font-medium">
+                    Out of Stock
+                  </span>
+                ) : product.stock_quantity < 10 ? (
+                  <span className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 text-sm font-medium">
+                    Hurry! Only {product.stock_quantity} left
+                  </span>
+                ) : null}
               </div>
 
               {/* Buttons */}
@@ -386,6 +406,10 @@ function ProductPage() {
                     <button
                       onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                       className="w-10 h-10 flex items-center justify-center text-lg text-gray-700 border-r border-gray-300 rounded-full"
+                      disabled={
+                        product.stock_quantity === 0 ||
+                        product.stock_status === "outofstock"
+                      }
                     >
                       -
                     </button>
@@ -395,6 +419,10 @@ function ProductPage() {
                     <button
                       onClick={() => setQuantity((q) => q + 1)}
                       className="w-10 h-10 flex items-center justify-center text-lg text-gray-700 border-l border-gray-300 rounded-full"
+                      disabled={
+                        product.stock_quantity === 0 ||
+                        product.stock_status === "outofstock"
+                      }
                     >
                       +
                     </button>
@@ -402,7 +430,11 @@ function ProductPage() {
 
                   <button
                     onClick={handleAddToCart}
-                    className="flex items-center justify-center gap-2 bg-gray-800 text-white py-3 rounded-full text-[12px] flex-[2]"
+                    className="flex items-center justify-center gap-2 bg-gray-800 text-white py-3 rounded-full text-[12px] flex-[2] disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    disabled={
+                      product.stock_quantity === 0 ||
+                      product.stock_status === "outofstock"
+                    }
                   >
                     <ShoppingCart size={20} />
                     Add to Cart
@@ -410,7 +442,13 @@ function ProductPage() {
                 </div>
 
                 {/* Row 2: Buy Now */}
-                <button className="w-full border border-gray-800 py-2 rounded-full text-[20px] text-gray-900">
+                <button
+                  className="w-full border border-gray-800 py-2 rounded-full text-[20px] text-gray-900 disabled:border-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+                  disabled={
+                    product.stock_quantity === 0 ||
+                    product.stock_status === "outofstock"
+                  }
+                >
                   Buy Now
                 </button>
               </div>
@@ -456,7 +494,11 @@ function ProductPage() {
                 className="rounded-2xl overflow-hidden h-64 md:h-80"
                 style={{ borderBottomLeftRadius: "6rem" }}
               >
-                <Silk className="w-full h-full" />
+                <img
+                  src="https://huesandharvest.com/assets/banner.jpg"
+                  alt="Banner"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
 

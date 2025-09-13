@@ -94,7 +94,7 @@ const Hero = () => {
           >
             <div className="relative w-full">
               <motion.img
-                src="https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=800"
+                src="https://huesandharvest.com/assets/main.jpg?auto=compress&cs=tinysrgb&w=800"
                 alt="Premium Chips"
                 className="rounded-3xl shadow-2xl w-full"
                 whileHover={{ scale: 1.02 }}

@@ -3,25 +3,20 @@ import {
   User,
   Package,
   MapPin,
-  CreditCard,
-  Settings,
-  Heart,
-  Bell,
   Shield,
   HelpCircle,
   LogOut,
 } from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext"; // ✅ adjust path if needed
 
 const AccountSidebar = ({ activeSection, setActiveSection }) => {
+  const { logout } = useAuth(); // ✅ get logout from AuthContext
+
   const menuItems = [
     { id: "profile", label: "Profile", icon: User },
     { id: "orders", label: "Orders", icon: Package },
     { id: "addresses", label: "Addresses", icon: MapPin },
-    // { id: "payments", label: "Payment Methods", icon: CreditCard },
-    // { id: "wishlist", label: "Wishlist", icon: Heart },
-    // { id: "notifications", label: "Notifications", icon: Bell },
     { id: "security", label: "Security", icon: Shield },
-    // { id: "settings", label: "Settings", icon: Settings },
     { id: "help", label: "Help & Support", icon: HelpCircle },
   ];
 
@@ -67,6 +62,7 @@ const AccountSidebar = ({ activeSection, setActiveSection }) => {
         style={{ borderTop: "1px solid var(--border-color)" }}
       >
         <button
+          onClick={logout} // ✅ call logout
           className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-colors"
           style={{ color: "var(--error-color)" }}
         >

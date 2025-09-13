@@ -97,11 +97,11 @@ function CaProductListing() {
     : products;
 
   return (
-    <section className="w-full px-6 py-12">
-      <div className="max-w-7xl mx-auto">
+    <section className="w-full px-6 py-12 bg-transparent">
+      <div className="max-w-7xl mx-auto bg-transparent">
         {/* Header */}
         <div className="flex flex-col md:flex-row items-center justify-between mb-10 gap-4 md:gap-0">
-          <div className="text-center w-full flex justify-center flex-col gap-4">
+          <div className="text-center w-full flex justify-center flex-col gap-4 ml-40">
             <p className="text-gray-400 uppercase tracking-wide text-sm">
               Exclusive Hues & Harvest
             </p>

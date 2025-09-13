@@ -3,8 +3,8 @@ import { ArrowUpRight } from "lucide-react";
 
 const FreshInsights = () => {
   return (
-    <section className="w-full px-6 py-12">
-      <div className="max-w-7xl mx-auto">
+    <section className="w-full px-6 py-12 bg-transparent">
+      <div className="max-w-7xl mx-auto bg-transparent">
         {/* Heading */}
         <div className="mb-10 flex flex-row gap-3">
           <span className="text-gray-500  text-[32px]">|</span>
