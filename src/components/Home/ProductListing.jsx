@@ -57,7 +57,7 @@ function ProductListing({ excludeId }) {
       <div className=" max-w-7xl mx-auto bg-transparent">
         {/* Header */}
         <div className="flex flex-col md:flex-row items-center justify-between mb-10 gap-4 md:gap-0">
-          <div className="text-center w-full flex justify-center flex-col gap-4 ml-40">
+          <div className="text-center w-full flex justify-center flex-col gap-4 lg:ml-40">
             <p className="text-gray-400 uppercase tracking-wide text-sm">
               Exclusive Hues & Harvest
             </p>
@@ -101,7 +101,11 @@ function ProductListing({ excludeId }) {
             {products.map((product) => (
               <div
                 key={product.id}
-                className="flex-shrink-0 w-1/4 px-3 flex flex-col cursor-pointer snap-start"
+                className="
+        flex-shrink-0
+        w-1/2 sm:w-1/3 lg:w-1/4
+        px-3 flex flex-col cursor-pointer snap-start
+      "
                 onClick={() =>
                   navigate(`/product/${slugify(product.name)}`, {
                     state: { id: product.id },
@@ -122,26 +126,29 @@ function ProductListing({ excludeId }) {
 
                 {/* Details */}
                 <div className="mt-4 p-2 flex flex-col gap-2">
-                  <h3 className="text-lg">{product.name}</h3>
+                  <h3 className="text-base sm:text-lg font-medium">
+                    {product.name}
+                  </h3>
 
                   {/* Prices and Quantity */}
-                  <div className="flex items-center justify-between mt-1">
+                  <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-2 mt-1">
+                    {/* Prices */}
                     <div className="flex items-center gap-2">
-                      <span className="text-lg font-medium">
+                      <span className="text-sm sm:text-lg font-medium">
                         ₹ {product.price}.00
                       </span>
-                      <span className="line-through text-gray-400">
+                      <span className="line-through text-gray-400 text-xs sm:text-sm">
                         ₹ {product.oldPrice}.00
                       </span>
                     </div>
 
                     {/* Quantity */}
-                    <div className="flex items-center gap-3 border rounded-full border-gray-300">
-                      <button className="px-2 py-1 rounded-[50px] border border-gray-300">
+                    <div className="flex items-center gap-2 border rounded-full border-gray-300 px-2 self-start xl:self-auto">
+                      <button className="px-2 py-1 text-sm sm:text-base">
                         –
                       </button>
-                      <span className="text-sm">1kg</span>
-                      <button className="px-2 py-1 rounded-[50px] border border-gray-300">
+                      <span className="text-xs sm:text-sm">1kg</span>
+                      <button className="px-2 py-1 text-sm sm:text-base">
                         +
                       </button>
                     </div>
@@ -149,7 +156,7 @@ function ProductListing({ excludeId }) {
 
                   {/* Shop Now button */}
                   <button
-                    className="relative mt-4 w-full bg-[#EFEFEF] rounded-[15px] py-3 px-5 font-medium hover:bg-gray-200 transition"
+                    className="relative mt-3 sm:mt-4 w-full bg-[#EFEFEF] rounded-[12px] sm:rounded-[15px] py-2 sm:py-3 px-3 sm:px-5 font-medium hover:bg-gray-200 transition text-sm sm:text-base"
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(`/product/${slugify(product.name)}`, {
@@ -158,8 +165,8 @@ function ProductListing({ excludeId }) {
                     }}
                   >
                     <span className="block text-center">Shop Now</span>
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-white shadow">
-                      <ArrowUpRight size={16} />
+                    <span className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-white shadow">
+                      <ArrowUpRight size={14} className="sm:w-4 sm:h-4" />
                     </span>
                   </button>
                 </div>

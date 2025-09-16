@@ -5,14 +5,13 @@ import { ENDPOINTS } from "../../api/api";
 import Loader from "../Load";
 
 const FeaturedProduct = () => {
-  const productIds = [20, 15]; // Example IDs
+  const productIds = [20, 15];
   const [products, setProducts] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
-  const [direction, setDirection] = useState(0); // for slide direction
+  const [direction, setDirection] = useState(0);
 
-  // Fetch all products once
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
@@ -47,22 +46,16 @@ const FeaturedProduct = () => {
   const discount =
     oldPrice > 0 ? Math.round(((oldPrice - newPrice) / oldPrice) * 100) : 0;
 
-  // Handlers
   const handlePrev = () => {
     setDirection(-1);
-    setCurrentIndex((prev) =>
-      prev === 0 ? products.length - 1 : prev - 1
-    );
+    setCurrentIndex((prev) => (prev === 0 ? products.length - 1 : prev - 1));
   };
 
   const handleNext = () => {
     setDirection(1);
-    setCurrentIndex((prev) =>
-      prev === products.length - 1 ? 0 : prev + 1
-    );
+    setCurrentIndex((prev) => (prev === products.length - 1 ? 0 : prev + 1));
   };
 
-  // Motion Variants
   const variants = {
     enter: (dir) => ({
       x: dir > 0 ? 300 : -300,
@@ -84,15 +77,15 @@ const FeaturedProduct = () => {
   };
 
   return (
-    <section className="py-16 px-4 font-[Poppins] relative overflow-hidden bg-transparent">
+    <section className="py-12 sm:py-16 px-4 font-[Poppins] relative overflow-hidden bg-transparent">
       <div className="max-w-7xl mx-auto bg-transparent">
         {/* Section Title */}
-        <div className="mb-12 flex items-center justify-center">
+        <div className="mb-10 sm:mb-12 flex items-center justify-center text-center">
           <div className="flex flex-col gap-2">
-            <p className="text-gray-400 uppercase tracking-wider text-[19px]">
+            <p className="text-gray-400 uppercase tracking-wider text-sm sm:text-base">
               Exclusive Hues & Harvest
             </p>
-            <h2 className="text-3xl lg:text-[31px] uppercase text-gray-900">
+            <h2 className="text-2xl sm:text-3xl lg:text-[31px] uppercase text-gray-900">
               Featured Product
             </h2>
           </div>
@@ -108,14 +101,14 @@ const FeaturedProduct = () => {
               initial="enter"
               animate="center"
               exit="exit"
-              className="grid lg:grid-cols-2 gap-12 items-center"
+              className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center"
             >
               {/* Left Button */}
               <button
                 onClick={handlePrev}
-                className="absolute -left-6 top-1/2 transform -translate-y-1/2 bg-gray-100 hover:bg-gray-200 p-3 rounded-full shadow"
+                className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-gray-100 hover:bg-gray-200 p-1.5 sm:p-2 rounded-full shadow"
               >
-                <ChevronLeft size={24} />
+                <ChevronLeft size={18} />
               </button>
 
               {/* Image Section */}
@@ -124,7 +117,7 @@ const FeaturedProduct = () => {
                   initial={{ rotate: -5 }}
                   animate={{ rotate: 0 }}
                   transition={{ duration: 0.6 }}
-                  className="rounded-full bg-yellow-100 flex items-center justify-center w-[400px] h-[400px] lg:w-[500px] lg:h-[500px]"
+                  className="rounded-full bg-yellow-100 flex items-center justify-center w-64 h-64 sm:w-80 sm:h-80 lg:w-[500px] lg:h-[500px]"
                 >
                   <img
                     src={product.image}
@@ -135,56 +128,58 @@ const FeaturedProduct = () => {
               </div>
 
               {/* Product Info Section */}
-              <div className="space-y-6">
-                <h2 className="text-3xl lg:text-4xl text-gray-900">
+              <div className="space-y-5 sm:space-y-6 text-center lg:text-left">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900">
                   {product.name}
                 </h2>
 
-                <p className="text-lg leading-relaxed text-gray-600">
+                <p className="text-base sm:text-lg leading-relaxed text-gray-600">
                   {product.short_description || product.description}
                 </p>
 
-                <div className="flex items-center gap-4">
-                  <span className="text-[23px] text-gray-900">₹{newPrice}</span>
+                <div className="flex flex-wrap justify-center lg:justify-start items-center gap-3 sm:gap-4">
+                  <span className="text-xl sm:text-2xl font-semibold text-gray-900">
+                    ₹{newPrice}
+                  </span>
                   {oldPrice > 0 && (
-                    <span className="text-[20px] line-through text-gray-400">
+                    <span className="text-lg sm:text-xl line-through text-gray-400">
                       ₹{oldPrice}
                     </span>
                   )}
                   {discount > 0 && (
-                    <span className="px-3 py-1 rounded-full bg-red-100 text-red-600 text-sm font-medium">
+                    <span className="px-3 py-1 rounded-full bg-red-100 text-red-600 text-xs sm:text-sm font-medium">
                       {discount}% offer
                     </span>
                   )}
                 </div>
 
-                <div className="space-y-4 w-[379px]">
-                  <div className="flex items-center gap-4 w-full">
+                <div className="space-y-4 w-full sm:w-[379px] mx-auto lg:mx-0">
+                  <div className="flex items-center gap-3 sm:gap-4 w-full">
                     <div className="flex items-center border rounded-full overflow-hidden flex-1">
                       <button
                         onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                        className="w-10 h-10 flex items-center justify-center text-lg text-gray-700 border-r border-gray-300 rounded-full"
+                        className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-base sm:text-lg text-gray-700 border-r border-gray-300"
                       >
                         -
                       </button>
-                      <span className="px-4 text-[15px] font-medium text-gray-900">
+                      <span className="px-3 sm:px-4 text-sm sm:text-base font-medium text-gray-900">
                         {quantity}
                       </span>
                       <button
                         onClick={() => setQuantity((q) => q + 1)}
-                        className="w-10 h-10 flex items-center justify-center text-lg text-gray-700 border-l border-gray-300 rounded-full"
+                        className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-base sm:text-lg text-gray-700 border-l border-gray-300"
                       >
                         +
                       </button>
                     </div>
 
-                    <button className="flex items-center justify-center gap-2 bg-gray-800 text-white py-3 rounded-full text-[12px] flex-[2]">
-                      <ShoppingCart size={20} />
+                    <button className="flex items-center justify-center gap-1 sm:gap-2 bg-gray-800 text-white py-2 sm:py-3 rounded-full text-xs sm:text-sm flex-[2]">
+                      <ShoppingCart size={18} />
                       Add to Cart
                     </button>
                   </div>
 
-                  <button className="w-full border border-gray-800 py-2 rounded-full text-[20px] text-gray-900">
+                  <button className="w-full border border-gray-800 py-2 sm:py-3 rounded-full text-base sm:text-lg text-gray-900">
                     Buy Now
                   </button>
                 </div>
@@ -193,9 +188,9 @@ const FeaturedProduct = () => {
               {/* Right Button */}
               <button
                 onClick={handleNext}
-                className="absolute -right-6 top-1/2 transform -translate-y-1/2 bg-gray-100 hover:bg-gray-200 p-3 rounded-full shadow"
+                className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-gray-100 hover:bg-gray-200 p-1.5 sm:p-2 rounded-full shadow"
               >
-                <ChevronRight size={24} />
+                <ChevronRight size={18} />
               </button>
             </motion.div>
           </AnimatePresence>
