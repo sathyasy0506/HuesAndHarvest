@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Camera, Edit3, Save, X } from "lucide-react";
-
-const BASE_URL = "https://admin.huesandharvest.com/api/";
+import { ENDPOINTS } from "../../api/api";
 
 const ProfileSection = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -22,7 +21,7 @@ const ProfileSection = () => {
         const token = localStorage.getItem("hh_token");
         if (!token) return;
 
-        const res = await fetch(`${BASE_URL}profile.php`, {
+        const res = await fetch(ENDPOINTS.PROFILE(), {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -68,7 +67,7 @@ const ProfileSection = () => {
         formDataToSend.append("avatar", profilePhoto);
       }
 
-      const res = await fetch(`${BASE_URL}update-profile.php`, {
+      const res = await fetch(ENDPOINTS.UPDATE_PROFILE(), {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`, // ✅ secure with JWT

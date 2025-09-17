@@ -12,7 +12,7 @@ function slugify(name) {
 }
 
 // Predefined background colors
-const bgColors = ["#ffeae2", "#e9f7e4", "#fff9e6", "#ffe9ef"];
+const bgColors = ["#FFFFFF"];
 
 function getRandomBg() {
   return bgColors[Math.floor(Math.random() * bgColors.length)];
@@ -90,7 +90,7 @@ function ProductCarousel() {
               className="flex-shrink-0 flex flex-col cursor-pointer p-1 bg-white rounded-2xl shadow-lg"
               style={{
                 width: window.innerWidth < 768 ? "200px" : "250px",
-                height: window.innerWidth < 768 ? "340px" : "380px"
+                height: window.innerWidth < 768 ? "340px" : "380px",
               }}
               onClick={() =>
                 navigate(`/product/${slugify(product.name)}`, {
@@ -104,7 +104,7 @@ function ProductCarousel() {
                 style={{
                   width: window.innerWidth < 768 ? "192px" : "242px",
                   height: window.innerWidth < 768 ? "200px" : "253px",
-                  backgroundColor: product.bgColor
+                  backgroundColor: product.bgColor,
                 }}
               >
                 <img
@@ -212,8 +212,8 @@ function ProductCylinderCarousel() {
       setIsMobile(window.innerWidth < 768);
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // fetch products
@@ -347,7 +347,7 @@ function ProductCylinderCarousel() {
         style={{
           width: isMobile ? "320px" : "520px",
           height: isMobile ? "320px" : "420px",
-          perspective: "1300px"
+          perspective: "1300px",
         }}
       >
         {/* Cards */}
@@ -386,7 +386,7 @@ function ProductCylinderCarousel() {
           disabled={isAnimating}
           className="absolute top-1/2 left-1/2 -translate-y-1/2 bg-white rounded-full p-2 md:p-3 shadow-md hover:bg-gray-100 disabled:opacity-50"
           style={{
-            transform: isMobile ? "translateX(-120px)" : "translateX(-186px)"
+            transform: isMobile ? "translateX(-120px)" : "translateX(-186px)",
           }}
         >
           <ChevronLeft size={isMobile ? 16 : 20} />
@@ -397,14 +397,16 @@ function ProductCylinderCarousel() {
           disabled={isAnimating}
           className="absolute top-1/2 left-1/2 -translate-y-1/2 bg-white rounded-full p-2 md:p-3 shadow-md hover:bg-gray-100 disabled:opacity-50"
           style={{
-            transform: isMobile ? "translateX(80px)" : "translateX(140px)"
+            transform: isMobile ? "translateX(80px)" : "translateX(140px)",
           }}
         >
           <ChevronRight size={isMobile ? 16 : 20} />
         </button>
       </div>
       <div className="text-center mt-4 md:mt-6">
-        <h2 className="text-lg md:text-xl tracking-wide text-white">Combo Products</h2>
+        <h2 className="text-lg md:text-xl tracking-wide text-white">
+          Combo Products
+        </h2>
       </div>
     </section>
   );
@@ -424,7 +426,7 @@ function ProductCard({ product, onClick, emphasized, isMobile }) {
       ].join(" ")}
       style={{
         width: isMobile ? 180 : 250,
-        height: isMobile ? 260 : 380
+        height: isMobile ? 260 : 380,
       }}
       onClick={onClick}
     >
@@ -451,7 +453,7 @@ function ProductCard({ product, onClick, emphasized, isMobile }) {
         className="w-full flex items-center justify-center p-3 md:p-4"
         style={{
           height: isMobile ? "55%" : "65%",
-          backgroundColor: product.bgColor
+          backgroundColor: product.bgColor,
         }}
       >
         <img
@@ -463,11 +465,15 @@ function ProductCard({ product, onClick, emphasized, isMobile }) {
 
       {/* details */}
       <div className="flex flex-col flex-1 p-2 md:p-3 gap-1 md:gap-2 relative z-20 items-center">
-        <h3 className="text-sm md:text-lg text-red-800 text-center">{product.name}</h3>
+        <h3 className="text-sm md:text-lg text-red-800 text-center">
+          {product.name}
+        </h3>
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1 md:gap-2">
-            <span className="text-xs md:text-sm font-medium">₹ {product.price}.00</span>
+            <span className="text-xs md:text-sm font-medium">
+              ₹ {product.price}.00
+            </span>
             <span className="line-through text-red-400 text-xs">
               ₹ {product.oldPrice}.00
             </span>
@@ -491,8 +497,8 @@ export default function ProductShowcase() {
       setIsMobile(window.innerWidth < 768);
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
@@ -502,7 +508,11 @@ export default function ProductShowcase() {
         background: "linear-gradient(to bottom, #4F926E, #326B4E)",
       }}
     >
-      <div className={`flex ${isMobile ? 'flex-col' : 'gap-8'} w-full overflow-hidden items-center`}>
+      <div
+        className={`flex ${
+          isMobile ? "flex-col" : "gap-8"
+        } w-full overflow-hidden items-center`}
+      >
         {/* Left component */}
         <div className={isMobile ? "w-full" : "w-1/3 min-w-0"}>
           <ProductCylinderCarousel />

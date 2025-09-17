@@ -18,7 +18,7 @@ import { ArrowUpRight } from "lucide-react";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
-const bgColors = ["#ffeae2", "#e9f7e4", "#fff9e6", "#ffe9ef"];
+const bgColors = ["#ffffff"];
 
 function getRandomBg() {
   return bgColors[Math.floor(Math.random() * bgColors.length)];

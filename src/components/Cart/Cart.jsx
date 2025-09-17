@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Minus, Plus, X, Shield, CreditCard, Truck } from "lucide-react";
 import Gradient from "../Background/Gradient";
 import { useCart } from "../../contexts/CartContext"; // ✅ add this
+import { ENDPOINTS } from "../../api/api";
 
-const BASE_URL = "https://admin.huesandharvest.com/api";
 
 const Cart = () => {
   const [items, setItems] = useState([]);
@@ -18,7 +18,7 @@ const Cart = () => {
     if (!token) return;
     setLoading(true);
     try {
-      const res = await fetch(`${BASE_URL}/cart.php`, {
+      const res = await fetch(ENDPOINTS.CART(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token }),
@@ -80,7 +80,7 @@ const Cart = () => {
 
     // 3️⃣ Update backend immediately
     try {
-      const res = await fetch(`${BASE_URL}/product_quantity.php`, {
+      const res = await fetch(ENDPOINTS.PRODUCT_QUANTITY(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, product_id: productId, action }),
@@ -123,7 +123,7 @@ const Cart = () => {
 
     // 3️⃣ Update backend immediately
     try {
-      const res = await fetch(`${BASE_URL}/removecart.php`, {
+      const res = await fetch(ENDPOINTS.REMOVE_FROM_CART(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, item_key: itemKey }),

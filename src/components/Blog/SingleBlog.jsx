@@ -1,27 +1,71 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getBlogById, blogPosts } from "./BlogData"; // assuming blogPosts is exported
 import Gradient from "../Background/Gradient";
 import BlogCard from "./BlogCard";
+import { ENDPOINTS } from "../../api/api";
+import Loader from "../Load"; // ✅ Import Loader
 
 const SingleBlog = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [blog, setBlog] = useState(null);
+  const [relatedBlogs, setRelatedBlogs] = useState([]);
+  const [loading, setLoading] = useState(true); // ✅ Loading state
 
-  if (!id) {
-    navigate("/");
-    return null;
-  }
+  useEffect(() => {
+    fetch(ENDPOINTS.GET_POSTS())
+      .then((res) => res.json())
+      .then((data) => {
+        const found = data.find((b) => String(b.id) === String(id));
+        setBlog(
+          found && {
+            id: found.id,
+            title: found.title,
+            excerpt: found.excerpt,
+            content: found.content,
+            image: found.featured_image,
+            category: found.categories?.[0]?.name || "General",
+            author: {
+              name: found.author?.name || "Unknown",
+              avatar:
+                "https://ui-avatars.com/api/?name=" +
+                encodeURIComponent(found.author?.name || "U"),
+            },
+            publishedDate: found.date,
+            readTime: found.reading_time,
+          }
+        );
+        setRelatedBlogs(
+          data
+            .filter((b) => String(b.id) !== String(id))
+            .map((b) => ({
+              id: b.id,
+              title: b.title,
+              excerpt: b.excerpt,
+              content: b.content,
+              image: b.featured_image,
+              category: b.categories?.[0]?.name || "General",
+              author: {
+                name: b.author?.name || "Unknown",
+                avatar:
+                  "https://ui-avatars.com/api/?name=" +
+                  encodeURIComponent(b.author?.name || "U"),
+              },
+              publishedDate: b.date,
+              readTime: b.reading_time,
+            }))
+        );
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching blog:", err);
+        setLoading(false);
+      });
+  }, [id]);
 
-  const blog = getBlogById(id);
+  if (loading) return <Loader />; // ✅ Loader here
 
-  if (!blog) {
-    navigate("/");
-    return null;
-  }
-
-  // filter out current blog from suggestions
-  const relatedBlogs = blogPosts.filter((b) => b.id !== id);
+  if (!blog) return <p className="text-center py-20">Blog not found</p>;
 
   return (
     <Gradient>
@@ -77,9 +121,6 @@ const SingleBlog = () => {
 
             {/* Post Details */}
             <div className="mb-8">
-              {/* <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Post Details
-              </h2> */}
               <div className="flex items-center gap-2 text-gray-600">
                 <span className="text-sm">
                   Hosted by {blog.publishedDate} .
