@@ -24,7 +24,7 @@ import ProductListing from "../Home/ProductListing";
 import { showToast } from "../Common/Toaster"; // ✅ import this
 import { useCart } from "../../contexts/CartContext"; // ✅ import cart context
 
-const bgColors = ["#ffeae2", "#e9f7e4", "#fff9e6", "#ffe9ef"];
+const bgColors = ["#ffffff"];
 
 // FeatureCard Component
 const FeatureCard = ({ Icon, title, description }) => (
@@ -167,20 +167,17 @@ function ProductPage() {
     }
 
     try {
-      const response = await fetch(
-        "https://admin.huesandharvest.com/api/add-to-cart.php",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            token,
-            product_id: product.id,
-            quantity,
-          }),
-        }
-      );
+      const response = await fetch(ENDPOINTS.ADD_TO_CART(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token,
+          product_id: product.id,
+          quantity,
+        }),
+      });
 
       const data = await response.json();
       if (data.success) {
@@ -276,7 +273,7 @@ function ProductPage() {
     stockMessage = "In Stock";
   }
 
-  const images = [product.image]; // single image for now
+  const images = [product.image, ...(product.gallery || [])];
 
   return (
     <Gradient>

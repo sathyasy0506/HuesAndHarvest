@@ -60,7 +60,7 @@ const BlogCard = ({ blog, onClick, variant = "default" }) => {
 
       {/* Content */}
       <div className="p-6">
-        <h2 className="text-xl font-semibold tracking-tight text-gray-900 mb-3  transition-colors duration-200 line-clamp-2">
+        <h2 className="text-xl font-semibold tracking-tight text-gray-900 mb-3 transition-colors duration-200 line-clamp-2">
           {blog.title}
         </h2>
 

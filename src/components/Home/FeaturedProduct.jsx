@@ -117,7 +117,7 @@ const FeaturedProduct = () => {
                   initial={{ rotate: -5 }}
                   animate={{ rotate: 0 }}
                   transition={{ duration: 0.6 }}
-                  className="rounded-full bg-yellow-100 flex items-center justify-center w-64 h-64 sm:w-80 sm:h-80 lg:w-[500px] lg:h-[500px]"
+                  className="rounded-full bg-[#FFFFFF] flex items-center justify-center w-64 h-64 sm:w-80 sm:h-80 lg:w-[500px] lg:h-[500px]"
                 >
                   <img
                     src={product.image}

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react"; // 👁️ Icons for show/hide password
 import { showToast } from "../Common/Toaster";
-
-const BASE_URL = "https://admin.huesandharvest.com/api";
+import { ENDPOINTS } from "../../api/api";
 
 const SecuritySection = () => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -44,7 +43,7 @@ const SecuritySection = () => {
 
     setIsLoading(true);
     try {
-      const res = await fetch(`${BASE_URL}/request_password_otp.php`, {
+      const res = await fetch(ENDPOINTS.REQUEST_PASSWORD_OTP(), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -83,7 +82,7 @@ const SecuritySection = () => {
 
     setIsLoading(true);
     try {
-      const res = await fetch(`${BASE_URL}/verify_password_otp.php`, {
+      const res = await fetch(ENDPOINTS.VERIFY_PASSWORD_OTP(), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

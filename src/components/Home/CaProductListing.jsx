@@ -4,7 +4,7 @@ import { ENDPOINTS } from "../../api/api";
 import { useNavigate } from "react-router-dom";
 
 // Predefined background colors
-const bgColors = ["#ffeae2", "#e9f7e4", "#fff9e6", "#ffe9ef"];
+const bgColors = ["#ffffff"];
 
 function getRandomBg() {
   return bgColors[Math.floor(Math.random() * bgColors.length)];

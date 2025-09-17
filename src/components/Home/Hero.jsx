@@ -1,9 +1,27 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Mouse } from "lucide-react";
 import Silk from "../Background/Silk";
+import mainImg1 from "../../assets/images/main.jpg";
+import mainImg2 from "../../assets/images/main.jpg";
+import mainImg3 from "../../assets/images/main.jpg";
+import mainImg4 from "../../assets/images/main.jpg";
+import mainImg5 from "../../assets/images/main.jpg";
 
 const Hero = () => {
+  // For now all five use the same URL; replace with distinct URLs later
+  const images = [mainImg1, mainImg2, mainImg3, mainImg4, mainImg5];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % images.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [images.length]);
+
   return (
     <section
       className="relative overflow-x-hidden overflow-y-hidden min-h-screen
@@ -40,10 +58,12 @@ const Hero = () => {
               >
                 Farm to Bag Excellence
               </motion.div>
+
               <h1 className="text-5xl lg:text-7xl font-bold text-white leading-tight">
                 Taste the
                 <span className="text-emerald-400 block">Harvest</span>
               </h1>
+
               <p className="text-xl text-gray-300 leading-relaxed max-w-lg">
                 Premium artisanal chips crafted from the finest organic
                 ingredients, bringing authentic flavors straight from our
@@ -60,6 +80,7 @@ const Hero = () => {
                 <span>Shop Now</span>
                 <ArrowRight className="w-5 h-5" />
               </motion.button>
+
               <motion.button
                 className="border-2 border-gray-500 text-white px-8 py-4 rounded-full font-semibold text-lg hover:border-emerald-400 hover:text-emerald-400 transition-colors"
                 whileHover={{ scale: 1.05 }}
@@ -85,25 +106,40 @@ const Hero = () => {
             </div>
           </motion.div>
 
-          {/* Right Image */}
+          {/* Right Image (badge moved outside overflow-hidden so it won't be clipped) */}
           <motion.div
             className="relative w-full"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
+            {/* Outer wrapper is relative and DOES NOT hide overflow. This allows the badge to sit outside the image's rounded container without being clipped. */}
             <div className="relative w-full">
-              <motion.img
-                src="https://huesandharvest.com/assets/main.jpg?auto=compress&cs=tinysrgb&w=800"
-                alt="Premium Chips"
-                className="rounded-3xl shadow-2xl w-full"
-                whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              />
+              {/* Image wrapper keeps rounded corners and hides overflow so the image stays clipped to the rounded shape. */}
+              <div className="rounded-3xl overflow-hidden shadow-2xl">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={currentIndex}
+                    src={images[currentIndex]}
+                    alt={`Premium Chips ${currentIndex + 1}`}
+                    className="w-full h-[420px] md:h-[520px] lg:h-[420px] object-cover"
+                    initial={{ opacity: 0, scale: 1.02 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.8 }}
+                  />
+                </AnimatePresence>
+              </div>
+
+              {/* Badge placed in the outer wrapper so it's not clipped by the rounded image container */}
               <motion.div
-                className="absolute -top-4 -right-4 bg-orange-500 text-white px-6 py-3 rounded-full font-bold shadow-lg"
+                className="absolute -top-4 -right-4 bg-orange-500 text-white px-6 py-3 rounded-full font-bold shadow-lg z-20"
                 animate={{ rotate: [0, 5, 0] }}
-                transition={{ repeat: Infinity, duration: 3 }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 3,
+                  ease: "easeInOut",
+                }}
               >
                 Fresh Daily!
               </motion.div>
