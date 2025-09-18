@@ -2,28 +2,29 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import all from "../../assets/images/all.jpg";
+import snacks from "../../assets/images/snacks.jpg";
+import combos from "../../assets/images/combos.jpg";
 import { ENDPOINTS } from "../../api/api";
+
 const categories = [
   {
     name: "All",
     description: "All products in one place",
-    image:
-      "https://images.pexels.com/photos/4109743/pexels-photo-4109743.jpeg?auto=compress&cs=tinysrgb&w=800",
-    key: "", // keep empty since it's not a real category
+    key: "all",
+    image: all,
   },
   {
-    name: "Spicy & Bold",
-    description: "For those who love adventure in every bite",
-    image:
-      "https://images.pexels.com/photos/4199098/pexels-photo-4199098.jpeg?auto=compress&cs=tinysrgb&w=800",
-    key: "spicy",
+    name: "Snacks",
+    description: "Tasty and convenient treats for anytime",
+    key: "snacks",
+    image: snacks,
   },
   {
-    name: "Sweet Treats",
-    description: "Delight your sweet tooth",
-    image:
-      "https://images.pexels.com/photos/4198018/pexels-photo-4198018.jpeg?auto=compress&cs=tinysrgb&w=800",
-    key: "sweetssssss",
+    name: "Combos",
+    description: "Special combos to enjoy with friends & family",
+    key: "combo",
+    image: combos,
   },
 ];
 
@@ -32,30 +33,41 @@ const ProductCategories = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(ENDPOINTS.LIST_PRODUCTS())
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          const counts = {};
-          let total = 0;
-
-          data.Categories.forEach((cat) => {
-            const count = data.products.filter(
-              (p) => p.category === cat
-            ).length;
-            counts[cat] = count;
-            total += count;
-          });
-
-          counts.total = total; // store separately
-          setProductCounts(counts);
+    fetch(ENDPOINTS.PRODUCT_COUNT())
+      .then(async (res) => {
+        const text = await res.text();
+        try {
+          const data = JSON.parse(text);
+          if (data && data.success) {
+            setProductCounts({
+              all: data.all ?? 0,
+              snacks: data.snacks ?? 0,
+              combo: data.combo ?? 0,
+            });
+          } else {
+            console.error("Unexpected API response:", data);
+          }
+        } catch (err) {
+          console.error("Failed to parse JSON. Response was:", text);
         }
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error("Fetch error:", err));
   }, []);
 
   const handleCategoryClick = (categoryKey) => {
-    navigate("/shop", { state: { category: categoryKey } });
+    switch (categoryKey) {
+      case "all":
+        navigate("/shop");
+        break;
+      case "snacks":
+        navigate("/snacks");
+        break;
+      case "combo":
+        navigate("/combos");
+        break;
+      default:
+        navigate("/shop");
+    }
   };
 
   return (
@@ -100,7 +112,7 @@ const ProductCategories = () => {
               transition={{ delay: index * 0.2 }}
               whileHover={{ y: -8 }}
               className="group cursor-pointer flex"
-              onClick={() => handleCategoryClick(category.key)} // Navigate on card click
+              onClick={() => handleCategoryClick(category.key)}
             >
               <div
                 className="rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 flex flex-col w-full"
@@ -119,10 +131,7 @@ const ProductCategories = () => {
                       className="text-sm font-medium"
                       style={{ fontFamily: "var(--font-poppins)" }}
                     >
-                      {category.name === "All"
-                        ? productCounts.total ?? 0
-                        : productCounts[category.key] ?? 0}{" "}
-                      Products
+                      {productCounts[category.key] ?? 0} Products
                     </span>
                   </div>
                 </div>

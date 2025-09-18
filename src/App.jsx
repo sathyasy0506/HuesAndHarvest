@@ -28,6 +28,11 @@ import Toaster from "./components/Common/Toaster";
 import { CartProvider } from "./contexts/CartContext";
 import SingleBlog from "./components/Blog/SingleBlog";
 import BlogList from "./components/Blog/BlogList";
+import Accordion from "@mui/material/Accordion";
+import AccordionUsage from "./components/Products/Accordian";
+import Snacks from "./components/shop/Snacks";
+import Combo from "./components/shop/Combo";
+import ProductCategories from "./components/Home/ProductCategories";
 
 // ✅ Protected Route Wrapper
 const ProtectedRoute = ({ children, requiresAuth }) => {
@@ -84,10 +89,14 @@ function AppContent() {
               />
               <Route path="/about" element={<AboutUs />} />
               <Route path="/shop" element={<Shop />} />
+              <Route path="/snacks" element={<Snacks />} />
+              <Route path="/combos" element={<Combo />} />
               <Route path="/product/:productName" element={<ProductPage />} />
               <Route path="/reviews" element={<RatingsAndReviews />} />
               <Route path="/blog" element={<BlogList />} />
+              <Route path="/accordian" element={<AccordionUsage />} />
               <Route path="/blog/:id" element={<SingleBlog />} />
+              <Route path="/catagories" element={<ProductCategories/>} />
 
               {/* ✅ Protected Routes */}
               <Route

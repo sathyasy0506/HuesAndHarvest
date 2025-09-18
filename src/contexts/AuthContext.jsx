@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { ENDPOINTS } from "../api/api"; // ✅ make sure path is correct
 
 const AuthContext = createContext();
 
@@ -10,8 +11,6 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  const BASE_URL = "https://admin.huesandharvest.com/api/";
 
   // Save token in localStorage
   const saveToken = (newToken) => {
@@ -28,7 +27,7 @@ export const AuthProvider = ({ children }) => {
   // Validate token on load
   const validateToken = async (storedToken) => {
     try {
-      const res = await fetch(`${BASE_URL}validate.php`, {
+      const res = await fetch(ENDPOINTS.VALIDATE(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: storedToken }),
@@ -40,7 +39,6 @@ export const AuthProvider = ({ children }) => {
         const refreshed = await refreshToken(storedToken);
         return refreshed;
       } else {
-        // Invalid token, logout
         clearToken();
         return false;
       }
@@ -54,7 +52,7 @@ export const AuthProvider = ({ children }) => {
   // Refresh token
   const refreshToken = async (oldToken) => {
     try {
-      const res = await fetch(`${BASE_URL}refresh.php`, {
+      const res = await fetch(ENDPOINTS.REFRESH(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: oldToken }),
@@ -78,7 +76,7 @@ export const AuthProvider = ({ children }) => {
   // Register user
   const register = async (formData) => {
     try {
-      const res = await fetch(`${BASE_URL}register.php`, {
+      const res = await fetch(ENDPOINTS.REGISTER(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -108,11 +106,10 @@ export const AuthProvider = ({ children }) => {
   // Login user
   const login = async (email, password) => {
     try {
-      const res = await fetch(`${BASE_URL}login.php`, {
-        // changed from register.php
+      const res = await fetch(ENDPOINTS.LOGIN(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }), // matches your PHP
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
@@ -133,13 +130,13 @@ export const AuthProvider = ({ children }) => {
   // Send OTP to user email
   const sendPasswordResetOtp = async (email) => {
     try {
-      const res = await fetch(`${BASE_URL}forget-password.php`, {
+      const res = await fetch(ENDPOINTS.FORGET_PASSWORD(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
       const data = await res.json();
-      return data; // { success: true/false, message }
+      return data;
     } catch (err) {
       console.error("Send OTP error:", err);
       return { success: false, message: "Failed to send OTP" };
@@ -149,13 +146,13 @@ export const AuthProvider = ({ children }) => {
   // Verify OTP & reset password
   const resetPassword = async (email, otp, newPassword) => {
     try {
-      const res = await fetch(`${BASE_URL}reset-password.php`, {
+      const res = await fetch(ENDPOINTS.RESET_PASSWORD(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp, new_password: newPassword }),
       });
       const data = await res.json();
-      return data; // { success: true/false, message }
+      return data;
     } catch (err) {
       console.error("Reset password error:", err);
       return { success: false, message: "Failed to reset password" };
@@ -166,7 +163,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     if (token) {
       try {
-        await fetch(`${BASE_URL}logout.php`, {
+        await fetch(ENDPOINTS.LOGOUT(), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token }),
@@ -181,11 +178,14 @@ export const AuthProvider = ({ children }) => {
 
   // On initial load, check localStorage
   useEffect(() => {
-    const storedToken = localStorage.getItem("hh_token");
-    if (storedToken) {
-      validateToken(storedToken);
-    }
-    setLoading(false);
+    const initAuth = async () => {
+      const storedToken = localStorage.getItem("hh_token");
+      if (storedToken) {
+        await validateToken(storedToken);
+      }
+      setLoading(false);
+    };
+    initAuth();
   }, []);
 
   return (

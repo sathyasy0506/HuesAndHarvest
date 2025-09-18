@@ -90,8 +90,9 @@ const Header = () => {
 
   const navigation = [
     { name: "HOME", path: "/" },
-    { name: "SNACKS", path: "/shop" },
-    { name: "COMBOS", path: "/shop" },
+    { name: "SHOP", path: "/shop" },
+    { name: "SNACKS", path: "/snacks" },
+    { name: "COMBOS", path: "/combos" },
     { name: "ABOUT", path: "/about" },
     { name: "BLOG", path: "/blog" },
   ];
@@ -140,7 +141,7 @@ const Header = () => {
                 className={`relative font-medium tracking-wide transition-all duration-200
                 ${
                   isActive(item.path)
-                    ? `${headerTextColor} scale-105 -translate-y-0.5 font-semibold`
+                    ? `${headerTextColor} scale-105 -translate-y-0.5 font-semibold text-[#E5B676]`
                     : headerTextColor
                 }
                 hover:scale-105 hover:-translate-y-0.5 hover:font-semibold
