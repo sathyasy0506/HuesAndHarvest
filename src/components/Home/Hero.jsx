@@ -51,7 +51,7 @@ const Hero = () => {
           >
             <div className="space-y-4">
               <motion.div
-                className="inline-block bg-emerald-600 text-white px-4 py-2 rounded-full text-sm font-medium"
+                className="inline-block bg-emerald-600 text-white px-4 py-2 rounded-[14px] text-sm font-medium"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2 }}
@@ -73,7 +73,7 @@ const Hero = () => {
 
             <div className="flex flex-col sm:flex-row gap-4">
               <motion.button
-                className="bg-emerald-500 text-white px-8 py-4 rounded-full font-semibold text-lg flex items-center justify-center space-x-2 hover:bg-emerald-600 transition-colors shadow-lg"
+                className="bg-emerald-500 text-white px-8 py-3 rounded-[18px] font-semibold text-lg flex items-center justify-center space-x-2 hover:bg-emerald-600 transition-colors shadow-lg"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -82,7 +82,7 @@ const Hero = () => {
               </motion.button>
 
               <motion.button
-                className="border-2 border-gray-500 text-white px-8 py-4 rounded-full font-semibold text-lg hover:border-emerald-400 hover:text-emerald-400 transition-colors"
+                className="border-2 border-gray-500 text-white px-8 py-3 rounded-[18px] font-semibold text-lg hover:border-emerald-400 hover:text-emerald-400 transition-colors"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -133,7 +133,7 @@ const Hero = () => {
 
               {/* Badge placed in the outer wrapper so it's not clipped by the rounded image container */}
               <motion.div
-                className="absolute -top-4 -right-4 bg-orange-500 text-white px-6 py-3 rounded-full font-bold shadow-lg z-20"
+                className="absolute -top-4 -right-4 bg-orange-500 text-white px-6 py-2 rounded-[18px] font-bold shadow-lg z-20"
                 animate={{ rotate: [0, 5, 0] }}
                 transition={{
                   repeat: Infinity,

@@ -23,6 +23,7 @@ import { Star } from "lucide-react";
 import ProductListing from "../Home/ProductListing";
 import { showToast } from "../Common/Toaster"; // ✅ import this
 import { useCart } from "../../contexts/CartContext"; // ✅ import cart context
+import ProductAccordion from "./Accordian";
 
 const bgColors = ["#ffffff"];
 
@@ -561,6 +562,7 @@ function ProductPage() {
               </div>
             </div>
           </div>
+          <ProductAccordion productId={productId} />
 
           {/* Ratings & Reviews Section */}
           <div

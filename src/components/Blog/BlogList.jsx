@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BlogCard from "./BlogCard";
 import Gradient from "../Background/Gradient";
+import banner from "../../assets/images/blog_banner.jpg";
 import { ENDPOINTS } from "../../api/api";
 import Loader from "../Load"; // ✅ Import Loader
 
@@ -33,18 +34,18 @@ const BlogList = () => {
     <Gradient>
       <div className="min-h-screen bg-transparent ">
         {/* Header */}
-        <div className="relative w-full h-44 sm:h-80 -mt-16  lg:h-84">
+        <div className="relative w-full ">
           <img
-            src="https://images.pexels.com/photos/19161533/pexels-photo-19161533.jpeg"
+            src={banner}
             alt="Blog Header"
-            className="w-full h-full object-cover"
+            className="w-full h-auto object-cover"
           />
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center pt-16">
-            <h2 className="text-gray-300 text-2xl sm:text-2xl lg:text-2xl ">
+          {/* <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+            <h2 className="text-gray-300 text-2xl sm:text-2xl lg:text-2xl">
               <span onClick={() => navigate("/")}>Home</span> /{" "}
-              <span className=" text-white"> Blogs</span>
+              <span className="text-white"> Blogs</span>
             </h2>
-          </div>
+          </div> */}
         </div>
 
         {/* Blog Grid */}

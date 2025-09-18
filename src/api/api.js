@@ -2,13 +2,22 @@
 
 // Base API URL
 export const BASE_URL = "https://admin.huesandharvest.com/api/";
+// export const BASE_URL = "/admin/api/";
 
 // Endpoints as functions for consistency
 export const ENDPOINTS = {
+  VALIDATE: () => `${BASE_URL}validate.php`,
+  REFRESH: () => `${BASE_URL}refresh.php`,
+  REGISTER: () => `${BASE_URL}register.php`,
+  LOGIN: () => `${BASE_URL}login.php`,
+  FORGET_PASSWORD: () => `${BASE_URL}forget-password.php`,
+  RESET_PASSWORD: () => `${BASE_URL}reset-password.php`,
+  LOGOUT: () => `${BASE_URL}logout.php`,
   LIST_PRODUCTS: () => `${BASE_URL}list_products.php`,
   INSTAGRAM_FEED: () => `${BASE_URL}instagram.php`,
   REVIEWS: () => `${BASE_URL}reviews.php`,
   GET_PRODUCT: (id) => `${BASE_URL}get_product.php?id=${id}`,
+  PRODUCT_COUNT: (id) => `${BASE_URL}product_count.php`,
   PRODUCT_REVIEWS: (id) => `${BASE_URL}product_reviews.php?id=${id}`,
   CART_COUNT: (userId) => `${BASE_URL}cart_count.php?user_id=${userId}`, // ✅ new endpoint for cart count
   GET_POSTS: () => `${BASE_URL}get_posts.php`,
