@@ -46,36 +46,21 @@ const Footer = forwardRef((props, ref) => {
           <h2 className="text-center text-2xl font-light tracking-wider mb-12">
             WE ALWAYS CARE FOR YOU
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full border-2 flex items-center justify-center">
-                <Leaf className="w-8 h-8" />
+          {/* Flex instead of grid for the icons */}
+          <div className="flex flex-wrap justify-between gap-8 mx-10">
+            {[
+              { icon: Leaf, label: "100% NATURAL" },
+              { icon: Wrench, label: "TRADITIONAL" },
+              { icon: Flask, label: "VEGETERIAN" },
+              { icon: Shield, label: "CHEMICAL FREE" },
+            ].map((item, index) => (
+              <div key={index} className="text-center">
+                <div className="w-20 h-20 mx-auto mb-4 rounded-full border-2 flex items-center justify-center">
+                  <item.icon className="w-8 h-8" />
+                </div>
+                <h3 className="text-sm font-medium tracking-wide">{item.label}</h3>
               </div>
-              <h3 className="text-sm font-medium tracking-wide">
-                100% NATURAL
-              </h3>
-            </div>
-
-            <div className="text-center">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full border-2 flex items-center justify-center">
-                <Wrench className="w-8 h-8" />
-              </div>
-              <h3 className="text-sm font-medium tracking-wide">TRADITIONAL</h3>
-            </div>
-            <div className="text-center">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full border-2 flex items-center justify-center">
-                <Flask className="w-8 h-8" />
-              </div>
-              <h3 className="text-sm font-medium tracking-wide">VEGETERIAN</h3>
-            </div>
-            <div className="text-center">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full border-2 flex items-center justify-center">
-                <Shield className="w-8 h-8" />
-              </div>
-              <h3 className="text-sm font-medium tracking-wide">
-                CHEMICAL FREE
-              </h3>
-            </div>
+            ))}
           </div>
         </div>
 
@@ -86,9 +71,10 @@ const Footer = forwardRef((props, ref) => {
 
         {/* Footer links section */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Flex instead of grid */}
+          <div className="flex flex-wrap justify-between gap-8">
             {/* Company info */}
-            <div className="lg:col-span-1">
+            <div className="flex-1 min-w-[250px]">
               <div className="flex items-center mb-6">
                 <img
                   src={logo}
@@ -109,55 +95,47 @@ const Footer = forwardRef((props, ref) => {
             </div>
 
             {/* Quick Links */}
-            <div>
-              <h4 className="text-lg font-semibold mb-6  justify-center flex">
-                QUICK LINKS
-              </h4>
-              <div className="space-y-3 flex justify-center items-center flex-col">
-                <ul className="space-y-3 ">
-                  <li>
-                    <a href="#" className="hover:text-white text-sm">
-                      Home
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="hover:text-white text-sm">
-                      About Us
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="hover:text-white text-sm">
-                      Shop
-                    </a>
-                  </li>
-                </ul>
-              </div>
+            <div className="flex-1 min-w-[150px] flex flex-col items-center">
+              <h4 className="text-lg font-semibold mb-6">QUICK LINKS</h4>
+              <ul className="space-y-3 text-center">
+                <li>
+                  <a href="#" className="hover:text-white text-sm">
+                    Home
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white text-sm">
+                    About Us
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white text-sm">
+                    Shop
+                  </a>
+                </li>
+              </ul>
             </div>
 
             {/* Other Links */}
-            <div>
-              <h4 className="text-lg font-semibold mb-6 flex justify-center">
-                OTHER LINKS
-              </h4>
-              <div className=" flex justify-center items-center ">
-                <ul className="space-y-3">
-                  <li>
-                    <a href="#" className="hover:text-white text-sm">
-                      Privacy Policy
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="hover:text-white text-sm">
-                      Terms & Condition
-                    </a>
-                  </li>{" "}
-                  <li>
-                    <a href="#" className="hover:text-white text-sm">
-                      Contact Us{" "}
-                    </a>
-                  </li>
-                </ul>
-              </div>
+            <div className="flex-1 min-w-[150px] flex flex-col items-center">
+              <h4 className="text-lg font-semibold mb-6">OTHER LINKS</h4>
+              <ul className="space-y-3 text-center">
+                <li>
+                  <a href="#" className="hover:text-white text-sm">
+                    Privacy Policy
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white text-sm">
+                    Terms & Condition
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white text-sm">
+                    Contact Us
+                  </a>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
