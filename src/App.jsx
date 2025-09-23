@@ -35,6 +35,7 @@ import Combo from "./components/shop/Combo";
 import ProductCategories from "./components/Home/ProductCategories";
 import Checkout from "./components/Checkout/Checkout";
 import ProductShowcase from "./components/Home/ProductShowcase";
+import FeaturedProduct from "./components/Home/FeaturedProduct";
 
 // ✅ Protected Route Wrapper
 const ProtectedRoute = ({ children, requiresAuth }) => {
@@ -100,7 +101,7 @@ function AppContent() {
               <Route path="/blog/:id" element={<SingleBlog />} />
               <Route path="/catagories" element={<ProductCategories />} />
               <Route path="/checkout" element={<Checkout />} />
-              <Route path="/showcase" element={<ProductShowcase />} />
+              <Route path="/showcase" element={<FeaturedProduct />} />
 
               {/* ✅ Protected Routes */}
               <Route

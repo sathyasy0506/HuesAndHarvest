@@ -5,7 +5,6 @@ import { ENDPOINTS } from "../../api/api";
 import Loader from "../Load";
 
 const FeaturedProduct = () => {
-  const productIds = [20, 15];
   const [products, setProducts] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -13,23 +12,19 @@ const FeaturedProduct = () => {
   const [direction, setDirection] = useState(0);
 
   useEffect(() => {
-    const fetchAllProducts = async () => {
+    const fetchProducts = async () => {
       try {
-        const fetched = await Promise.all(
-          productIds.map(async (id) => {
-            const res = await fetch(ENDPOINTS.GET_PRODUCT(id));
-            return res.json();
-          })
-        );
-        setProducts(fetched);
+        const res = await fetch(ENDPOINTS.FEATURED_PRODUCTS());
+        const data = await res.json();
+        setProducts(data);
       } catch (err) {
-        console.error("Error fetching products:", err);
+        console.error("Error fetching featured products:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAllProducts();
+    fetchProducts();
   }, []);
 
   if (loading || products.length === 0) {
@@ -86,12 +81,12 @@ const FeaturedProduct = () => {
               Exclusive Hues & Harvest
             </p>
             <h2 className="text-2xl sm:text-3xl lg:text-[31px] uppercase text-gray-900">
-              Featured Product
+              Featured Products
             </h2>
           </div>
         </div>
 
-        {/* Product Wrapper */}
+        {/* Product Carousel */}
         <div className="relative">
           <AnimatePresence custom={direction} mode="wait">
             <motion.div
