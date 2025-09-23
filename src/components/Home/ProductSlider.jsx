@@ -94,7 +94,7 @@ export default function ProductCylinderCarousel() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(ENDPOINTS.LIST_PRODUCTS());
+        const res = await fetch(ENDPOINTS.LIST_COMBO());
         const data = await res.json();
         if (data?.success) {
           const withColor = data.products.map((p) => ({

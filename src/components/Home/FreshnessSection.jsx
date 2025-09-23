@@ -21,9 +21,9 @@ function FreshnessSection() {
             <Truck className="w-6 h-6 text-red-500" />
           </div>
           <div>
-            <h3 className="font-semibold">Free Delivery Across Town!</h3>
+            <h3 className="font-semibold">Free Delivery Across India</h3>
             <p className="text-sm text-gray-600">
-              Free delivery for all orders above ₹500
+              Complimentary delivery on all orders over ₹500
             </p>
           </div>
         </div>
@@ -34,9 +34,11 @@ function FreshnessSection() {
             <ShieldCheck className="w-6 h-6 text-red-500" />
           </div>
           <div>
-            <h3 className="font-semibold">100% Satisfaction Guarantee!</h3>
+            <h3 className="font-semibold">
+              Your satisfaction is our priority.
+            </h3>
             <p className="text-sm text-gray-600">
-              Providing help in case of dissatisfaction
+              We are always here to assist you.
             </p>
           </div>
         </div>
@@ -49,7 +51,7 @@ function FreshnessSection() {
           <div>
             <h3 className="font-semibold">Top-Notch Support</h3>
             <p className="text-sm text-gray-600">
-              Chat with us if you’ve any questions
+              Reach out to us anytime for any queries
             </p>
           </div>
         </div>
@@ -62,7 +64,7 @@ function FreshnessSection() {
           <div>
             <h3 className="font-semibold">Secure Payments</h3>
             <p className="text-sm text-gray-600">
-              We use safest payment technologies
+              We use the most reliable and safe payment methods
             </p>
           </div>
         </div>

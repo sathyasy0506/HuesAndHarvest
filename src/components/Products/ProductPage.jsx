@@ -360,9 +360,12 @@ function ProductPage() {
                 <h2 className="text-3xl lg:text-4xl text-gray-900">
                   {product.name}
                 </h2>
-                <p className="text-lg leading-relaxed text-gray-600">
-                  {product.short_description || product.description}
-                </p>
+                <p
+                  className="text-lg leading-relaxed text-gray-600"
+                  dangerouslySetInnerHTML={{
+                    __html: product.short_description || product.description,
+                  }}
+                />
               </div>
 
               {/* Price + Stock Badge */}
@@ -510,8 +513,7 @@ function ProductPage() {
               <div className="rounded-2xl p-4 md:p-6 flex-1 flex justify-between flex-col gap-6">
                 <InfoCard
                   Icon={Truck}
-                  text="We Delivery on Next Day from"
-                  highlight="10:00 AM to 08:00 PM"
+                  text="Pure ingredients carefully made to make every moment delicious"
                 />
 
                 <div>
@@ -527,9 +529,8 @@ function ProductPage() {
                       fontFamily: "var(--font-poppins)",
                     }}
                     className="text-sm leading-relaxed"
-                  >
-                    {product.description}
-                  </p>
+                    dangerouslySetInnerHTML={{ __html: product.description }}
+                  />
                 </div>
 
                 <div>

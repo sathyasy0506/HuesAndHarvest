@@ -90,7 +90,7 @@ const Header = () => {
 
   const navigation = [
     { name: "HOME", path: "/" },
-    { name: "SHOP", path: "/shop" },
+    // { name: "SHOP", path: "/shop" },
     { name: "SNACKS", path: "/snacks" },
     { name: "COMBOS", path: "/combos" },
     { name: "ABOUT", path: "/about" },

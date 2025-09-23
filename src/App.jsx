@@ -33,6 +33,8 @@ import AccordionUsage from "./components/Products/Accordian";
 import Snacks from "./components/shop/Snacks";
 import Combo from "./components/shop/Combo";
 import ProductCategories from "./components/Home/ProductCategories";
+import Checkout from "./components/Checkout/Checkout";
+import ProductShowcase from "./components/Home/ProductShowcase";
 
 // ✅ Protected Route Wrapper
 const ProtectedRoute = ({ children, requiresAuth }) => {
@@ -96,7 +98,9 @@ function AppContent() {
               <Route path="/blog" element={<BlogList />} />
               <Route path="/accordian" element={<AccordionUsage />} />
               <Route path="/blog/:id" element={<SingleBlog />} />
-              <Route path="/catagories" element={<ProductCategories/>} />
+              <Route path="/catagories" element={<ProductCategories />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/showcase" element={<ProductShowcase />} />
 
               {/* ✅ Protected Routes */}
               <Route

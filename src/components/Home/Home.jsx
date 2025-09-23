@@ -43,11 +43,11 @@ const Home = ({ onDataLoaded }) => {
       <Gradient>
         <Hero />
         <ProductCategories />
-        <ProductListing />
+        {/* <ProductListing /> */}
+        <CaProductListing />
         <Promotion />
         <ProductShowcase />
         <Features />
-        <CaProductListing />
         <FreshnessSection />
         <FeaturedProduct />
         <Testimonials />

@@ -10,19 +10,19 @@ import { ENDPOINTS } from "../../api/api";
 const categories = [
   {
     name: "All",
-    description: "All products in one place",
+    description: "All Your Favorites Together",
     key: "all",
     image: all,
   },
   {
     name: "Snacks",
-    description: "Tasty and convenient treats for anytime",
+    description: "Convenient bites packed with flavor",
     key: "snacks",
     image: snacks,
   },
   {
     name: "Combos",
-    description: "Special combos to enjoy with friends & family",
+    description: "Specially crafted for sharing moments",
     key: "combo",
     image: combos,
   },

@@ -61,9 +61,7 @@ function ProductListing({ excludeId }) {
             <p className="text-gray-400 uppercase tracking-wide text-sm">
               Exclusive Hues & Harvest
             </p>
-            <h2 className="text-2xl md:text-3xl mt-1">
-              BEST SELLER’S OF MONTH
-            </h2>
+            <h2 className="text-2xl md:text-3xl mt-1">RELATED PRODUCT'S </h2>
           </div>
 
           <button
@@ -147,7 +145,7 @@ function ProductListing({ excludeId }) {
                       <button className="px-2 py-1 text-sm sm:text-base">
                         –
                       </button>
-                      <span className="text-xs sm:text-sm">1kg</span>
+                      <span className="text-xs sm:text-sm">1</span>
                       <button className="px-2 py-1 text-sm sm:text-base">
                         +
                       </button>

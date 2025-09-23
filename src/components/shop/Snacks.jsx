@@ -53,15 +53,16 @@ const Snacks = () => {
     fetch(ENDPOINTS.LIST_PRODUCTS())
       .then((res) => res.json())
       .then((data) => {
-        // ✅ filter out Combo products
+        // ✅ filter out Combo, Combo2p, Combox2 products
+        const excluded = ["combo", "combo2p", "combox2"];
         const prods = (data.products || []).filter(
-          (p) => p.category.toLowerCase() !== "combo"
+          (p) => !excluded.includes(p.category.toLowerCase())
         );
         setProducts(prods);
 
-        // ✅ remove Combo from categories
+        // ✅ remove Combo, Combo2p, Combox2 from categories
         const cats = (data.Categories || []).filter(
-          (cat) => cat.toLowerCase() !== "combo"
+          (cat) => !excluded.includes(cat.toLowerCase())
         );
         setCategories(cats);
 

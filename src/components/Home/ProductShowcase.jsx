@@ -28,13 +28,19 @@ function ProductCarousel() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch(ENDPOINTS.LIST_PRODUCTS());
+        const res = await fetch(ENDPOINTS.LIST_COMBO());
         const data = await res.json();
         if (data.success) {
-          const productsWithColor = data.products.map((p) => ({
+          // ✅ keep only Combo2p products
+          const combo2pProducts = data.products.filter(
+            (p) => p.category === "Combo2p"
+          );
+
+          const productsWithColor = combo2pProducts.map((p) => ({
             ...p,
             bgColor: getRandomBg(),
           }));
+
           setProducts(productsWithColor);
         }
       } catch (error) {
@@ -136,7 +142,7 @@ function ProductCarousel() {
                       <button className="px-1 py-0 rounded-[50px] border border-gray-300">
                         –
                       </button>
-                      <span className="text-xs">1kg</span>
+                      <span className="text-xs">1</span>
                       <button className="px-1 py-0 rounded-[50px] border border-gray-300">
                         +
                       </button>
@@ -220,14 +226,21 @@ function ProductCylinderCarousel() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(ENDPOINTS.LIST_PRODUCTS());
+        const res = await fetch(ENDPOINTS.LIST_COMBO());
         const data = await res.json();
         if (data?.success) {
-          const withColor = data.products.map((p) => ({
+          // ✅ filter only ComboX2
+          const comboX2Products = data.products.filter(
+            (p) => p.category === "ComboX2"
+          );
+
+          const withColor = comboX2Products.map((p) => ({
             ...p,
             bgColor: getRandomBg(),
           }));
+
           setProducts(withColor);
+
           if (withColor.length) {
             setDisplay({
               center: 0,
