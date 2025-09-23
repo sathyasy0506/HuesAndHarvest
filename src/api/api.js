@@ -14,6 +14,7 @@ export const ENDPOINTS = {
   RESET_PASSWORD: () => `${BASE_URL}reset-password.php`,
   LOGOUT: () => `${BASE_URL}logout.php`,
   LIST_PRODUCTS: () => `${BASE_URL}list_products.php`,
+  LIST_COMBO: () => `${BASE_URL}listproducts_combo.php`,
   INSTAGRAM_FEED: () => `${BASE_URL}instagram.php`,
   REVIEWS: () => `${BASE_URL}reviews.php`,
   GET_PRODUCT: (id) => `${BASE_URL}get_product.php?id=${id}`,

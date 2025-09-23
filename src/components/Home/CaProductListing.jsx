@@ -1,15 +1,13 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { ENDPOINTS } from "../../api/api";
 import { useNavigate } from "react-router-dom";
 
 // Predefined background colors
 const bgColors = ["#ffffff"];
-
 function getRandomBg() {
   return bgColors[Math.floor(Math.random() * bgColors.length)];
 }
-
 function slugify(name) {
   return name
     .toLowerCase()
@@ -19,49 +17,37 @@ function slugify(name) {
 
 function CaProductListing() {
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [activeCategory, setActiveCategory] = useState(null);
-
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
-
   const scrollRef = useRef(null);
   const navigate = useNavigate();
 
-  // Map API categories to display labels
-  const categoryLabels = {
-    spicy: "Spicy",
-    sweetssssss: "Sweet",
-  };
-
-  // Fetch products from API
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await fetch(ENDPOINTS.LIST_PRODUCTS());
         const data = await res.json();
         if (data.success) {
-          setProducts(data.products);
-          setCategories(data.Categories || []);
-          if (data.Categories && data.Categories.length > 0) {
-            setActiveCategory(data.Categories[0]); // default select first category
-          }
+          // Filter out combo products
+          const filteredProducts = (data.products || []).filter(
+            (p) =>
+              !["combo", "combo2p", "combox2"].includes(
+                p.category.toLowerCase()
+              )
+          );
+          setProducts(filteredProducts);
         }
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
-
     fetchProducts();
   }, []);
 
-  // Update scroll button visibility
   const updateScrollButtons = () => {
     const container = scrollRef.current;
     if (!container) return;
-
     const { scrollLeft, scrollWidth, clientWidth } = container;
-
     setShowLeft(scrollLeft > 0);
     setShowRight(scrollLeft + clientWidth < scrollWidth);
   };
@@ -70,31 +56,24 @@ function CaProductListing() {
     updateScrollButtons();
     const container = scrollRef.current;
     if (!container) return;
-
     container.addEventListener("scroll", updateScrollButtons);
     window.addEventListener("resize", updateScrollButtons);
-
     return () => {
       container.removeEventListener("scroll", updateScrollButtons);
       window.removeEventListener("resize", updateScrollButtons);
     };
-  }, [products, activeCategory]);
+  }, [products]);
 
   const scroll = (direction) => {
     if (scrollRef.current) {
-      const cardWidth = scrollRef.current.offsetWidth / 4; // exactly 4 per view
-      const scrollAmount = cardWidth * 4; // jump one "page"
+      const cardWidth = scrollRef.current.offsetWidth / 4;
+      const scrollAmount = cardWidth * 4;
       scrollRef.current.scrollBy({
         left: direction === "left" ? -scrollAmount : scrollAmount,
         behavior: "smooth",
       });
     }
   };
-
-  // Filter products by category
-  const filteredProducts = activeCategory
-    ? products.filter((p) => p.category === activeCategory)
-    : products;
 
   return (
     <section className="w-full px-6 py-12 bg-transparent">
@@ -105,62 +84,46 @@ function CaProductListing() {
             <p className="text-gray-400 uppercase tracking-wide text-sm">
               Exclusive Hues & Harvest
             </p>
-            <h2 className="text-2xl md:text-3xl mt-1">
-              BEST SELLER’S OF MONTH
-            </h2>
+            <h2 className="text-2xl md:text-3xl mt-1">TRENDING TASTY TREATS</h2>
           </div>
 
-          {/* Category Toggle */}
-          <div className="flex rounded-full border border-[#4b3832] bg-[#4b3832] overflow-hidden p-[2px]">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`w-28 py-1 text-base font-medium flex items-center justify-center transition-all
-        ${
-          activeCategory === cat
-            ? "bg-white text-[#4b3832]"
-            : "bg-[#4b3832] text-white border border-[#4b3832]"
-        }
-        rounded-full`}
-              >
-                {categoryLabels[cat] || cat}
-              </button>
-            ))}
+          {/* All Collections Button */}
+          <div className="flex flex-col items-center gap-3">
+            <button
+              onClick={() => navigate("/snacks")}
+              className="flex items-center gap-2 border border-gray-400 rounded-full px-4 py-2 text-sm font-medium hover:bg-gray-100 transition whitespace-nowrap flex-shrink-0"
+            >
+              ALL COLLECTIONS <ArrowUpRight size={16} />
+            </button>
           </div>
         </div>
 
         {/* Scrollable Products */}
         <div className="relative">
-          {/* Left Scroll Button */}
           <button
             onClick={() => scroll("left")}
             disabled={!showLeft}
-            className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow transition
-              ${
-                showLeft
-                  ? "bg-white hover:bg-gray-100"
-                  : "bg-gray-200 cursor-not-allowed opacity-50"
-              }`}
+            className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow transition ${
+              showLeft
+                ? "bg-white hover:bg-gray-100"
+                : "bg-gray-200 cursor-not-allowed opacity-50"
+            }`}
           >
             <ChevronLeft size={24} />
           </button>
 
-          {/* Right Scroll Button */}
           <button
             onClick={() => scroll("right")}
             disabled={!showRight}
-            className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow transition
-              ${
-                showRight
-                  ? "bg-white hover:bg-gray-100"
-                  : "bg-gray-200 cursor-not-allowed opacity-50"
-              }`}
+            className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow transition ${
+              showRight
+                ? "bg-white hover:bg-gray-100"
+                : "bg-gray-200 cursor-not-allowed opacity-50"
+            }`}
           >
             <ChevronRight size={24} />
           </button>
 
-          {/* Product Container */}
           <div
             ref={scrollRef}
             className="flex overflow-x-auto scroll-smooth py-2 scrollbar-hide"
@@ -169,18 +132,13 @@ function CaProductListing() {
             {products.map((product) => (
               <div
                 key={product.id}
-                className="
-              flex-shrink-0
-              w-1/2 sm:w-1/3 lg:w-1/4
-              px-3 flex flex-col cursor-pointer snap-start
-            "
+                className="flex-shrink-0 w-1/2 sm:w-1/3 lg:w-1/4 px-3 flex flex-col cursor-pointer snap-start"
                 onClick={() =>
                   navigate(`/product/${slugify(product.name)}`, {
                     state: { id: product.id },
                   })
                 }
               >
-                {/* Image with random background */}
                 <div
                   className="w-full aspect-square rounded-2xl flex items-center justify-center overflow-hidden p-4"
                   style={{ backgroundColor: getRandomBg() }}
@@ -192,15 +150,12 @@ function CaProductListing() {
                   />
                 </div>
 
-                {/* Details */}
                 <div className="mt-4 p-2 flex flex-col gap-2">
                   <h3 className="text-base sm:text-lg font-medium">
                     {product.name}
                   </h3>
 
-                  {/* Prices and Quantity */}
                   <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-2 mt-1">
-                    {/* Prices */}
                     <div className="flex items-center gap-2">
                       <span className="text-sm sm:text-lg font-medium">
                         ₹ {product.price}.00
@@ -210,19 +165,17 @@ function CaProductListing() {
                       </span>
                     </div>
 
-                    {/* Quantity */}
                     <div className="flex items-center gap-2 border rounded-full border-gray-300 px-2 self-start xl:self-auto">
                       <button className="px-2 py-1 text-sm sm:text-base">
                         –
                       </button>
-                      <span className="text-xs sm:text-sm">1kg</span>
+                      <span className="text-xs sm:text-sm">1</span>
                       <button className="px-2 py-1 text-sm sm:text-base">
                         +
                       </button>
                     </div>
                   </div>
 
-                  {/* Shop Now button */}
                   <button
                     className="relative mt-3 sm:mt-4 w-full bg-[#EFEFEF] rounded-[12px] sm:rounded-[15px] py-2 sm:py-3 px-3 sm:px-5 font-medium hover:bg-gray-200 transition text-sm sm:text-base"
                     onClick={(e) => {

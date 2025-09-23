@@ -31,7 +31,7 @@ function ProductCarousel() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch(ENDPOINTS.LIST_PRODUCTS());
+        const res = await fetch(ENDPOINTS.LIST_COMBO());
         const data = await res.json();
         if (data.success) {
           const productsWithColor = data.products.map((p) => ({
@@ -134,7 +134,7 @@ function ProductCarousel() {
                       <button className="px-1 py-0 rounded-[50px] border border-gray-300">
                         –
                       </button>
-                      <span className="text-xs">1kg</span>
+                      <span className="text-xs">1</span>
                       <button className="px-1 py-0 rounded-[50px] border border-gray-300">
                         +
                       </button>

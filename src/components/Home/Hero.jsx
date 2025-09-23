@@ -60,14 +60,14 @@ const Hero = () => {
               </motion.div>
 
               <h1 className="text-5xl lg:text-7xl font-bold text-white leading-tight">
-                Taste the
-                <span className="text-emerald-400 block">Harvest</span>
+                Harvested for Your{" "}
+                <span className="text-emerald-400 block">Taste</span>
               </h1>
 
               <p className="text-xl text-gray-300 leading-relaxed max-w-lg">
-                Premium artisanal chips crafted from the finest organic
-                ingredients, bringing authentic flavors straight from our
-                sustainable farms to your table.
+                Handcrafted artisanal chips made with pure organic goodness,
+                delivering bold, real flavors nurtured in our sustainable farms
+                and shared fresh at your table.
               </p>
             </div>
 
@@ -90,7 +90,7 @@ const Hero = () => {
               </motion.button>
             </div>
 
-            <div className="flex items-center space-x-8 pt-4">
+            {/* <div className="flex items-center space-x-8 pt-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-white">100%</div>
                 <div className="text-sm text-gray-300">Organic</div>
@@ -103,7 +103,7 @@ const Hero = () => {
                 <div className="text-2xl font-bold text-white">50k+</div>
                 <div className="text-sm text-gray-300">Happy Customers</div>
               </div>
-            </div>
+            </div> */}
           </motion.div>
 
           {/* Right Image (badge moved outside overflow-hidden so it won't be clipped) */}

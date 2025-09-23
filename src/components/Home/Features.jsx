@@ -18,7 +18,7 @@ const Features = () => {
           <img src={icon1} alt="Home Made" className="w-12 h-12 mb-4" />
           <h4 className=" text-gray-500 text-lg  mb-2">Home Made </h4>
           <p className="text-gray-500 text-sm text-center">
-            Delicious foods made with fresh ingredients, served hot and fast!
+            Flavorful meals made with fresh ingredients and served fast!
           </p>
         </div>
 
@@ -27,7 +27,7 @@ const Features = () => {
           <img src={icon2} alt="Traditional" className="w-12 h-12 mb-4" />
           <h4 className="text-lg  mb-2">Traditional</h4>
           <p className="text-sm text-center">
-            Delicious foods made with fresh ingredients, served hot and fast!
+            Classic dishes made fast and tasty.
           </p>
         </div>
 
@@ -36,7 +36,7 @@ const Features = () => {
           <img src={icon1} alt="Chemical Free" className="w-12 h-12 mb-4" />
           <h4 className=" text-gray-500 text-lg  mb-2">Chemical Free</h4>
           <p className="text-gray-500 text-sm text-center">
-            Delicious foods made with fresh ingredients, served hot and fast!
+            Delicious meals made with fresh, chemical-free ingredients.
           </p>
         </div>
       </div>
