@@ -4,7 +4,7 @@ import icon2 from "../../assets/images/ic2.png"; // for Traditional
 
 const Features = () => {
   return (
-    <section className="py-16 bg-transparent text-center">
+    <section className="py-0 bg-transparent text-center">
       {/* Heading */}
       <h3 className="text-gray-400 uppercase tracking-wide mb-2">
         Hues & Harvest

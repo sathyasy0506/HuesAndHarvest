@@ -70,7 +70,7 @@ const Testimonials = () => {
   };
 
   return (
-    <section className="py-16 sm:py-20 bg-transparent relative">
+    <section className="py-0 sm:py-0 bg-transparent relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
         <motion.div className="text-center mb-10 sm:mb-16" {...fadeInUp}>

@@ -34,6 +34,7 @@ const Combo = () => {
   const [loading, setLoading] = useState(true);
   const [selectedStockStatuses, setSelectedStockStatuses] = useState([]);
 
+
   const slugify = (name) =>
     name
       .toLowerCase()
@@ -314,7 +315,7 @@ const Combo = () => {
                     </div>
 
                     <div className="mt-4 p-2 flex flex-col gap-2 flex-1">
-                      <h3 className="text-lg line-clamp-2 min-h-[3.5rem]">
+                      <h3 className="text-lg line-clamp-2 min-h-[3.5rem] capitalize">
                         {product.name}
                       </h3>
 

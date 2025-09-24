@@ -108,7 +108,7 @@ function ProductCarousel() {
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain camelcase"
                 />
               </div>
 

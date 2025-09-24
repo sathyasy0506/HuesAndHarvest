@@ -61,7 +61,7 @@ function ProductCard({ product, onClick, emphasized }) {
 
       {/* details */}
       <div className="flex flex-col flex-1 p-3 gap-2 relative z-20 items-center">
-        <h3 className="text-lg text-red-800">{product.name}</h3>
+        <h3 className="text-lg text-red-800 capitalize">{product.name}</h3>
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">

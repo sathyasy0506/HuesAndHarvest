@@ -83,17 +83,17 @@ function ProductCarousel() {
   };
 
   return (
-    <section className="w-auto text-gray-800 p-3 md:p-6 rounded-2xl bg-transparent">
+    <section className="w-auto text-gray-800 p-3 md:p-6 rounded-2xl bg-transparent scrollbar-hide">
       <div className="flex flex-col">
         {/* Product Cards */}
         <div
           ref={scrollRef}
-          className="flex gap-4 md:gap-6 overflow-x-scroll scroll-smooth pr-8 md:pr-12 scrollbar-hide"
+          className="flex gap-4 md:gap-6 overflow-x-scroll scroll-smooth pr-8 md:pr-12 product-carousel-scrollbar"
         >
           {products.map((product) => (
             <div
               key={product.id}
-              className="flex-shrink-0 flex flex-col cursor-pointer p-1 bg-white rounded-2xl shadow-lg"
+              className="flex-shrink-0 flex flex-col cursor-pointer p-1 bg-white rounded-2xl shadow-lg scrollbar-hide"
               style={{
                 width: window.innerWidth < 768 ? "200px" : "250px",
                 height: window.innerWidth < 768 ? "340px" : "380px",
@@ -123,7 +123,7 @@ function ProductCarousel() {
               {/* Details */}
               <div className="mt-2 p-2 md:p-3 flex flex-col flex-1 gap-2">
                 <div className="flex flex-col gap-1 md:gap-2">
-                  <h3 className="text-base md:text-lg">{product.name}</h3>
+                  <h3 className="text-base md:text-lg capitalize">{product.name}</h3>
 
                   {/* Prices and Quantity */}
                   <div className="flex items-center justify-between mt-1">
@@ -210,7 +210,7 @@ function ProductCylinderCarousel() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const navigate = useNavigate();
 
-  const DURATION = 700;
+  const DURATION = 100;
 
   // Handle window resize
   useEffect(() => {
@@ -368,9 +368,9 @@ function ProductCylinderCarousel() {
           className="absolute inset-0"
           style={{ transformStyle: "preserve-3d" }}
         >
-          {slots.map(({ key, role, product, emphasized }) => (
+          {slots.map(({ role, product, emphasized }) => (
             <div
-              key={key}
+              key={`${role}-${product?.id}`} // 🔑 product.id ensures React remounts
               className="absolute top-1/2 left-1/2 will-change-transform transition-transform duration-700 ease-out"
               style={{
                 ...pos[role],
@@ -438,7 +438,7 @@ function ProductCard({ product, onClick, emphasized, isMobile }) {
           : "scale-90 opacity-70 blur-sm brightness-110 pointer-events-none",
       ].join(" ")}
       style={{
-        width: isMobile ? 180 : 250,
+        width: isMobile ? 190 : 260,
         height: isMobile ? 260 : 380,
       }}
       onClick={onClick}
@@ -478,7 +478,7 @@ function ProductCard({ product, onClick, emphasized, isMobile }) {
 
       {/* details */}
       <div className="flex flex-col flex-1 p-2 md:p-3 gap-1 md:gap-2 relative z-20 items-center">
-        <h3 className="text-sm md:text-lg text-red-800 text-center">
+        <h3 className="text-sm md:text-lg text-red-800 text-center capitalize">
           {product.name}
         </h3>
 
@@ -516,7 +516,7 @@ export default function ProductShowcase() {
 
   return (
     <section
-      className="max-w-7xl mx-auto py-2 rounded-2xl"
+      className="max-w-7xl mx-auto py-0 rounded-2xl"
       style={{
         background: "linear-gradient(to bottom, #4F926E, #326B4E)",
       }}

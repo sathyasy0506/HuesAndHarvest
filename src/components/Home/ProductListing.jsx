@@ -118,13 +118,13 @@ function ProductListing({ excludeId }) {
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain camelcase"
                   />
                 </div>
 
                 {/* Details */}
                 <div className="mt-4 p-2 flex flex-col gap-2">
-                  <h3 className="text-base sm:text-lg font-medium">
+                  <h3 className="text-base sm:text-lg font-medium capitalize">
                     {product.name}
                   </h3>
 

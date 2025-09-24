@@ -360,7 +360,7 @@ function ProductPage() {
             {/* Product Details */}
             <div className="w-full md:w-1/2 flex flex-col gap-4 md:gap-6 justify-center">
               <div className="flex gap-3 flex-col">
-                <h2 className="text-3xl lg:text-4xl text-gray-900">
+                <h2 className="text-3xl lg:text-4xl text-gray-900 capitalize">
                   {product.name}
                 </h2>
                 <p
