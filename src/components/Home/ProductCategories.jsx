@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import all from "../../assets/images/all.jpg";
-import snacks from "../../assets/images/snacks.jpg";
-import combos from "../../assets/images/combos.jpg";
+import all from "../../assets/images/shop.jpeg";
+import snacks from "../../assets/images/snacks.jpeg";
+import combos from "../../assets/images/combo.jpeg";
 import { ENDPOINTS } from "../../api/api";
 
 const categories = [

@@ -8,6 +8,9 @@ import {
   Info,
   CheckCircle,
   Shield,
+  ShieldCheck,
+  Headphones,
+  CreditCard,
   Clock,
 } from "lucide-react";
 import StarIcon from "@mui/icons-material/Star";
@@ -35,7 +38,7 @@ const FeatureCard = ({ Icon, title, description }) => (
         className="w-12 h-12 rounded-full flex items-center justify-center"
         style={{ border: "1px solid #D8DFD9" }}
       >
-        <Icon className="w-6 h-6" style={{ color: "var(--primary-color)" }} />
+        <Icon className="w-6 h-6" style={{ color: "red-500" }} />
       </div>
     </div>
     <div>
@@ -470,23 +473,23 @@ function ProductPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                   <FeatureCard
                     Icon={Truck}
-                    title="Free Delivery Across Town!"
-                    description="Free delivery for all orders above ₹500"
+                    title="Free Delivery Across India"
+                    description="Complimentary delivery on all orders over ₹500"
                   />
                   <FeatureCard
-                    Icon={Info}
+                    Icon={ShieldCheck}
+                    title="Your satisfaction is our priority"
+                    description="We are always here to assist you"
+                  />
+                  <FeatureCard
+                    Icon={Headphones}
                     title="Top-Notch Support"
-                    description="Chat with us if you've any questions"
+                    description="Reach out to us anytime for any queries"
                   />
                   <FeatureCard
-                    Icon={CheckCircle}
-                    title="100% Satisfaction Guarantee!"
-                    description="Providing help in case of dissatisfaction"
-                  />
-                  <FeatureCard
-                    Icon={Shield}
+                    Icon={CreditCard}
                     title="Secure Payments"
-                    description="We use safest payment technologies"
+                    description="We use the most reliable and safe payment methods"
                   />
                 </div>
               </div>
