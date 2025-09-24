@@ -2,15 +2,12 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Mouse } from "lucide-react";
 import Silk from "../Background/Silk";
-import mainImg1 from "../../assets/images/main.jpg";
-import mainImg2 from "../../assets/images/main.jpg";
-import mainImg3 from "../../assets/images/main.jpg";
-import mainImg4 from "../../assets/images/main.jpg";
-import mainImg5 from "../../assets/images/main.jpg";
+import mainImg1 from "../../assets/images/tb1.jpeg";
+import mainImg2 from "../../assets/images/tb2.jpeg";
 
 const Hero = () => {
   // For now all five use the same URL; replace with distinct URLs later
-  const images = [mainImg1, mainImg2, mainImg3, mainImg4, mainImg5];
+  const images = [mainImg1, mainImg2];
 
   const [currentIndex, setCurrentIndex] = useState(0);
 

@@ -150,19 +150,17 @@ const FeaturedProduct = () => {
 
                 <div className="space-y-4 w-full sm:w-[379px] mx-auto lg:mx-0">
                   <div className="flex items-center gap-3 sm:gap-4 w-full">
-                    <div className="flex items-center border rounded-full overflow-hidden flex-1">
+                    <div className="flex items-center gap-1 md:gap-2 border rounded-full border-gray-300 text-xl">
                       <button
                         onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                        className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-base sm:text-lg text-gray-700 border-r border-gray-300"
+                        className="px-2 py-0 rounded-full border border-gray-300"
                       >
-                        -
+                        –
                       </button>
-                      <span className="px-3 sm:px-4 text-sm sm:text-base font-medium text-gray-900">
-                        {quantity}
-                      </span>
+                      <span className="text-xs">{quantity}</span>
                       <button
                         onClick={() => setQuantity((q) => q + 1)}
-                        className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-base sm:text-lg text-gray-700 border-l border-gray-300"
+                        className="px-2 py-0 rounded-full border border-gray-300"
                       >
                         +
                       </button>

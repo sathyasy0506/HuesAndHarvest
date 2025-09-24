@@ -164,13 +164,12 @@ function CaProductListing() {
                         ₹ {product.oldPrice}.00
                       </span>
                     </div>
-
-                    <div className="flex items-center gap-2 border rounded-full border-gray-300 px-2 self-start xl:self-auto">
-                      <button className="px-2 py-1 text-sm sm:text-base">
+                    <div className="flex items-center gap-1 md:gap-2 border rounded-full border-gray-300 text-xl">
+                      <button className="px-2 py-0 rounded-[50px] border border-gray-300">
                         –
                       </button>
-                      <span className="text-xs sm:text-sm">1</span>
-                      <button className="px-2 py-1 text-sm sm:text-base">
+                      <span className="text-xs">1</span>
+                      <button className="px-2 py-0 rounded-[50px] border border-gray-300">
                         +
                       </button>
                     </div>
