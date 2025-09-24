@@ -1,5 +1,6 @@
 import React from "react";
 import { Truck, ShieldCheck, Headphones, CreditCard } from "lucide-react";
+import fresh from "../../assets/images/fresh.jpeg";
 
 function FreshnessSection() {
   return (
@@ -7,7 +8,7 @@ function FreshnessSection() {
       {/* Left section (Full Image, Larger Area) */}
       <div className="md:w-2/3 w-full flex items-center justify-center bg-transparent">
         <img
-          src="https://huesandharvest.com/assets/fresh.png"
+          src={fresh}
           alt="Kiwi Promo"
           className="w-full h-full object-contain rounded-2xl"
         />

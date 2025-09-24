@@ -383,8 +383,10 @@ const Shop = () => {
                     </div>
 
                     {/* Details */}
-                    <div className="mt-4 p-2 flex flex-col gap-2">
-                      <h3 className="text-lg">{product.name}</h3>
+                    <div className="mt-4 p-2 flex flex-col gap-2 flex-1">
+                      <h3 className="text-lg line-clamp-2 min-h-[3.5rem]">
+                        {product.name}
+                      </h3>
 
                       {/* Prices */}
                       <div className="flex items-center justify-between mt-1">
@@ -400,7 +402,7 @@ const Shop = () => {
 
                       {/* Shop Now button */}
                       <button
-                        className="relative mt-4 w-full bg-[#EFEFEF] rounded-[15px] py-3 px-5 font-medium hover:bg-gray-200 transition"
+                        className="relative mt-auto w-full bg-[#EFEFEF] rounded-[15px] py-3 px-5 font-medium hover:bg-gray-200 transition"
                         onClick={(e) => {
                           e.stopPropagation();
                           navigate(`/product/${slugify(product.name)}`, {

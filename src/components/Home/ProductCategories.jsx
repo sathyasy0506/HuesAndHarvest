@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import all from "../../assets/images/shop.jpeg";
-import snacks from "../../assets/images/snacks.jpeg";
+import all from "../../assets/images/snacks.jpeg";
+import snacks from "../../assets/images/shop.jpeg";
 import combos from "../../assets/images/combo.jpeg";
 import { ENDPOINTS } from "../../api/api";
 
@@ -125,7 +125,7 @@ const ProductCategories = () => {
                     alt={category.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t  to-transparent"></div>
                   <div className="absolute bottom-4 left-4 text-white">
                     <span
                       className="text-sm font-medium"
