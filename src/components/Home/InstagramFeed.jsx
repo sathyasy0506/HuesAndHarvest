@@ -61,7 +61,7 @@ const InstagramFeed = () => {
   }, []);
 
   return (
-    <section className="py-20 lg:py-32 bg-transparent">
+    <section className="py-0 lg:py-0 bg-transparent">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Header */}
         <motion.div

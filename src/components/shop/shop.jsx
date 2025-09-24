@@ -378,13 +378,13 @@ const Shop = () => {
                       <img
                         src={product.image}
                         alt={product.name}
-                        className="w-full h-full object-contain"
+                        className="w-full h-full object-contain capitalize"
                       />
                     </div>
 
                     {/* Details */}
                     <div className="mt-4 p-2 flex flex-col gap-2 flex-1">
-                      <h3 className="text-lg line-clamp-2 min-h-[3.5rem]">
+                      <h3 className="text-lg line-clamp-2 min-h-[3.5rem] capitalize">
                         {product.name}
                       </h3>
 

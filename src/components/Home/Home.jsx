@@ -17,7 +17,6 @@ const Home = ({ onDataLoaded }) => {
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        // 🔹 Fetch everything in parallel
         await Promise.all([
           fetch("/api/products").then((res) => res.json()),
           fetch("/api/categories").then((res) => res.json()),
@@ -25,12 +24,10 @@ const Home = ({ onDataLoaded }) => {
           fetch("/api/featured").then((res) => res.json()),
           fetch("/api/testimonials").then((res) => res.json()),
           fetch("/api/instagram").then((res) => res.json()),
-          // 👉 Add any other API calls your sections need
         ]);
       } catch (error) {
         console.error("❌ Error loading home data:", error);
       } finally {
-        // ✅ Always notify App, even if some calls failed
         onDataLoaded();
       }
     };
@@ -41,18 +38,19 @@ const Home = ({ onDataLoaded }) => {
   return (
     <div className="-mt-16 overflow-hidden">
       <Gradient>
-        <Hero />
-        <ProductCategories />
-        {/* <ProductListing /> */}
-        <CaProductListing />
-        <Promotion />
-        <ProductShowcase />
-        <Features />
-        <FreshnessSection />
-        <FeaturedProduct />
-        <Testimonials />
-        <FreshInsights />
-        <InstagramFeed />
+        <div className="flex flex-col gap-16">
+          <Hero />
+          <ProductCategories />
+          <CaProductListing />
+          <Promotion />
+          <ProductShowcase />
+          <Features />
+          <FreshnessSection />
+          {/* <FeaturedProduct /> */}
+          <Testimonials />
+          <FreshInsights />
+          <InstagramFeed />
+        </div>
       </Gradient>
     </div>
   );

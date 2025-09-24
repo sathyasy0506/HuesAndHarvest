@@ -378,12 +378,12 @@ const Snacks = () => {
                       <img
                         src={product.image}
                         alt={product.name}
-                        className="w-full h-full object-contain"
+                        className="w-full h-full object-contain capitalize"
                       />
                     </div>
 
                     <div className="mt-4 p-2 flex flex-col gap-2">
-                      <h3 className="text-lg">{product.name}</h3>
+                      <h3 className="text-lg capitalize">{product.name}</h3>
 
                       <div className="flex items-center justify-between mt-1">
                         <div className="flex items-center gap-2">

@@ -71,7 +71,7 @@ const ProductCategories = () => {
   };
 
   return (
-    <section className="py-20 lg:py-32 bg-transparent">
+    <section className="py-0 lg:py-0 bg-transparent">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Header */}
         <motion.div
@@ -123,9 +123,10 @@ const ProductCategories = () => {
                   <img
                     src={category.image}
                     alt={category.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    className="w-full h-full object-cover transition-transform duration-700"
+                    style={{ objectPosition: "50% 20%" }} // <-- 50% horizontal, 40% vertical
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t  to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t to-transparent"></div>
                   <div className="absolute bottom-4 left-4 text-white">
                     <span
                       className="text-sm font-medium"

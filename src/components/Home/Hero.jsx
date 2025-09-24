@@ -58,7 +58,7 @@ const Hero = () => {
 
               <h1 className="text-5xl lg:text-7xl font-bold text-white leading-tight">
                 Harvested for Your{" "}
-                <span className="text-emerald-400 block">Taste</span>
+                <span className="text-emerald-400  ">Taste</span>
               </h1>
 
               <p className="text-xl text-gray-300 leading-relaxed max-w-lg">
@@ -119,10 +119,10 @@ const Hero = () => {
                     key={currentIndex}
                     src={images[currentIndex]}
                     alt={`Premium Chips ${currentIndex + 1}`}
-                    className="w-full h-[420px] md:h-[520px] lg:h-[420px] object-cover"
-                    initial={{ opacity: 0, scale: 1.02 }}
+                    className="w-full h-[320px] md:h-[520px] lg:h-[420px] object-cover"
+                    initial={{ opacity: 0, scale: 1.02 }} // new image fades/scales in
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
+                    // ❌ removed exit so no fade-out
                     transition={{ duration: 0.8 }}
                   />
                 </AnimatePresence>
