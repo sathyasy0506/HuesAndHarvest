@@ -27,6 +27,7 @@ import ProductListing from "../Home/ProductListing";
 import { showToast } from "../Common/Toaster"; // ✅ import this
 import { useCart } from "../../contexts/CartContext"; // ✅ import cart context
 import ProductAccordion from "./Accordian";
+import RelatedProducts from "./RelatedProducts";
 
 const bgColors = ["#ffffff"];
 
@@ -292,15 +293,15 @@ function ProductPage() {
           {/* Top Section */}
           <div className="flex flex-col md:flex-row items-start gap-8 md:gap-20">
             {/* Image Section */}
-            <div className="w-full md:w-1/2 flex flex-row gap-4">
-              {/* Gallery Images - Left */}
-              <div className="flex flex-col gap-2 justify-start">
+            <div className="w-full md:w-1/2 flex flex-col md:flex-row gap-4">
+              {/* Gallery Images - Thumbnails */}
+              <div className="flex md:flex-col flex-row gap-2 md:w-auto w-full order-last md:order-first mt-4 md:mt-0">
                 {images.map((img, i) => (
                   <div
                     key={i}
                     className={`w-14 h-14 rounded-lg overflow-hidden cursor-pointer border-2 ${
                       i === selectedImageIndex
-                        ? "border-var(--primary-color)"
+                        ? "border-[var(--primary-color)]"
                         : "border-transparent"
                     }`}
                     onClick={() => setSelectedImageIndex(i)}
@@ -322,7 +323,7 @@ function ProductPage() {
                 <img
                   src={images[selectedImageIndex]}
                   alt={product.name}
-                  className="w-full h-auto max-h-[400px] object-contain rounded-lg"
+                  className="w-full h-auto max-h-[400px] object-contain rounded-lg "
                 />
 
                 {/* Left Arrow */}
@@ -360,11 +361,11 @@ function ProductPage() {
             {/* Product Details */}
             <div className="w-full md:w-1/2 flex flex-col gap-4 md:gap-6 justify-center">
               <div className="flex gap-3 flex-col">
-                <h2 className="text-3xl lg:text-4xl text-gray-900 capitalize">
+                <h2 className="text-3xl lg:text-4xl text-gray-900 capitalize text-center md:text-start">
                   {product.name}
                 </h2>
                 <p
-                  className="text-lg leading-relaxed text-gray-600"
+                  className="text-lg leading-relaxed text-gray-600 text-justify "
                   dangerouslySetInnerHTML={{
                     __html: product.short_description || product.description,
                   }}
@@ -372,7 +373,6 @@ function ProductPage() {
               </div>
 
               {/* Price + Stock Badge */}
-              {/* Price Section */}
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-[23px] text-gray-900">₹{newPrice}</span>
                 {oldPrice > 0 && (
@@ -387,7 +387,7 @@ function ProductPage() {
                 )}
               </div>
 
-              {/* ✅ Stock Badge just below prices */}
+              {/* Stock Badge */}
               <div className="mt-2">
                 {product.stock_quantity === 0 ||
                 product.stock_status === "outofstock" ? (
@@ -402,14 +402,14 @@ function ProductPage() {
               </div>
 
               {/* Buttons */}
-              <div className="space-y-4 w-[379px]">
+              <div className="space-y-4 w-full max-w-[379px]">
                 {/* Row 1: Quantity + Add to Cart */}
                 <div className="flex items-center gap-4 w-full">
                   {/* Quantity Selector */}
                   <div className="flex items-center border rounded-full overflow-hidden flex-1">
                     <button
                       onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                      className="w-10 h-10 flex items-center justify-center text-lg text-gray-700 border-r border-gray-300 rounded-full"
+                      className="w-11 h-10 flex items-center justify-center text-lg text-gray-700 border border-gray-300 rounded-full"
                       disabled={
                         product.stock_quantity === 0 ||
                         product.stock_status === "outofstock"
@@ -422,7 +422,7 @@ function ProductPage() {
                     </span>
                     <button
                       onClick={() => setQuantity((q) => q + 1)}
-                      className="w-10 h-10 flex items-center justify-center text-lg text-gray-700 border-l border-gray-300 rounded-full"
+                      className="w-10 h-10 flex items-center justify-center text-lg text-gray-700 border border-gray-300 rounded-full"
                       disabled={
                         product.stock_quantity === 0 ||
                         product.stock_status === "outofstock"
@@ -531,7 +531,7 @@ function ProductPage() {
                       color: "var(--text-color)",
                       fontFamily: "var(--font-poppins)",
                     }}
-                    className="text-sm leading-relaxed"
+                    className="text-sm leading-relaxed text-justify"
                     dangerouslySetInnerHTML={{ __html: product.description }}
                   />
                 </div>
@@ -705,7 +705,7 @@ function ProductPage() {
           </div>
         </div>
       </div>
-      <ProductListing excludeId={productId} />
+      <RelatedProducts excludeId={productId} />
     </Gradient>
   );
 }

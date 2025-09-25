@@ -31,7 +31,6 @@ function ProductCarousel() {
         const res = await fetch(ENDPOINTS.LIST_COMBO());
         const data = await res.json();
         if (data.success) {
-          // ✅ keep only Combo2p products
           const combo2pProducts = data.products.filter(
             (p) => p.category === "Combo2p"
           );
@@ -63,18 +62,14 @@ function ProductCarousel() {
     };
 
     el.addEventListener("scroll", updateProgress);
-
-    // Smooth initial fill
-    requestAnimationFrame(() => {
-      updateProgress();
-    });
+    updateProgress();
 
     return () => el.removeEventListener("scroll", updateProgress);
   }, [products]);
 
   const scroll = (dir) => {
     if (scrollRef.current) {
-      const scrollAmount = window.innerWidth < 768 ? 250 : 300;
+      const scrollAmount = scrollRef.current.clientWidth * 0.8;
       scrollRef.current.scrollBy({
         left: dir === "next" ? scrollAmount : -scrollAmount,
         behavior: "smooth",
@@ -83,21 +78,17 @@ function ProductCarousel() {
   };
 
   return (
-    <section className="w-auto text-gray-800 p-3 md:p-6 rounded-2xl bg-transparent scrollbar-hide">
+    <section className="w-full text-gray-800 px-4 py-6 md:p-6">
       <div className="flex flex-col">
         {/* Product Cards */}
         <div
           ref={scrollRef}
-          className="flex gap-4 md:gap-6 overflow-x-scroll scroll-smooth pr-8 md:pr-12 product-carousel-scrollbar"
+          className="flex gap-4 md:gap-6 overflow-x-auto scroll-smooth product-carousel-scrollbar snap-x"
         >
           {products.map((product) => (
             <div
               key={product.id}
-              className="flex-shrink-0 flex flex-col cursor-pointer p-1 bg-white rounded-2xl shadow-lg scrollbar-hide"
-              style={{
-                width: window.innerWidth < 768 ? "200px" : "250px",
-                height: window.innerWidth < 768 ? "340px" : "380px",
-              }}
+              className="flex-shrink-0 flex flex-col cursor-pointer bg-white rounded-2xl shadow-lg w-[280px] md:w-[300px] snap-start"
               onClick={() =>
                 navigate(`/product/${slugify(product.name)}`, {
                   state: { id: product.id },
@@ -106,53 +97,50 @@ function ProductCarousel() {
             >
               {/* Image container */}
               <div
-                className="flex items-center justify-center overflow-hidden p-3 md:p-4 rounded-2xl"
-                style={{
-                  width: window.innerWidth < 768 ? "192px" : "242px",
-                  height: window.innerWidth < 768 ? "200px" : "253px",
-                  backgroundColor: product.bgColor,
-                }}
+                className="flex items-center justify-center p-4 md:p-6 rounded-t-2xl"
+                style={{ backgroundColor: product.bgColor }}
               >
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-full object-contain"
+                  className="w-full h-48 md:h-56 object-contain"
                 />
               </div>
 
               {/* Details */}
-              <div className="mt-2 p-2 md:p-3 flex flex-col flex-1 gap-2">
-                <div className="flex flex-col gap-1 md:gap-2">
-                  <h3 className="text-base md:text-lg capitalize">{product.name}</h3>
+              <div className="p-4 md:p-6 flex flex-col flex-1 gap-3">
+                <div className="flex flex-col gap-2">
+                  <h3 className="text-lg md:text-xl font-medium capitalize line-clamp-2">
+                    {product.name}
+                  </h3>
 
                   {/* Prices and Quantity */}
-                  <div className="flex items-center justify-between mt-1">
-                    {/* Current & Old Price on same line */}
-                    <div className="flex items-center gap-1 md:gap-2 whitespace-nowrap">
-                      <span className="text-xs md:text-sm font-medium">
-                        ₹ {product.price}.00
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-base md:text-lg font-semibold">
+                        ₹{product.price}.00
                       </span>
-                      <span className="line-through text-gray-400 text-xs">
-                        ₹ {product.oldPrice}.00
+                      <span className="line-through text-gray-400 text-sm">
+                        ₹{product.oldPrice}.00
                       </span>
                     </div>
 
                     {/* Quantity Selector */}
-                    <div className="flex items-center gap-1 md:gap-2 border rounded-full border-gray-300 text-xs">
-                      <button className="px-1 py-0 rounded-[50px] border border-gray-300">
+                    <div className="flex items-center gap-2 border rounded-full border-gray-300 text-sm">
+                      <button className="px-2 py-1 hover:bg-gray-100 border border-gray-300 rounded-full">
                         –
                       </button>
-                      <span className="text-xs">1</span>
-                      <button className="px-1 py-0 rounded-[50px] border border-gray-300">
+                      <span className="px-2">1</span>
+                      <button className="px-2 py-1 hover:bg-gray-100 border border-gray-300 rounded-full">
                         +
                       </button>
                     </div>
                   </div>
                 </div>
 
-                {/* Push button to bottom */}
+                {/* Shop Now Button */}
                 <button
-                  className="relative mt-auto w-full bg-[#EFEFEF] rounded-[12px] md:rounded-[15px] py-2 md:py-3 px-3 md:px-5 font-medium hover:bg-gray-200 transition text-sm md:text-base"
+                  className="relative mt-auto w-full bg-gray-100 rounded-xl py-3 px-4 font-medium hover:bg-gray-200 transition-all duration-200 group"
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate(`/product/${slugify(product.name)}`, {
@@ -161,8 +149,8 @@ function ProductCarousel() {
                   }}
                 >
                   <span className="block text-center">Shop Now</span>
-                  <span className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full bg-white shadow">
-                    <ArrowUpRight size={window.innerWidth < 768 ? 14 : 16} />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full bg-white shadow-sm group-hover:scale-110 transition-transform">
+                    <ArrowUpRight size={16} />
                   </span>
                 </button>
               </div>
@@ -170,30 +158,29 @@ function ProductCarousel() {
           ))}
         </div>
 
-        {/* Scrollbar + Nav row */}
-        <div className="flex items-center gap-3 mt-4">
-          {/* Scrollbar track */}
-          <div className="flex-1 h-[3px] bg-gray-400 rounded-full relative overflow-hidden">
-            {/* Scroll thumb */}
+        {/* Scrollbar + Navigation */}
+        <div className="flex items-center gap-4 mt-6 px-2">
+          {/* Scrollbar */}
+          <div className="flex-1 h-1 bg-gray-600 rounded-full overflow-hidden">
             <div
-              className="h-1 bg-white rounded-full transition-[width] duration-1000 ease-out"
+              className="h-full bg-gray-300 rounded-full transition-all duration-300"
               style={{ width: `${scrollProgress}%` }}
             />
           </div>
 
-          {/* Nav Buttons */}
+          {/* Navigation Buttons */}
           <div className="flex gap-2">
             <button
               onClick={() => scroll("prev")}
-              className="bg-white rounded-full p-1 md:p-2 shadow-md hover:bg-gray-100"
+              className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors"
             >
-              <ChevronLeft size={window.innerWidth < 768 ? 16 : 20} />
+              <ChevronLeft size={20} />
             </button>
             <button
               onClick={() => scroll("next")}
-              className="bg-white rounded-full p-1 md:p-2 shadow-md hover:bg-gray-100"
+              className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors"
             >
-              <ChevronRight size={window.innerWidth < 768 ? 16 : 20} />
+              <ChevronRight size={20} />
             </button>
           </div>
         </div>
@@ -207,29 +194,17 @@ function ProductCylinderCarousel() {
   const [display, setDisplay] = useState({ left: 0, center: 0, right: 0 });
   const [roles, setRoles] = useState(["left", "center", "right"]);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const navigate = useNavigate();
 
   const DURATION = 100;
 
-  // Handle window resize
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // fetch products
+  // Fetch products
   useEffect(() => {
     (async () => {
       try {
         const res = await fetch(ENDPOINTS.LIST_COMBO());
         const data = await res.json();
         if (data?.success) {
-          // ✅ filter only ComboX2
           const comboX2Products = data.products.filter(
             (p) => p.category === "ComboX2"
           );
@@ -255,7 +230,6 @@ function ProductCylinderCarousel() {
     })();
   }, []);
 
-  // go next
   const goNext = () => {
     if (isAnimating || products.length < 2) return;
     setIsAnimating(true);
@@ -274,7 +248,6 @@ function ProductCylinderCarousel() {
     }, DURATION);
   };
 
-  // go prev
   const goPrev = () => {
     if (isAnimating || products.length < 2) return;
     setIsAnimating(true);
@@ -295,25 +268,7 @@ function ProductCylinderCarousel() {
 
   if (!products.length) return null;
 
-  // Responsive transforms
   const getTransforms = () => {
-    if (isMobile) {
-      return {
-        left: {
-          transform: "translateX(-30px) rotateY(22deg) translateZ(-50px)",
-          zIndex: 2,
-        },
-        center: {
-          transform: "translateX(0px) rotateY(0deg) translateZ(0px)",
-          zIndex: 5,
-        },
-        right: {
-          transform: "translateX(30px) rotateY(-22deg) translateZ(-50px)",
-          zIndex: 2,
-        },
-      };
-    }
-
     return {
       left: {
         transform: "translateX(-50px) rotateY(22deg) translateZ(-90px)",
@@ -337,40 +292,42 @@ function ProductCylinderCarousel() {
       key: "slot-left",
       role: roles[0],
       product: products[display.left],
-      emphasized: false,
     },
     {
       key: "slot-center",
       role: roles[1],
       product: products[display.center],
-      emphasized: true,
     },
     {
       key: "slot-right",
       role: roles[2],
       product: products[display.right],
-      emphasized: false,
     },
   ];
 
   return (
-    <section className="max-w-xl mx-auto text-gray-800 p-2 md:p-3 rounded-2xl flex flex-col items-center bg-transparent">
+    <section className="w-full max-w-md mx-auto text-gray-800 p-4 mt-10">
+      {/* Title moved OUTSIDE the 3D container to prevent overlapping */}
+
       <div
-        className="relative"
+        className="relative mx-auto"
         style={{
-          width: isMobile ? "320px" : "520px",
-          height: isMobile ? "320px" : "420px",
+          width: "100%",
+          height: "420px", // Reduced height since title is now outside
+          maxWidth: "520px",
           perspective: "1300px",
         }}
       >
-        {/* Cards */}
+        {/* Cards Container */}
         <div
           className="absolute inset-0"
-          style={{ transformStyle: "preserve-3d" }}
+          style={{
+            transformStyle: "preserve-3d",
+          }}
         >
-          {slots.map(({ role, product, emphasized }) => (
+          {slots.map(({ role, product }) => (
             <div
-              key={`${role}-${product?.id}`} // 🔑 product.id ensures React remounts
+              key={`${role}-${product?.id}`}
               className="absolute top-1/2 left-1/2 will-change-transform transition-transform duration-700 ease-out"
               style={{
                 ...pos[role],
@@ -381,7 +338,6 @@ function ProductCylinderCarousel() {
               <ProductCard
                 product={product}
                 emphasized={role === "center"}
-                isMobile={isMobile}
                 onClick={() =>
                   role === "center" &&
                   navigate(`/product/${slugify(product.name)}`, {
@@ -397,27 +353,21 @@ function ProductCylinderCarousel() {
         <button
           onClick={goPrev}
           disabled={isAnimating}
-          className="absolute top-1/2 left-1/2 -translate-y-1/2 bg-white rounded-full p-2 md:p-3 shadow-md hover:bg-gray-100 disabled:opacity-50"
-          style={{
-            transform: isMobile ? "translateX(-120px)" : "translateX(-186px)",
-          }}
+          className="absolute top-1/2 -left-4 md:-left-6 -translate-y-1/2 bg-white rounded-full p-3 shadow-lg hover:bg-gray-100 disabled:opacity-50 transition-all z-10"
         >
-          <ChevronLeft size={isMobile ? 16 : 20} />
+          <ChevronLeft size={20} />
         </button>
 
         <button
           onClick={goNext}
           disabled={isAnimating}
-          className="absolute top-1/2 left-1/2 -translate-y-1/2 bg-white rounded-full p-2 md:p-3 shadow-md hover:bg-gray-100 disabled:opacity-50"
-          style={{
-            transform: isMobile ? "translateX(80px)" : "translateX(140px)",
-          }}
+          className="absolute top-1/2 -right-4 md:-right-6 -translate-y-1/2 bg-white rounded-full p-3 shadow-lg hover:bg-gray-100 disabled:opacity-50 transition-all z-10"
         >
-          <ChevronRight size={isMobile ? 16 : 20} />
+          <ChevronRight size={20} />
         </button>
       </div>
-      <div className="text-center mt-4 md:mt-6">
-        <h2 className="text-lg md:text-xl tracking-wide text-white">
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-semibold tracking-wide text-white">
           Combo Products
         </h2>
       </div>
@@ -425,47 +375,49 @@ function ProductCylinderCarousel() {
   );
 }
 
-function ProductCard({ product, onClick, emphasized, isMobile }) {
+function ProductCard({ product, onClick, emphasized }) {
   if (!product) return null;
 
   return (
     <div
-      className={[
-        "relative flex flex-col bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer",
-        "transition-all duration-700 ease-out",
-        emphasized
-          ? "scale-105 opacity-100 blur-0 brightness-100"
-          : "scale-90 opacity-70 blur-sm brightness-110 pointer-events-none",
-      ].join(" ")}
+      className={`
+        relative flex flex-col bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer
+        transition-all duration-700 ease-out
+        ${
+          emphasized
+            ? "scale-105 opacity-100 blur-0"
+            : "scale-90 opacity-70 blur-[1px] pointer-events-none"
+        }
+      `}
       style={{
-        width: isMobile ? 190 : 260,
-        height: isMobile ? 260 : 380,
+        width: "280px", // Slightly wider to utilize more space
+        height: "380px", // Increased height to fill available space
       }}
       onClick={onClick}
     >
       {/* Combo Badge */}
-      <div className="absolute top-2 md:top-3 left-2 md:left-3 z-20">
-        <span className="bg-[#C6B560] text-white text-xs font-semibold px-2 md:px-3 py-1 rounded-full shadow-md">
+      <div className="absolute top-3 left-3 z-20">
+        <span className="bg-[#C6B560] text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
           Combo
         </span>
       </div>
 
-      {/* Green blurry overlay for side cards */}
+      {/* Overlay for side cards */}
       {!emphasized && (
         <div
-          className="absolute inset-0 rounded-2xl z-20"
+          className="absolute inset-0 rounded-2xl z-10"
           style={{
-            backgroundColor: "rgba(84, 136, 109, 0.6)",
-            backdropFilter: "blur(1000px)",
+            backgroundColor: "rgba(84, 136, 109, 0.4)",
+            backdropFilter: "blur(2px)",
           }}
-        ></div>
+        />
       )}
 
-      {/* image */}
+      {/* Image container with optimized height */}
       <div
-        className="w-full flex items-center justify-center p-3 md:p-4"
+        className="w-full flex items-center justify-center p-4"
         style={{
-          height: isMobile ? "55%" : "65%",
+          height: "60%", // Increased slightly for better image display
           backgroundColor: product.bgColor,
         }}
       >
@@ -476,25 +428,23 @@ function ProductCard({ product, onClick, emphasized, isMobile }) {
         />
       </div>
 
-      {/* details */}
-      <div className="flex flex-col flex-1 p-2 md:p-3 gap-1 md:gap-2 relative z-20 items-center">
-        <h3 className="text-sm md:text-lg text-red-800 text-center capitalize">
+      {/* Details section with better spacing */}
+      <div className="flex flex-col flex-1 p-4 gap-3 relative z-20 items-center justify-center">
+        <h3 className="text-base font-medium text-gray-900 text-center capitalize line-clamp-2 leading-tight">
           {product.name}
         </h3>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1 md:gap-2">
-            <span className="text-xs md:text-sm font-medium">
-              ₹ {product.price}.00
-            </span>
-            <span className="line-through text-red-400 text-xs">
-              ₹ {product.oldPrice}.00
-            </span>
-          </div>
+        <div className="flex items-center gap-2">
+          <span className="text-lg font-semibold text-gray-900">
+            ₹{product.price}.00
+          </span>
+          <span className="line-through text-red-400 text-sm">
+            ₹{product.oldPrice}.00
+          </span>
         </div>
 
-        <button className="relative mt-auto w-full bg-[#EFEFEF] rounded-[12px] md:rounded-[15px] py-1 md:py-2 px-2 md:px-4 font-medium hover:bg-gray-200 transition text-xs md:text-sm">
-          <span className="block text-center">Shop Now</span>
+        <button className="w-full max-w-[90%] bg-gray-100 rounded-xl py-3 px-4 font-medium hover:bg-gray-200 transition-colors text-sm mt-1">
+          Shop Now
         </button>
       </div>
     </div>
@@ -502,50 +452,32 @@ function ProductCard({ product, onClick, emphasized, isMobile }) {
 }
 
 export default function ProductShowcase() {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-  // Handle window resize
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   return (
     <section
-      className="max-w-7xl mx-auto py-0 rounded-2xl"
-      style={{
-        background: "linear-gradient(to bottom, #4F926E, #326B4E)",
-      }}
+      className="w-full bg-transparent"
+      // style={{
+      //   background: "linear-gradient(to bottom, #4F926E, #326B4E)",
+      // }}
     >
       <div
-        className={`flex ${
-          isMobile ? "flex-col" : "gap-8"
-        } w-full overflow-hidden items-center`}
+        className="max-w-7xl mx-auto py-8 md:py-0 rounded-2xl"
+        style={{
+          background: "linear-gradient(to bottom, #4F926E, #326B4E)",
+        }}
       >
-        {/* Left component */}
-        <div className={isMobile ? "w-full" : "w-1/3 min-w-0"}>
-          <ProductCylinderCarousel />
-        </div>
+        <div className="flex flex-col lg:flex-row items-center py lg:items-stretch gap-8 lg:gap-12 px-4">
+          {/* Cylinder Carousel */}
+          <div className="w-full lg:w-2/5 flex justify-center">
+            <ProductCylinderCarousel />
+          </div>
 
-        {/* Divider (hidden on mobile) */}
-        {!isMobile && (
-          <div
-            className="w-px self-stretch my-16"
-            style={{
-              backgroundImage:
-                "linear-gradient(to bottom, white 40%, transparent 40%)",
-              backgroundSize: "1px 16px",
-            }}
-          ></div>
-        )}
+          {/* Vertical Divider - Hidden on mobile */}
+          <div className="hidden lg:block w-px bg-gradient-to-b from-white/40 to-transparent bg-[length:1px_16px] my-8" />
 
-        {/* Right component */}
-        <div className={isMobile ? "w-full" : "w-2/3 min-w-0"}>
-          <ProductCarousel />
+          {/* Horizontal Carousel */}
+          <div className="w-full lg:w-3/5">
+            <ProductCarousel />
+          </div>
         </div>
       </div>
     </section>

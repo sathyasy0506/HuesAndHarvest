@@ -59,33 +59,35 @@ function Promotion() {
 
   return (
     <section className="w-full bg-transparent">
-      <div className="max-w-5xl mx-auto py-0 relative">
-        {/* Slider container */}
-        <div
-          ref={sliderRef}
-          className="flex overflow-x-scroll scroll-smooth snap-x snap-mandatory product-carousel-scrollbar"
-        >
-          {images.map((img, index) => (
-            <img
-              key={index}
-              src={img}
-              alt={`Promotion ${index + 1}`}
-              className="w-full flex-shrink-0 h-auto rounded-2xl object-cover snap-start"
-            />
-          ))}
-        </div>
+      <div className="max-w-7xl mx-auto px-4 flex justify-center">
+        <div className="w-full max-w-5xl py-0 relative">
+          {/* Slider container */}
+          <div
+            ref={sliderRef}
+            className="flex overflow-x-scroll scroll-smooth snap-x snap-mandatory product-carousel-scrollbar space-x-4"
+          >
+            {images.map((img, index) => (
+              <img
+                key={index}
+                src={img}
+                alt={`Promotion ${index + 1}`}
+                className="w-full flex-shrink-0 h-auto rounded-2xl object-cover snap-start"
+              />
+            ))}
+          </div>
 
-        {/* Dots */}
-        <div className="flex justify-center mt-4 space-x-2">
-          {images.map((_, index) => (
-            <span
-              key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={`w-3 h-3 rounded-full cursor-pointer transition-colors duration-300 ${
-                index === currentIndex ? "bg-[#1A342F]" : "bg-gray-300"
-              }`}
-            ></span>
-          ))}
+          {/* Dots */}
+          <div className="flex justify-center mt-4 space-x-2">
+            {images.map((_, index) => (
+              <span
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`w-3 h-3 rounded-full cursor-pointer transition-colors duration-300 ${
+                  index === currentIndex ? "bg-[#1A342F]" : "bg-gray-300"
+                }`}
+              ></span>
+            ))}
+          </div>
         </div>
       </div>
     </section>
