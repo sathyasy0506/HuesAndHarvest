@@ -80,7 +80,7 @@ function CaProductListing() {
 
 
   return (
-    <section className="w-full px-4 sm:px-6 py-0 bg-transparent">
+    <section className="w-full px-0 sm:px-6 py-0 bg-transparent">
       <div className="max-w-7xl mx-auto bg-transparent">
         {/* Header */}
         <div className="flex flex-col md:flex-row items-center justify-between mb-4 gap-4 md:gap-0">
