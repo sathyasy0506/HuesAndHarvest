@@ -6,7 +6,7 @@ import ProductCategories from "./ProductCategories";
 import InstagramFeed from "./InstagramFeed";
 import ProductListing from "./ProductListing";
 import Gradient from "../Background/Gradient";
-import FeaturedProduct from "./FeaturedProduct";
+import FeaturedProducts from "./FeaturedProduct";
 import Promotion from "./Promtion";
 import FreshInsights from "./FreshInsights";
 import FreshnessSection from "./FreshnessSection";
@@ -46,7 +46,7 @@ const Home = ({ onDataLoaded }) => {
           <ProductShowcase />
           <Features />
           <FreshnessSection />
-          {/* <FeaturedProduct /> */}
+          <FeaturedProducts />
           <Testimonials />
           <FreshInsights />
           <InstagramFeed />

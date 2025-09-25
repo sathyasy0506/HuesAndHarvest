@@ -17,6 +17,10 @@ import Gradient from "../Background/Gradient";
 import { ArrowUpRight } from "lucide-react";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import { CheckCircle } from "@mui/icons-material";
+import CloseIcon from "@mui/icons-material/Close";
 
 const bgColors = ["#ffffff"];
 
@@ -33,7 +37,6 @@ const Combo = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [selectedStockStatuses, setSelectedStockStatuses] = useState([]);
-
 
   const slugify = (name) =>
     name
@@ -184,16 +187,16 @@ const Combo = () => {
       </div>
 
       {filtersApplied && (
-        <Button
-          variant="contained"
+        <button
           onClick={() => {
             setPriceRange([...priceLimits]);
             setSelectedStockStatuses([]);
           }}
-          sx={{ mt: 3 }}
+          className="mt-4 w-full flex items-center justify-center gap-2 bg-[#20403D] text-white py-3 px-6 rounded-2xl shadow-md hover:bg-[#1a332f] transition-all duration-300 transform hover:scale-105"
         >
           Reset Filters
-        </Button>
+          <RestartAltIcon className="w-5 h-5" />
+        </button>
       )}
     </div>
   );
@@ -204,13 +207,40 @@ const Combo = () => {
 
   return (
     <Gradient>
-      <div className="min-h-screen px-4 sm:px-6 py-8 mt-16 bg-transparent">
+      <div className="min-h-screen px-3 sm:px-6 py-8 mt-16 bg-transparent">
         {/* Breadcrumb + Sort */}
         <div className="max-w-7xl mx-auto mb-6 flex justify-between items-center">
-          <nav className="text-sm text-gray-600 bg-white px-5 py-2 rounded-full shadow-sm">
-            Home &gt; Combo
+          {/* Breadcrumb (hidden on mobile) */}
+          <nav className="hidden sm:block text-sm text-gray-600 bg-white px-5 py-2 rounded-full shadow-sm">
+            Home &gt; Combos
           </nav>
 
+          {/* Filters button (mobile only, matches Sort By style) */}
+          <div className="sm:hidden">
+            <Button
+              variant="outlined"
+              onClick={() => setOpenFilters(true)}
+              startIcon={<FilterListIcon />}
+              sx={{
+                fontSize: "0.875rem",
+                color: "#4b5563",
+                backgroundColor: "#ffffff",
+                padding: "6px 12px",
+                borderRadius: "9999px",
+                textTransform: "none",
+                border: "none",
+                boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+                "&:hover": {
+                  backgroundColor: "#f9f9f9",
+                  border: "none",
+                },
+              }}
+            >
+              Filters
+            </Button>
+          </div>
+
+          {/* Sort dropdown */}
           <div className="bg-white rounded-full shadow-sm">
             <FormControl
               size="small"
@@ -223,15 +253,16 @@ const Combo = () => {
                   "&.Mui-focused fieldset": { border: "none" },
                 },
                 "& .MuiSelect-select": {
-                  padding: "6px 16px",
-                  maxWidth: "150px",
-                  minWidth: "140px",
+                  padding: "6px 12px",
+                  maxWidth: "110px",
+                  minWidth: "90px",
                   textAlign: "center",
                   display: "flex",
                   justifyContent: "center",
+                  fontSize: "0.875rem",
                 },
                 "& .MuiSelect-icon": {
-                  right: "8px",
+                  right: "6px",
                 },
               }}
             >
@@ -241,48 +272,55 @@ const Combo = () => {
                 displayEmpty
                 renderValue={(selected) => {
                   if (selected === "default") {
-                    return <span className="text-gray-500">Sort By</span>;
+                    return (
+                      <span className="text-gray-500 text-sm">Sort By</span>
+                    );
                   }
-                  return selected === "priceLowHigh"
-                    ? "Price: Low → High"
-                    : selected === "priceHighLow"
-                    ? "Price: High → Low"
-                    : selected === "nameAZ"
-                    ? "Name: A-Z"
-                    : "Name: Z-A";
+                  return (
+                    <span className="text-sm">
+                      {selected === "priceLowHigh"
+                        ? "Price: Low → High"
+                        : selected === "priceHighLow"
+                        ? "Price: High → Low"
+                        : selected === "nameAZ"
+                        ? "Name: A-Z"
+                        : "Name: Z-A"}
+                    </span>
+                  );
                 }}
               >
-                <MenuItem value="priceLowHigh">Price: Low → High</MenuItem>
-                <MenuItem value="priceHighLow">Price: High → Low</MenuItem>
-                <MenuItem value="nameAZ">Name: A-Z</MenuItem>
-                <MenuItem value="nameZA">Name: Z-A</MenuItem>
+                <MenuItem value="priceLowHigh" className="text-sm">
+                  Price: Low → High
+                </MenuItem>
+                <MenuItem value="priceHighLow" className="text-sm">
+                  Price: High → Low
+                </MenuItem>
+                <MenuItem value="nameAZ" className="text-sm">
+                  Name: A-Z
+                </MenuItem>
+                <MenuItem value="nameZA" className="text-sm">
+                  Name: Z-A
+                </MenuItem>
               </Select>
             </FormControl>
           </div>
         </div>
 
         {/* Main Card */}
-        <div className="max-w-7xl mx-auto rounded-2xl shadow-sm p-6 relative bg-white flex h-[80vh]">
+        <div className="max-w-7xl mx-auto rounded-2xl shadow-sm p-4 sm:p-6 relative bg-white flex min-h-[80vh]">
           {/* Filters Sidebar */}
-          <aside className="hidden lg:block w-1/4 border-r border-dashed border-gray-300">
-            <div className="sticky top-0 overflow-y-auto p-4">
+          <aside className="hidden lg:block w-1/4 relative">
+            <div className="sticky top-6 p-4 h-[calc(100vh-96px)] overflow-y-auto">
               {renderFilters()}
             </div>
           </aside>
 
-          {/* Product Grid */}
-          <main className="lg:w-3/4 w-full pl-6 overflow-y-auto">
-            <div className="lg:hidden mb-4">
-              <Button
-                variant="contained"
-                onClick={() => setOpenFilters(true)}
-                startIcon={<FilterListIcon />}
-              >
-                Filters
-              </Button>
-            </div>
+          {/* Vertical Dotted Divider */}
+          <div className="hidden lg:block border-l-2 border-dashed border-gray-300 mx-8"></div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pr-2">
+          {/* Product Grid */}
+          <main className="lg:w-3/4 w-full lg:pl-6 overflow-y-auto max-h-[calc(100vh-96px)]">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
               {filteredProducts.length > 0 ? (
                 filteredProducts.map((product) => (
                   <div
@@ -298,7 +336,7 @@ const Combo = () => {
                     }}
                   >
                     <div
-                      className="w-full aspect-square rounded-2xl flex items-center justify-center overflow-hidden p-4"
+                      className="w-full aspect-square rounded-xl sm:rounded-2xl flex items-center justify-center overflow-hidden p-2 sm:p-4"
                       style={{
                         backgroundColor: getRandomBg(),
                         filter:
@@ -314,24 +352,26 @@ const Combo = () => {
                       />
                     </div>
 
-                    <div className="mt-4 p-2 flex flex-col gap-2 flex-1">
-                      <h3 className="text-lg line-clamp-2 min-h-[3.5rem] capitalize">
+                    <div className="mt-3 sm:mt-4 p-1 sm:p-2 flex flex-col gap-1 sm:gap-2 flex-1">
+                      {/* Product Name - Full width, no line clamp */}
+                      <h3 className="text-sm sm:text-base lg:text-lg font-small min-h-[2.5rem] sm:min-h-[3.5rem] capitalize leading-tight text-center">
                         {product.name}
                       </h3>
 
-                      <div className="flex items-center justify-between mt-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg font-medium">
-                            ₹ {Number(product.price).toFixed(2)}
-                          </span>
-                          <span className="line-through text-gray-400">
+                      {/* Prices in column layout */}
+                      <div className="flex flex-col sm:flex-row gap-1 mt-1 items-baseline justify-center">
+                        <span className="text-base sm:text-lg font-semibold text-gray-900">
+                          ₹ {Number(product.price).toFixed(2)}
+                        </span>
+                        {product.oldPrice && (
+                          <span className="line-through text-gray-400 text-sm sm:text-base sm:ml-2">
                             ₹ {Number(product.oldPrice).toFixed(2)}
                           </span>
-                        </div>
+                        )}
                       </div>
 
                       <button
-                        className="relative mt-auto w-full bg-[#EFEFEF] rounded-[15px] py-3 px-5 font-medium hover:bg-gray-200 transition"
+                        className="relative mt-2 sm:mt-auto w-full bg-[#EFEFEF] rounded-[12px] sm:rounded-[15px] py-2 sm:py-3 px-3 sm:px-5 font-medium hover:bg-gray-200 transition text-sm sm:text-base"
                         onClick={(e) => {
                           e.stopPropagation();
                           navigate(`/product/${slugify(product.name)}`, {
@@ -346,8 +386,8 @@ const Combo = () => {
                             : "Shop Now"}
                         </span>
                         {product.stock_status !== "outofstock" && (
-                          <span className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-white shadow">
-                            <ArrowUpRight size={16} />
+                          <span className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-white shadow">
+                            <ArrowUpRight size={12} className="sm:w-4 sm:h-4" />
                           </span>
                         )}
                       </button>
@@ -368,32 +408,34 @@ const Combo = () => {
         </div>
 
         {/* Filters Dialog (Mobile) */}
-        <Dialog
-          open={openFilters}
-          onClose={() => setOpenFilters(false)}
-          fullWidth
-          maxWidth="xs"
-          PaperProps={{
-            style: {
-              borderRadius: "20px",
-              padding: "16px",
-              backgroundColor: "white",
-            },
-          }}
-        >
-          <DialogContent>
-            {renderFilters()}
-            <Button
-              fullWidth
-              variant="contained"
-              onClick={() => setOpenFilters(false)}
-              startIcon={<TransitEnterexitIcon />}
-              sx={{ mt: 4 }}
+        {openFilters && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30"
+            onClick={() => setOpenFilters(false)}
+          >
+            <div
+              className="bg-white rounded-2xl p-4 w-full max-w-xs relative"
+              onClick={(e) => e.stopPropagation()}
             >
-              Apply Filters
-            </Button>
-          </DialogContent>
-        </Dialog>
+              <button
+                onClick={() => setOpenFilters(false)}
+                className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              >
+                <CloseIcon className="w-5 h-5" />
+              </button>
+
+              <div>{renderFilters()}</div>
+
+              <button
+                onClick={() => setOpenFilters(false)}
+                className="mt-4 w-full flex items-center justify-center gap-2 bg-[#20403D] text-white py-3 px-6 rounded-2xl shadow-md hover:bg-[#1a332f] transition-all duration-300 transform hover:scale-105"
+              >
+                Apply Filters
+                <CheckCircle className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </Gradient>
   );

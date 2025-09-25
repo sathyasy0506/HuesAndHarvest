@@ -102,7 +102,7 @@ const ProductCategories = () => {
         </motion.div>
 
         {/* Categories Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 items-stretch md:p-0 p-6">
           {categories.map((category, index) => (
             <motion.div
               key={index}
@@ -124,7 +124,7 @@ const ProductCategories = () => {
                     src={category.image}
                     alt={category.name}
                     className="w-full h-full object-cover transition-transform duration-700"
-                    style={{ objectPosition: "50% 20%" }} // <-- 50% horizontal, 40% vertical
+                    style={{ objectPosition: "50% 20%" }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t to-transparent"></div>
                   <div className="absolute bottom-4 left-4 text-white">
@@ -138,7 +138,7 @@ const ProductCategories = () => {
                 </div>
 
                 {/* Content */}
-                <div className="p-8 flex-1 flex flex-col justify-between">
+                <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between">
                   <div>
                     <h3
                       className="text-2xl font-bold mb-3 group-hover:text-[var(--primary-color)] transition-colors"
@@ -150,7 +150,7 @@ const ProductCategories = () => {
                       {category.name}
                     </h3>
                     <p
-                      className="mb-6 leading-relaxed"
+                      className="mb-6 leading-relaxed text-sm sm:text-base"
                       style={{
                         color: "var(--muted-text)",
                         fontFamily: "var(--font-poppins)",
@@ -163,7 +163,7 @@ const ProductCategories = () => {
                   <div className="flex items-center justify-between mt-auto">
                     <motion.button
                       whileHover={{ x: 5 }}
-                      className="flex items-center space-x-2 font-semibold"
+                      className="flex items-center space-x-2 font-semibold text-sm sm:text-base"
                       style={{
                         color: "var(--accent-color)",
                         fontFamily: "var(--font-poppins)",
