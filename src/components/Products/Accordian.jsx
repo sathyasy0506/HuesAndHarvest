@@ -13,7 +13,6 @@ function ProductAccordion({ productId }) {
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
-  22;
 
   React.useEffect(() => {
     if (!productId) return; // ✅ prevent API call if no productId yet
@@ -53,6 +52,9 @@ function ProductAccordion({ productId }) {
     border: "none",
     "&:before": { display: "none" },
     width: "100%",
+    "& .MuiCollapse-root": {
+      willChange: "height", // ✅ smoother on mobile
+    },
   };
 
   const summaryStyles = {
@@ -75,7 +77,7 @@ function ProductAccordion({ productId }) {
         <Accordion
           expanded={expanded === "keyFeatures"}
           onChange={handleChange("keyFeatures")}
-          TransitionProps={{ timeout: 500 }}
+          transitionDuration="auto"
           sx={accordionStyles}
         >
           <AccordionSummary
@@ -99,7 +101,7 @@ function ProductAccordion({ productId }) {
         <Accordion
           expanded={expanded === "nutrition"}
           onChange={handleChange("nutrition")}
-          TransitionProps={{ timeout: 500 }}
+          transitionDuration="auto"
           sx={accordionStyles}
         >
           <AccordionSummary
@@ -177,7 +179,7 @@ function ProductAccordion({ productId }) {
         <Accordion
           expanded={expanded === "ingredients"}
           onChange={handleChange("ingredients")}
-          TransitionProps={{ timeout: 500 }}
+          transitionDuration="auto"
           sx={accordionStyles}
         >
           <AccordionSummary
@@ -201,7 +203,7 @@ function ProductAccordion({ productId }) {
       <Accordion
         expanded={expanded === "storage"}
         onChange={handleChange("storage")}
-        TransitionProps={{ timeout: 500 }}
+        transitionDuration="auto"
         sx={accordionStyles}
       >
         <AccordionSummary
@@ -223,7 +225,7 @@ function ProductAccordion({ productId }) {
       <Accordion
         expanded={expanded === "manufacturer"}
         onChange={handleChange("manufacturer")}
-        TransitionProps={{ timeout: 500 }}
+        transitionDuration="auto"
         sx={accordionStyles}
       >
         <AccordionSummary
@@ -244,7 +246,7 @@ function ProductAccordion({ productId }) {
       <Accordion
         expanded={expanded === "FSSAI"}
         onChange={handleChange("FSSAI")}
-        TransitionProps={{ timeout: 500 }}
+        transitionDuration="auto"
         sx={accordionStyles}
       >
         <AccordionSummary
