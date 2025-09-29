@@ -1,5 +1,6 @@
+// src/components/Products/ProductPage.jsx
 import { useState, useEffect, useMemo } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Minus,
   Plus,
@@ -24,8 +25,8 @@ import { ENDPOINTS } from "../../api/api";
 import Gradient from "../Background/Gradient";
 import { Star } from "lucide-react";
 import ProductListing from "../Home/ProductListing";
-import { showToast } from "../Common/Toaster"; // ✅ import this
-import { useCart } from "../../contexts/CartContext"; // ✅ import cart context
+import { showToast } from "../Common/Toaster";
+import { useCart } from "../../contexts/CartContext";
 import ProductAccordion from "./Accordian";
 import RelatedProducts from "./RelatedProducts";
 
@@ -86,7 +87,6 @@ const InfoCard = ({ Icon, text, highlight }) => (
   </div>
 );
 
-// StarRating Component using MUI Star icons
 // Lucide StarRating Component
 const StarRating = ({ rating }) => {
   return (
@@ -106,66 +106,21 @@ const StarRating = ({ rating }) => {
   );
 };
 
-// Inside ProductPage component
-
-const AverageRatingCircle = ({ rating }) => {
-  const radius = 40; // circle radius
-  const stroke = 6; // stroke width
-  const normalizedRadius = radius - stroke / 2;
-  const circumference = normalizedRadius * 2 * Math.PI;
-  const strokeDashoffset = circumference - (rating / 5) * circumference; // fill according to rating
-
-  return (
-    <div className="flex flex-col items-center">
-      <div className="relative w-[80px] h-[80px]">
-        <svg height={radius * 2} width={radius * 2}>
-          <circle
-            stroke="#e5e7eb"
-            fill="transparent"
-            strokeWidth={stroke}
-            r={normalizedRadius}
-            cx={radius}
-            cy={radius}
-          />
-          <circle
-            stroke="var(--primary-color)"
-            fill="transparent"
-            strokeWidth={stroke}
-            r={normalizedRadius}
-            cx={radius}
-            cy={radius}
-            strokeDasharray={`${circumference} ${circumference}`}
-            strokeDashoffset={strokeDashoffset}
-            strokeLinecap="round"
-            transform={`rotate(-90 ${radius} ${radius})`}
-          />
-        </svg>
-        {/* Centered Rating Number */}
-        <div className="absolute inset-0 flex items-center justify-center text-lg font-bold text-gray-900 dark:text-white">
-          {rating.toFixed(1)}
-        </div>
-      </div>
-      <span className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-        Average Rating
-      </span>
-    </div>
-  );
-};
-
 function ProductPage() {
   const [quantity, setQuantity] = useState(1);
-  const { setCartCount, fetchCartCount } = useCart(); // ✅ use cart context
+  const { setCartCount, fetchCartCount } = useCart();
   const [showModal, setShowModal] = useState(false);
   const [modalVisibleCount, setModalVisibleCount] = useState(10);
   const [product, setProduct] = useState(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [reviews, setReviews] = useState([]);
+  const navigate = useNavigate();
   const randomBgColor = useMemo(() => {
     return bgColors[Math.floor(Math.random() * bgColors.length)];
   }, []);
 
   const handleAddToCart = async () => {
-    const token = localStorage.getItem("hh_token"); // 🔐 token from localStorage
+    const token = localStorage.getItem("hh_token");
     if (!token) {
       showToast("Please login first to add items to cart.", "error");
       return;
@@ -188,12 +143,7 @@ function ProductPage() {
       if (data.success) {
         console.log("Cart updated:", data);
         showToast("Item added to cart!", "success");
-
-        // ✅ Option 1: Refresh from backend (safer if stock rules apply)
         await fetchCartCount();
-
-        // ✅ Option 2 (faster UI): Increment manually
-        // setCartCount((prev) => prev + quantity);
       } else {
         console.error("Cart error:", data);
         showToast("❌ " + (data.message || "Could not add item"), "error");
@@ -204,11 +154,42 @@ function ProductPage() {
     }
   };
 
+  const handleBuyNow = () => {
+    if (!product) return;
+
+    // Prepare order items for checkout
+    const orderItem = {
+      id: product.id,
+      name: product.name,
+      price: parseFloat(product.price) || 0,
+      quantity: quantity,
+      image: product.image,
+    };
+
+    // Calculate prices
+    const subtotal = orderItem.price * orderItem.quantity;
+    const shipping = 60; // Fixed shipping cost as requested
+    const tax = subtotal * 0.08;
+    const total = subtotal + shipping + tax;
+
+    // Navigate to checkout with product data
+    navigate("/checkout", {
+      state: {
+        orderItems: [orderItem],
+        subtotal,
+        shipping,
+        tax,
+        total,
+        fromBuyNow: true,
+      },
+    });
+  };
+
   // Get the product ID from navigation state
   const location = useLocation();
   const productId = location.state?.id;
 
-  // Calculate average rating and count **inside the component**
+  // Calculate average rating and count
   const averageRating =
     reviews.length > 0
       ? reviews.reduce((sum, r) => sum + r.stars, 0) / reviews.length
@@ -447,6 +428,7 @@ function ProductPage() {
 
                 {/* Row 2: Buy Now */}
                 <button
+                  onClick={handleBuyNow}
                   className="w-full border border-gray-800 py-2 rounded-full text-[20px] text-gray-900 disabled:border-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
                   disabled={
                     product.stock_quantity === 0 ||

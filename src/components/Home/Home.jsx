@@ -6,7 +6,7 @@ import ProductCategories from "./ProductCategories";
 import InstagramFeed from "./InstagramFeed";
 import ProductListing from "./ProductListing";
 import Gradient from "../Background/Gradient";
-import FeaturedProducts from "./FeaturedProduct";
+import FeaturedProducts from "./FeaturedProduct"; 
 import Promotion from "./Promtion";
 import FreshInsights from "./FreshInsights";
 import FreshnessSection from "./FreshnessSection";

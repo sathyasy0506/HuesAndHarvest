@@ -1,8 +1,22 @@
-// src/components/Checkout.jsx
-import React, { useState } from "react";
+// src/components/Checkout/Checkout.jsx
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { CreditCard, ShoppingBag, Lock, ChevronDown } from "lucide-react";
 
 const Checkout = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Get order data from navigation state or use default values
+  const orderData = location.state || {
+    orderItems: [],
+    subtotal: 0,
+    shipping: 60,
+    tax: 0,
+    total: 60,
+    fromBuyNow: false,
+  };
+
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
@@ -17,6 +31,20 @@ const Checkout = () => {
   });
 
   const [errors, setErrors] = useState({});
+
+  // Calculate prices based on order data
+  const orderItems = orderData.orderItems || [];
+  const subtotal = orderData.subtotal || 0;
+  const shipping = orderData.shipping || 60; // Default shipping cost
+  const tax = orderData.tax || subtotal * 0.08;
+  const total = orderData.total || subtotal + shipping + tax;
+
+  useEffect(() => {
+    // If no order items and not from buy now, redirect to shop
+    if (orderItems.length === 0 && !orderData.fromBuyNow) {
+      navigate("/shop");
+    }
+  }, [orderItems, orderData.fromBuyNow, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -57,36 +85,17 @@ const Checkout = () => {
     e.preventDefault();
     if (validateForm()) {
       console.log("Form submitted:", formData);
+      console.log("Order details:", {
+        orderItems,
+        subtotal,
+        shipping,
+        tax,
+        total,
+      });
       // Add backend integration here
+      // After successful payment, you might want to clear the cart if it was a cart checkout
     }
   };
-
-  const orderItems = [
-    {
-      id: 1,
-      name: "Premium Wireless Headphones",
-      price: 299.99,
-      quantity: 1,
-      image:
-        "https://images.pexels.com/photos/3945667/pexels-photo-3945667.jpeg?auto=compress&cs=tinysrgb&w=150",
-    },
-    {
-      id: 2,
-      name: "Smart Fitness Watch",
-      price: 199.99,
-      quantity: 2,
-      image:
-        "https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg?auto=compress&cs=tinysrgb&w=150",
-    },
-  ];
-
-  const subtotal = orderItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
-  const shipping = 15.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
 
   const states = [
     "California",
@@ -111,9 +120,16 @@ const Checkout = () => {
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center">
-            <ShoppingBag className="h-8 w-8 text-blue-600 mr-3" />
-            <h1 className="text-2xl font-bold text-gray-900">Checkout</h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <ShoppingBag className="h-8 w-8 text-blue-600 mr-3" />
+              <h1 className="text-2xl font-bold text-gray-900">Checkout</h1>
+            </div>
+            {orderData.fromBuyNow && (
+              <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
+                Quick Buy
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -420,49 +436,55 @@ const Checkout = () => {
               </h2>
 
               <div className="space-y-4 mb-6">
-                {orderItems.map((item) => (
-                  <div key={item.id} className="flex items-center space-x-4">
-                    <div className="relative">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-16 h-16 object-cover rounded-lg"
-                      />
-                      <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center">
-                        {item.quantity}
-                      </span>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-sm font-medium text-gray-900">
-                        {item.name}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        Qty: {item.quantity}
+                {orderItems.length > 0 ? (
+                  orderItems.map((item) => (
+                    <div key={item.id} className="flex items-center space-x-4">
+                      <div className="relative">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-16 h-16 object-cover rounded-lg"
+                        />
+                        <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center">
+                          {item.quantity}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-sm font-medium text-gray-900">
+                          {item.name}
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          Qty: {item.quantity}
+                        </p>
+                      </div>
+                      <p className="text-sm font-semibold text-gray-900">
+                        ₹{(item.price * item.quantity).toFixed(2)}
                       </p>
                     </div>
-                    <p className="text-sm font-semibold text-gray-900">
-                      ${(item.price * item.quantity).toFixed(2)}
-                    </p>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-center py-4">
+                    No items in order
+                  </p>
+                )}
               </div>
 
               <div className="border-t pt-4 space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Subtotal</span>
-                  <span className="text-gray-900">${subtotal.toFixed(2)}</span>
+                  <span className="text-gray-900">₹{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Shipping</span>
-                  <span className="text-gray-900">${shipping.toFixed(2)}</span>
+                  <span className="text-gray-900">₹{shipping.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Tax</span>
-                  <span className="text-gray-900">${tax.toFixed(2)}</span>
+                  <span className="text-gray-900">₹{tax.toFixed(2)}</span>
                 </div>
                 <div className="border-t pt-3 flex justify-between text-base font-semibold">
                   <span className="text-gray-900">Total</span>
-                  <span className="text-gray-900">${total.toFixed(2)}</span>
+                  <span className="text-gray-900">₹{total.toFixed(2)}</span>
                 </div>
               </div>
 

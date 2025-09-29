@@ -58,12 +58,10 @@ function AppContent() {
   const location = useLocation();
 
   useEffect(() => {
-    // ⏳ Ensure splash loader shows for at least 2s
     const timer = setTimeout(() => setSplashDone(true), 2000);
     return () => clearTimeout(timer);
   }, []);
 
-  // ✅ If route is NOT home, mark dataLoaded immediately
   useEffect(() => {
     if (location.pathname !== "/") {
       setDataLoaded(true);
@@ -74,7 +72,6 @@ function AppContent() {
     setDataLoaded(true);
   };
 
-  // final loader state depends on BOTH
   const loading = !(splashDone && dataLoaded);
 
   return (
