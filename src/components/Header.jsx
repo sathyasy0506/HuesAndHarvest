@@ -95,6 +95,7 @@ const Header = () => {
     { name: "COMBOS", path: "/combos" },
     { name: "ABOUT", path: "/about" },
     { name: "BLOG", path: "/blog" },
+    { name: "SIGN", path: "/sign" },
   ];
 
   const isActive = (path) =>

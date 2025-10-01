@@ -1,5 +1,4 @@
-// Signup.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -7,15 +6,8 @@ import {
   signInWithPhoneNumber,
 } from "firebase/auth";
 
-// Firebase config
+// --- Firebase config ---
 const firebaseConfig = {
-  //   apiKey: "YOUR_API_KEY",
-  //   authDomain: "YOUR_PROJECT.firebaseapp.com",
-  //   projectId: "YOUR_PROJECT",
-  //   storageBucket: "YOUR_PROJECT.appspot.com",
-  //   messagingSenderId: "YOUR_SENDER_ID",
-  //   appId: "YOUR_APP_ID",
-
   apiKey: "AIzaSyBsLe3I2wuUCkIp4sZnkF8FvS7WpEpqBDo",
   authDomain: "huesharvestapp.firebaseapp.com",
   projectId: "huesharvestapp",
@@ -25,6 +17,7 @@ const firebaseConfig = {
   measurementId: "G-YS7WXR2Y93",
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
@@ -40,33 +33,50 @@ const Signup = () => {
     confirm_password: "",
   });
 
-  // --- Send OTP ---
-  const sendOTP = () => {
-    // Initialize Recaptcha only once
+  // --- Initialize reCAPTCHA once ---
+  useEffect(() => {
     if (!window.recaptchaVerifier) {
       window.recaptchaVerifier = new RecaptchaVerifier(
         "recaptcha-container",
-        { size: "invisible" },
+        {
+          size: "invisible",
+          callback: (response) => {
+            // reCAPTCHA solved
+            console.log("reCAPTCHA solved", response);
+          },
+        },
         auth
       );
+      window.recaptchaVerifier.render();
     }
+  }, []);
+
+  // --- Send OTP ---
+  const sendOTP = () => {
+    if (!phone) return alert("Enter phone number with country code +91...");
 
     signInWithPhoneNumber(auth, phone, window.recaptchaVerifier)
       .then((result) => {
         setConfirmationResult(result);
-        alert("OTP sent!");
+        alert("OTP sent successfully!");
       })
-      .catch((err) => alert(err.message));
+      .catch((err) => {
+        console.error(err);
+        alert("Failed to send OTP: " + err.message);
+      });
   };
 
-  // --- Verify OTP ---
+  // --- Verify OTP and call backend ---
   const verifyOTP = async () => {
     if (!confirmationResult) return alert("Send OTP first");
+    if (!otp) return alert("Enter OTP");
+
     try {
       const result = await confirmationResult.confirm(otp);
       const firebaseUser = result.user;
       const idToken = await firebaseUser.getIdToken();
 
+      // Call backend
       const res = await fetch("https://admin.huesandharvest.com/api/fbr.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -76,81 +86,91 @@ const Signup = () => {
           ...userData,
         }),
       });
+
       const data = await res.json();
-      alert(data.success ? "Signup Successful!" : data.message);
+      if (data.success) {
+        alert("Signup Successful!");
+        console.log(data);
+      } else {
+        alert("Signup failed: " + data.message);
+      }
     } catch (err) {
+      console.error(err);
       alert("Invalid OTP!");
     }
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white shadow-lg rounded-lg space-y-4">
+    <div className="max-w-md mx-auto p-8 bg-white shadow-lg rounded-lg space-y-4">
       <h2 className="text-2xl font-bold text-center">Signup with Phone OTP</h2>
 
-      <input
-        className="w-full p-2 border rounded"
-        placeholder="First Name"
-        value={userData.first_name}
-        onChange={(e) =>
-          setUserData({ ...userData, first_name: e.target.value })
-        }
-      />
-      <input
-        className="w-full p-2 border rounded"
-        placeholder="Last Name"
-        value={userData.last_name}
-        onChange={(e) =>
-          setUserData({ ...userData, last_name: e.target.value })
-        }
-      />
-      <input
-        className="w-full p-2 border rounded"
-        placeholder="Email"
-        value={userData.email}
-        onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-      />
-      <input
-        className="w-full p-2 border rounded"
-        placeholder="Password"
-        type="password"
-        value={userData.password}
-        onChange={(e) => setUserData({ ...userData, password: e.target.value })}
-      />
-      <input
-        className="w-full p-2 border rounded"
-        placeholder="Confirm Password"
-        type="password"
-        value={userData.confirm_password}
-        onChange={(e) =>
-          setUserData({ ...userData, confirm_password: e.target.value })
-        }
-      />
-
-      <input
-        className="w-full p-2 border rounded"
-        placeholder="+91xxxxxxxxxx"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-      />
+      <div className="space-y-2">
+        <input
+          className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+          placeholder="First Name"
+          value={userData.first_name}
+          onChange={(e) =>
+            setUserData({ ...userData, first_name: e.target.value })
+          }
+        />
+        <input
+          className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+          placeholder="Last Name"
+          value={userData.last_name}
+          onChange={(e) =>
+            setUserData({ ...userData, last_name: e.target.value })
+          }
+        />
+        <input
+          className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+          placeholder="Email"
+          value={userData.email}
+          onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+        />
+        <input
+          className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+          type="password"
+          placeholder="Password"
+          value={userData.password}
+          onChange={(e) =>
+            setUserData({ ...userData, password: e.target.value })
+          }
+        />
+        <input
+          className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+          type="password"
+          placeholder="Confirm Password"
+          value={userData.confirm_password}
+          onChange={(e) =>
+            setUserData({ ...userData, confirm_password: e.target.value })
+          }
+        />
+        <input
+          className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+          placeholder="+91xxxxxxxxxx"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+      </div>
 
       <div id="recaptcha-container"></div>
 
       <button
-        className="w-full bg-green-600 text-white py-2 rounded"
+        className="w-full bg-green-600 text-white py-3 rounded hover:bg-green-700 transition"
         onClick={sendOTP}
       >
         Send OTP
       </button>
 
       <input
-        className="w-full p-2 border rounded"
+        className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         placeholder="Enter OTP"
         value={otp}
         onChange={(e) => setOtp(e.target.value)}
       />
 
       <button
-        className="w-full bg-blue-600 text-white py-2 rounded"
+        className="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition"
         onClick={verifyOTP}
       >
         Verify & Signup
