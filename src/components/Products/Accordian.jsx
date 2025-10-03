@@ -15,7 +15,7 @@ function ProductAccordion({ productId }) {
   };
 
   React.useEffect(() => {
-    if (!productId) return; // ✅ prevent API call if no productId yet
+    if (!productId) return;
     async function fetchProduct() {
       try {
         const res = await fetch(ENDPOINTS.GET_PRODUCT(productId));
@@ -32,7 +32,7 @@ function ProductAccordion({ productId }) {
       }
     }
     fetchProduct();
-  }, [productId]); // ✅ refetch when productId changes
+  }, [productId]);
 
   if (!product)
     return (
@@ -52,9 +52,7 @@ function ProductAccordion({ productId }) {
     border: "none",
     "&:before": { display: "none" },
     width: "100%",
-    "& .MuiCollapse-root": {
-      willChange: "height", // ✅ smoother on mobile
-    },
+    "& .MuiCollapse-root": { willChange: "height" },
   };
 
   const summaryStyles = {
@@ -70,6 +68,66 @@ function ProductAccordion({ productId }) {
     lineHeight: 1.6,
     fontFamily: "Poppins, sans-serif",
   };
+
+  // --- Render nutrition table ---
+  const renderNutritionTable = (attributesObj) => (
+    <table
+      style={{
+        width: "100%",
+        borderCollapse: "collapse",
+        fontFamily: "Poppins, sans-serif",
+      }}
+    >
+      <thead>
+        <tr>
+          <th
+            style={{
+              textAlign: "left",
+              padding: "4px 8px",
+              fontWeight: 600,
+              whiteSpace: "nowrap",
+              minWidth: "140px",
+            }}
+          >
+            Nutrient
+          </th>
+          <th
+            style={{
+              textAlign: "left",
+              padding: "4px 8px",
+              fontWeight: 600,
+            }}
+          >
+            Value
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {Object.entries(attributesObj).map(([attrName, value]) => {
+          // Handle WooCommerce arrays (normal products) and strings (combo products)
+          const displayValue = Array.isArray(value)
+            ? value.join(", ")
+            : value ?? "";
+          return (
+            <tr key={attrName}>
+              <td
+                style={{
+                  fontWeight: 500,
+                  padding: "4px 8px",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {attrName}
+              </td>
+              <td style={{ padding: "4px 8px", fontWeight: 500 }}>
+                {displayValue}
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
 
   return (
     <div className="w-full py-8 px-4 sm:px-6 lg:px-8">
@@ -97,7 +155,9 @@ function ProductAccordion({ productId }) {
         </Accordion>
       )}
 
-      {product.attributes && Object.keys(product.attributes).length > 0 && (
+      {/* --- Nutrition / Combo2p --- */}
+      {(product.attributes && Object.keys(product.attributes).length > 0) ||
+      (product.combo_attributes && product.combo_attributes.length > 0) ? (
         <Accordion
           expanded={expanded === "nutrition"}
           onChange={handleChange("nutrition")}
@@ -114,66 +174,51 @@ function ProductAccordion({ productId }) {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <table
-              style={{
-                width: "30%", // shrink table to content
-                borderCollapse: "collapse",
-                fontFamily: "Poppins, sans-serif",
-              }}
-            >
-              <thead>
-                <tr>
-                  <th
-                    style={{
-                      textAlign: "left",
-                      padding: "4px 8px",
-                      fontWeight: 600,
-                      whiteSpace: "nowrap",
-                      minWidth: "140px", // keeps Nutrient column neat
-                    }}
-                  >
-                    Nutrient
-                  </th>
-                  <th
-                    style={{
-                      textAlign: "left",
-                      padding: "4px 8px",
-                      fontWeight: 600,
-                    }}
-                  >
-                    Value
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(product.attributes).map(
-                  ([attrName, values]) => (
-                    <tr key={attrName}>
-                      <td
-                        style={{
-                          fontWeight: 500,
-                          padding: "4px 8px",
-                          whiteSpace: "nowrap",
+            {/* Case 1: Normal product */}
+            {product.attributes &&
+              Object.keys(product.attributes).length > 0 &&
+              (!product.combo_attributes ||
+                product.combo_attributes.length === 0) && (
+                <div className="mb-4">
+                  {renderNutritionTable(product.attributes)}
+                </div>
+              )}
+
+            {/* Case 2: Combo Product (2 products side by side) */}
+            {product.combo_attributes &&
+              product.combo_attributes.length === 2 && (
+                <div className="flex flex-col md:flex-row gap-6">
+                  {product.combo_attributes.map((combo) => (
+                    <div key={combo.product} className="flex-1">
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          marginBottom: "0.5rem",
+                          textAlign: "center",
                         }}
                       >
-                        {attrName}
-                      </td>
-                      <td
-                        style={{
-                          padding: "4px 8px",
-                          fontWeight: 500,
-                        }}
-                      >
-                        {values.join(", ")}
-                      </td>
-                    </tr>
-                  )
-                )}
-              </tbody>
-            </table>
+                        {combo.product}
+                      </Typography>
+                      {renderNutritionTable(combo.attributes)}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+            {/* Fallback if combo > 2 products */}
+            {product.combo_attributes &&
+              product.combo_attributes.length > 2 &&
+              product.combo_attributes.map((combo) => (
+                <div key={combo.product} className="mb-6">
+                  <Typography sx={{ fontWeight: 600, marginBottom: "0.5rem" }}>
+                    {combo.product}
+                  </Typography>
+                  {renderNutritionTable(combo.attributes)}
+                </div>
+              ))}
           </AccordionDetails>
         </Accordion>
-      )}
+      ) : null}
 
       {product.ingredients && (
         <Accordion

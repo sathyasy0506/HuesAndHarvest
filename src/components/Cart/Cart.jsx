@@ -1,17 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Minus, Plus, X, Shield, CreditCard, Truck } from "lucide-react";
 import Gradient from "../Background/Gradient";
-import { useCart } from "../../contexts/CartContext"; // ✅ add this
+import { useCart } from "../../contexts/CartContext";
 import { ENDPOINTS } from "../../api/api";
+import { useNavigate } from "react-router-dom";
 
+// Helper function to create slug
+function slugify(name) {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "");
+}
 
 const Cart = () => {
   const [items, setItems] = useState([]);
   const [totals, setTotals] = useState({ subtotal: "0.00", total: "0.00" });
+  const [cartWeight, setCartWeight] = useState(0);
   const [loading, setLoading] = useState(true);
-  const { setCartCount, fetchCartCount } = useCart(); // ✅ get context
+  const { setCartCount, fetchCartCount } = useCart();
+  const navigate = useNavigate();
 
-  const token = localStorage.getItem("hh_token"); // 🔑 Make sure you store token after login
+  const token = localStorage.getItem("hh_token");
 
   // Fetch Cart
   const fetchCart = async () => {
@@ -25,11 +35,12 @@ const Cart = () => {
       });
       const data = await res.json();
       if (data.success) {
-        setItems(data.items);
-        setTotals(data.totals);
-
-        // ✅ update global count
-        setCartCount(data.items.reduce((sum, i) => sum + i.quantity, 0));
+        setItems(data.items || []);
+        setTotals(data.totals || { subtotal: "0.00", total: "0.00" });
+        setCartWeight(data.cart_weight || 0);
+        setCartCount(
+          (data.items || []).reduce((sum, i) => sum + i.quantity, 0)
+        );
       } else {
         console.error("Cart fetch failed:", data.message);
       }
@@ -40,45 +51,41 @@ const Cart = () => {
     }
   };
 
-  // ✅ Update Quantity
+  // Update Quantity
   const updateQuantity = async (productId, action) => {
-    let newItems;
+    if (!items) return;
 
-    // 1️⃣ Optimistic update in React state
-    setItems((prevItems) => {
-      newItems = prevItems.map((item) =>
-        item.id === productId
-          ? {
-              ...item,
-              quantity:
-                action === "increase"
-                  ? item.quantity + 1
-                  : Math.max(1, item.quantity - 1),
-              subtotal: (
-                parseFloat(item.price) *
-                (action === "increase"
-                  ? item.quantity + 1
-                  : Math.max(1, item.quantity - 1))
-              ).toFixed(2),
-            }
-          : item
-      );
-      return newItems;
+    const newItems = items.map((item) => {
+      if (item.id === productId) {
+        const newQuantity =
+          action === "increase"
+            ? item.quantity + 1
+            : Math.max(1, item.quantity - 1);
+        return {
+          ...item,
+          quantity: newQuantity,
+          subtotal: (parseFloat(item.price) * newQuantity).toFixed(2),
+          weight_total: item.weight_per_unit * newQuantity,
+        };
+      }
+      return item;
     });
 
-    // 2️⃣ Optimistically update totals
-    setTotals(() => {
-      let newSubtotal = newItems.reduce(
-        (sum, item) => sum + item.quantity * parseFloat(item.price),
-        0
-      );
-      return {
-        subtotal: newSubtotal.toFixed(2),
-        total: newSubtotal.toFixed(2),
-      };
+    setItems(newItems);
+
+    const newSubtotal = newItems.reduce(
+      (sum, item) => sum + item.quantity * parseFloat(item.price),
+      0
+    );
+    setTotals({
+      subtotal: newSubtotal.toFixed(2),
+      total: newSubtotal.toFixed(2),
     });
 
-    // 3️⃣ Update backend immediately
+    setCartWeight(
+      newItems.reduce((sum, item) => sum + (item.weight_total || 0), 0)
+    );
+
     try {
       const res = await fetch(ENDPOINTS.PRODUCT_QUANTITY(), {
         method: "POST",
@@ -88,40 +95,39 @@ const Cart = () => {
 
       const data = await res.json();
       if (!data.success) {
-        console.error("❌ Backend update failed:", data.message);
-        fetchCart(); // fallback → refresh
+        console.error("Backend update failed:", data.message);
+        fetchCart();
       } else {
-        fetchCartCount(); // ✅ update header count
+        fetchCartCount();
       }
     } catch (err) {
-      console.error("⚠️ API error:", err);
+      console.error("API error:", err);
       fetchCart();
     }
   };
 
-  // ✅ Remove Item
+  // Remove Item
   const removeItem = async (itemKey) => {
-    let newItems;
+    if (!items) return;
 
-    // 1️⃣ Optimistic remove
-    setItems((prevItems) => {
-      newItems = prevItems.filter((item) => item.item_key !== itemKey);
-      return newItems;
+    const newItems = items.filter((item) => item.item_key !== itemKey);
+
+    setItems(newItems);
+
+    const newSubtotal = newItems.reduce(
+      (sum, item) => sum + item.quantity * parseFloat(item.price),
+      0
+    );
+
+    setTotals({
+      subtotal: newSubtotal.toFixed(2),
+      total: newSubtotal.toFixed(2),
     });
 
-    // 2️⃣ Optimistically update totals
-    setTotals(() => {
-      let newSubtotal = newItems.reduce(
-        (sum, item) => sum + item.quantity * parseFloat(item.price),
-        0
-      );
-      return {
-        subtotal: newSubtotal.toFixed(2),
-        total: newSubtotal.toFixed(2),
-      };
-    });
+    setCartWeight(
+      newItems.reduce((sum, item) => sum + (item.weight_total || 0), 0)
+    );
 
-    // 3️⃣ Update backend immediately
     try {
       const res = await fetch(ENDPOINTS.REMOVE_FROM_CART(), {
         method: "POST",
@@ -131,13 +137,13 @@ const Cart = () => {
 
       const data = await res.json();
       if (!data.success) {
-        console.error("❌ Remove failed:", data.message);
-        fetchCart(); // fallback refresh
+        console.error("Remove failed:", data.message);
+        fetchCart();
       } else {
-        fetchCartCount(); // ✅ update header count
+        fetchCartCount();
       }
     } catch (err) {
-      console.error("⚠️ Remove error:", err);
+      console.error("Remove error:", err);
       fetchCart();
     }
   };
@@ -196,14 +202,31 @@ const Cart = () => {
                           key={item.item_key}
                           className="flex flex-col sm:flex-row gap-4 sm:gap-6 p-4 sm:p-6 rounded-2xl border border-card-color border-[0.5px] cards-bg"
                         >
-                          <img
-                            src={item.image}
-                            alt={item.title}
-                            className="w-24 h-24 sm:w-28 sm:h-28 object-cover rounded-xl shadow-md mx-auto sm:mx-0"
-                          />
+                          <div
+                            className="w-24 h-24 sm:w-28 sm:h-28 overflow-hidden rounded-xl shadow-md mx-auto sm:mx-0 cursor-pointer transition-transform duration-300 hover:scale-105"
+                            onClick={() =>
+                              navigate(`/product/${slugify(item.title)}`, {
+                                state: { id: item.id },
+                              })
+                            }
+                          >
+                            <img
+                              src={item.image}
+                              alt={item.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+
                           <div className="flex-1">
                             <div className="flex justify-between items-start mb-2">
-                              <h3 className="text-lg sm:text-xl font-semibold font-outfit">
+                              <h3
+                                className="text-lg sm:text-xl font-semibold font-outfit cursor-pointer"
+                                onClick={() =>
+                                  navigate(`/product/${slugify(item.title)}`, {
+                                    state: { id: item.id },
+                                  })
+                                }
+                              >
                                 {item.title}
                               </h3>
                               <button
@@ -243,6 +266,10 @@ const Cart = () => {
                                 <p className="opacity-70 text-sm sm:text-base">
                                   ₹{item.price} each
                                 </p>
+                                <p className="opacity-70 text-sm sm:text-base">
+                                  Total: {item.weight_total} g |{" "}
+                                  {item.weight_per_unit} g each
+                                </p>
                               </div>
                             </div>
                           </div>
@@ -273,6 +300,11 @@ const Cart = () => {
                     <div className="flex justify-between opacity-80">
                       <span>Subtotal ({items.length} items)</span>
                       <span className="font-semibold">₹{totals.subtotal}</span>
+                    </div>
+
+                    <div className="flex justify-between opacity-80">
+                      <span>Cart Weight</span>
+                      <span className="font-semibold">{cartWeight} g</span>
                     </div>
 
                     <hr className="border-card-color" />

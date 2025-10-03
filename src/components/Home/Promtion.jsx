@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import promoImage from "../../assets/images/promotion.jpg";
 
-const images = [promoImage, promoImage, promoImage, promoImage, promoImage];
+const images = [promoImage, promoImage];
 
 function Promotion() {
   const [currentIndex, setCurrentIndex] = useState(0);
