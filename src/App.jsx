@@ -36,7 +36,6 @@ import ProductCategories from "./components/Home/ProductCategories";
 import Checkout from "./components/Checkout/Checkout";
 import ProductShowcase from "./components/Home/ProductShowcase";
 import FeaturedProduct from "./components/Home/FeaturedProduct";
-import Signup from "./components/Fauth/Signup";
 
 // ✅ Protected Route Wrapper
 const ProtectedRoute = ({ children, requiresAuth }) => {
@@ -103,7 +102,6 @@ function AppContent() {
               <Route path="/catagories" element={<ProductCategories />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/showcase" element={<FeaturedProduct />} />
-              <Route path="/sign" element={<Signup />} />
 
               {/* ✅ Protected Routes */}
               <Route
