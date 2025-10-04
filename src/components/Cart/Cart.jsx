@@ -314,7 +314,14 @@ const Cart = () => {
                     </div>
                   </div>
 
-                  <button className="w-full py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-lg mb-4 shadow-lg primary-button">
+                  <button
+                    className="w-full py-3 sm:py-4 rounded-2xl font-bold text-base sm:text-lg mb-4 shadow-lg primary-button"
+                    onClick={() =>
+                      navigate("/checkout", {
+                        state: { items, totals, cartWeight },
+                      })
+                    }
+                  >
                     Proceed to Secure Checkout
                   </button>
 
