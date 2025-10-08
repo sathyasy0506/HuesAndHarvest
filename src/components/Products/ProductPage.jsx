@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // add this at top
+
 import {
   Minus,
   Plus,
@@ -160,6 +162,7 @@ function ProductPage() {
   const [product, setProduct] = useState(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [reviews, setReviews] = useState([]);
+  const navigate = useNavigate();
   const randomBgColor = useMemo(() => {
     return bgColors[Math.floor(Math.random() * bgColors.length)];
   }, []);
@@ -202,6 +205,32 @@ function ProductPage() {
       console.error("Error adding to cart:", err);
       showToast("❌ Something went wrong.", "error");
     }
+  };
+
+  const handleBuyNow = () => {
+    // Build single item for checkout
+    const checkoutItem = {
+      item_key: product.id,
+      title: product.name,
+      quantity,
+      subtotal: (product.price * quantity).toFixed(2),
+      image: product.image,
+      weight: product.weight || 0,
+      price: product.price,
+    };
+
+    const totals = {
+      subtotal: checkoutItem.subtotal,
+      total: checkoutItem.subtotal, // You can add shipping/tax if needed
+    };
+
+    navigate("/checkout", {
+      state: {
+        items: [checkoutItem],
+        totals,
+        cartWeight: checkoutItem.weight * quantity,
+      },
+    });
   };
 
   // Get the product ID from navigation state
@@ -452,6 +481,7 @@ function ProductPage() {
                     product.stock_quantity === 0 ||
                     product.stock_status === "outofstock"
                   }
+                  onClick={() => handleBuyNow()}
                 >
                   Buy Now
                 </button>
