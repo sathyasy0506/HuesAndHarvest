@@ -106,10 +106,10 @@ const OrderInitiatedModal = ({ isOpen, onClose, orderDetails }) => {
                     <p className="text-xs text-amber-700 mt-1">
                       Your payment is in <strong>Razorpay test mode</strong>. No
                       real transaction has been made. Test confirmation may take
-                      up to <strong>48 hours</strong>.
-                      <br />
+                      up to <strong>2 hours</strong>.
+                      {/* <br />
                       To create further orders and confirm your first order,
-                      please wait...
+                      please wait... */}
                     </p>
                   </div>
                 </div>

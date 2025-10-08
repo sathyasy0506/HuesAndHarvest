@@ -70,7 +70,7 @@ const Checkout = () => {
 
     if (!formData.firstName) newErrors.firstName = "First name is required";
     if (!formData.lastName) newErrors.lastName = "Last name is required";
-    if (!formData.country) newErrors.country = "Country is required";
+    formData.country = "India";
     if (!formData.address) newErrors.address = "Address is required";
     if (!formData.city) newErrors.city = "City is required";
     if (!formData.state) newErrors.state = "State is required";
@@ -245,25 +245,15 @@ const Checkout = () => {
                   >
                     Country/Region *
                   </label>
-                  <div className="relative">
-                    <select
-                      id="country"
-                      name="country"
-                      value={formData.country}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors appearance-none bg-white ${
-                        errors.country ? "border-red-300" : "border-gray-300"
-                      }`}
-                    >
-                      {/* <option value="">Select a country</option>
-                      <option value="US">United States</option>
-                      <option value="CA">Canada</option>
-                      <option value="UK">United Kingdom</option>
-                      <option value="AU">Australia</option> */}
-                      <option value="IN">India</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
-                  </div>
+                  <input
+                    type="text"
+                    id="country"
+                    name="country"
+                    value="India"
+                    readOnly
+                    className="w-full px-4 py-3 border rounded-lg bg-gray-100 cursor-not-allowed text-gray-700"
+                  />
+
                   {errors.country && (
                     <p className="mt-1 text-sm text-red-600">
                       {errors.country}
