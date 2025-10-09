@@ -9,12 +9,11 @@ const ProfileSection = () => {
     firstName: "",
     lastName: "",
     email: "",
+    phoneNumber: "",
   });
-
   const [currentPassword, setCurrentPassword] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch profile data on mount
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -28,13 +27,13 @@ const ProfileSection = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-
         const data = await res.json();
         if (data.success) {
           setFormData({
             firstName: data.user.first_name || "",
             lastName: data.user.last_name || "",
             email: data.user.email || "",
+            phoneNumber: data.user.phone_number || "",
           });
           setProfilePhoto(data.user.avatar || null);
         }
@@ -44,34 +43,24 @@ const ProfileSection = () => {
         setLoading(false);
       }
     };
-
     fetchProfile();
   }, []);
 
-  // ✅ Handle Save (update-profile.php)
-  // ✅ Handle Save (update-profile.php)
   const handleSave = async () => {
-    if (!currentPassword) {
-      alert("Please enter your password to update profile.");
-      return;
-    }
-
+    if (!currentPassword)
+      return alert("Please enter your password to update profile.");
     try {
       const token = localStorage.getItem("hh_token");
       const formDataToSend = new FormData();
       formDataToSend.append("first_name", formData.firstName);
       formDataToSend.append("last_name", formData.lastName);
       formDataToSend.append("password", currentPassword);
-
-      if (profilePhoto instanceof File) {
+      if (profilePhoto instanceof File)
         formDataToSend.append("avatar", profilePhoto);
-      }
 
       const res = await fetch(ENDPOINTS.UPDATE_PROFILE(), {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`, // ✅ secure with JWT
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: formDataToSend,
       });
 
@@ -79,37 +68,30 @@ const ProfileSection = () => {
       if (data.success) {
         alert("Profile updated successfully!");
         setIsEditing(false);
-        setCurrentPassword(""); // ✅ Clear password after success
+        setCurrentPassword("");
         setFormData({
           firstName: data.user.first_name,
           lastName: data.user.last_name,
           email: data.user.email,
+          phoneNumber: data.user.phone_number,
         });
         setProfilePhoto(data.user.avatar);
-      } else {
-        alert(data.message || "Profile update failed");
-      }
+      } else alert(data.message || "Profile update failed");
     } catch (err) {
       console.error("Update error:", err);
       alert("Error updating profile");
     }
   };
 
-  // ✅ Handle Photo Change (store File for upload)
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setProfilePhoto(file); // keep actual File for upload
-    }
+    if (file) setProfilePhoto(file);
   };
 
-  if (loading) {
-    return <p className="text-center">Loading profile...</p>;
-  }
+  if (loading) return <p className="text-center">Loading profile...</p>;
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div className="gradient-header rounded-2xl p-8 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-black bg-opacity-10"></div>
         <div className="relative flex items-center justify-between">
@@ -162,7 +144,6 @@ const ProfileSection = () => {
         </div>
       </div>
 
-      {/* Profile Form */}
       <div className="card-bg rounded-2xl p-8 space-y-6">
         <h2 className="text-2xl font-bold primary-text mb-6">
           Personal Information
@@ -207,9 +188,19 @@ const ProfileSection = () => {
               className="w-full input-field px-4 py-3 rounded-xl bg-gray-100 cursor-not-allowed"
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium primary-text mb-2">
+              Phone Number
+            </label>
+            <input
+              type="text"
+              value={formData.phoneNumber}
+              disabled
+              className="w-full input-field px-4 py-3 rounded-xl bg-gray-100 cursor-not-allowed"
+            />
+          </div>
         </div>
 
-        {/* Confirm with Password */}
         {isEditing && (
           <div className="mt-6">
             <label className="block text-sm font-medium primary-text mb-2">
@@ -229,13 +220,12 @@ const ProfileSection = () => {
             <button
               onClick={() => {
                 setIsEditing(false);
-                setCurrentPassword(""); // ✅ Clear password on cancel
+                setCurrentPassword("");
               }}
               className="secondary-button px-6 py-3 rounded-xl"
             >
               Cancel
             </button>
-
             <button
               onClick={handleSave}
               className="primary-button px-6 py-3 rounded-xl flex items-center space-x-2"

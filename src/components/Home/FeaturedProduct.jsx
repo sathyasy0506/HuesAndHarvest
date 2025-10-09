@@ -109,7 +109,7 @@ const FeaturedProducts = () => {
                   >
                     {/* Image Section */}
                     <div className="w-full md:w-1/2 flex justify-center">
-                      <div className="w-full max-w-sm md:max-w-md aspect-square rounded-xl overflow-hidden flex items-center justify-center bg-gray-100">
+                      <div className="w-full max-w-[150px] md:max-w-md aspect-square rounded-xl overflow-hidden flex items-center justify-center bg-gray-100">
                         <img
                           src={product.image}
                           alt={product.name}
