@@ -22,9 +22,9 @@ const Hero = () => {
   return (
     <section
       className="relative overflow-x-hidden overflow-y-hidden min-h-screen
-                 mt-16 md:-mt-8 lg:-mt-20
+                 mt-4 md:-mt-8 lg:-mt-20
                  pt-40 md:pt-52 lg:pt-[140px]
-                 pb-24 md:pb-32 lg:pb-10"
+                 pb-24 md:pb-32 lg:pb-10 p-4 "
     >
       {/* Silk Background */}
       <div className="absolute top-0 left-0 w-screen h-full -z-10">

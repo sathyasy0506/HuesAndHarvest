@@ -71,7 +71,7 @@ function Promotion() {
                 key={index}
                 src={img}
                 alt={`Promotion ${index + 1}`}
-                className="w-full flex-shrink-0 h-auto rounded-2xl object-cover snap-start"
+                className="w-full flex-shrink-0 h-[13rem] rounded-2xl object-cover snap-start"
               />
             ))}
           </div>
