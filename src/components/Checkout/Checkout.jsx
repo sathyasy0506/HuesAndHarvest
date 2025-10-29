@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { CreditCard, ShoppingBag, Lock, ChevronDown } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { ShoppingBag, Lock } from "lucide-react";
 import { ENDPOINTS } from "../../api/api";
-import OrderInitiatedModal from "./OrderInitiatedModal";
 
 const Checkout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const {
     items = [],
     totals = { subtotal: "0.00", total: "0.00" },
@@ -16,19 +17,28 @@ const Checkout = () => {
     email: "",
     firstName: "",
     lastName: "",
-    country: "",
+    country: "India",
     address: "",
     city: "",
     state: "",
     pinCode: "",
     phone: "",
-    paymentMethod: "card",
+    paymentMethod: "razorpay",
   });
 
+  const [shippingData, setShippingData] = useState({
+    firstName: "",
+    lastName: "",
+    country: "India",
+    address: "",
+    city: "",
+    state: "",
+    pinCode: "",
+    phone: "",
+  });
+
+  const [sameAsBilling, setSameAsBilling] = useState(true);
   const [errors, setErrors] = useState({});
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [orderDetails, setOrderDetails] = useState({});
-  const generatedOrderId = `H&H${Math.floor(100000 + Math.random() * 900000)}`;
 
   // Prefill user email
   useEffect(() => {
@@ -56,83 +66,126 @@ const Checkout = () => {
     fetchUserEmail();
   }, []);
 
-  const handleInputChange = (e) => {
+  // Handle input changes
+  const handleInputChange = (e, isShipping = false) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const targetState = isShipping ? setShippingData : setFormData;
+
+    if (name === "pinCode") {
+      const numericValue = value.replace(/\D/g, "").slice(0, 6);
+      targetState((prev) => ({ ...prev, pinCode: numericValue }));
+
+      if (numericValue.length === 6) {
+        fetchPincodeDetails(numericValue, isShipping);
+      }
+      return;
+    }
+
+    targetState((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.email) newErrors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(formData.email))
-      newErrors.email = "Email is invalid";
+  // Fetch city/state from pincode
+  const fetchPincodeDetails = async (pincode, isShipping = false) => {
+    try {
+      const res = await fetch(ENDPOINTS.PINCODE(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pincode }),
+      });
 
-    if (!formData.firstName) newErrors.firstName = "First name is required";
-    if (!formData.lastName) newErrors.lastName = "Last name is required";
-    formData.country = "India";
-    if (!formData.address) newErrors.address = "Address is required";
-    if (!formData.city) newErrors.city = "City is required";
-    if (!formData.state) newErrors.state = "State is required";
-    if (!formData.pinCode) newErrors.pinCode = "PIN code is required";
-    if (!formData.phone) newErrors.phone = "Phone number is required";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      const generatedOrderId = `H&H${Math.floor(Math.random() * 1000000)}`;
-      const modalData = {
-        orderId: generatedOrderId,
-        items,
-        totals,
-        shipping: {
-          name: `${formData.firstName} ${formData.lastName}`,
-          address: formData.address,
-          city: formData.city,
-          state: formData.state,
-          pinCode: formData.pinCode,
-          email: formData.email,
-        },
-      };
-      setOrderDetails(modalData);
-      setIsModalOpen(true);
+      const data = await res.json();
+      if (data.status === "success") {
+        if (isShipping) {
+          setShippingData((prev) => ({
+            ...prev,
+            city: data.city || "",
+            state: data.state || "",
+          }));
+        } else {
+          setFormData((prev) => ({
+            ...prev,
+            city: data.city || "",
+            state: data.state || "",
+          }));
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching pincode details:", error);
     }
   };
 
-  const states = [
-    "Andhra Pradesh",
-    "Arunachal Pradesh",
-    "Assam",
-    "Bihar",
-    "Chhattisgarh",
-    "Goa",
-    "Gujarat",
-    "Haryana",
-    "Himachal Pradesh",
-    "Jharkhand",
-    "Karnataka",
-    "Kerala",
-    "Madhya Pradesh",
-    "Maharashtra",
-    "Manipur",
-    "Meghalaya",
-    "Mizoram",
-    "Nagaland",
-    "Odisha",
-    "Punjab",
-    "Rajasthan",
-    "Sikkim",
-    "Tamil Nadu",
-    "Telangana",
-    "Tripura",
-    "Uttar Pradesh",
-    "Uttarakhand",
-    "West Bengal",
-  ];
+  // Razorpay Payment Handler
+  const handlePayment = async () => {
+    const token = localStorage.getItem("hh_token");
+    if (!token) {
+      alert("Please log in before proceeding to payment.");
+      return;
+    }
+
+    try {
+      const res = await fetch(ENDPOINTS.CREATE_RAZORPAY_ORDER(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: totals.total }),
+      });
+
+      const data = await res.json();
+      if (!data.success) {
+        alert("Failed to initiate payment");
+        return;
+      }
+
+      const options = {
+        key: "rzp_test_RZC0xunp2TupSo",
+        amount: data.amount * 100,
+        currency: data.currency,
+        name: "Hues & Harvest",
+        description: "Order Payment",
+        order_id: data.order_id,
+        prefill: {
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          contact: formData.phone,
+        },
+        theme: { color: "#4CAF50" },
+        handler: async function (response) {
+          const verifyRes = await fetch(ENDPOINTS.VERIFY_RAZORPAY_PAYMENT(), {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              orderData: {
+                items,
+                totals,
+                formData,
+                shippingData: sameAsBilling ? formData : shippingData,
+              },
+            }),
+          });
+
+          const verifyData = await verifyRes.json();
+          if (verifyData.success) {
+            alert("✅ Payment successful! Your order has been placed.");
+            navigate("/account", { state: { activeSection: "orders" } });
+          } else {
+            alert("❌ Payment verification failed: " + verifyData.message);
+          }
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong while initiating payment.");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -146,281 +199,42 @@ const Checkout = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="lg:grid lg:grid-cols-5 lg:gap-12">
-          {/* Form */}
-          <div className="lg:col-span-3">
-            <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Contact Information */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-6">
-                  Contact Information
-                </h2>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="john.doe@example.com"
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                      errors.email ? "border-red-300" : "border-gray-300"
-                    }`}
-                  />
-                  {errors.email && (
-                    <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-                  )}
-                </div>
-              </div>
+          {/* Form Section */}
+          <div className="lg:col-span-3 space-y-8">
+            {/* Billing Info */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">
+                Billing Information
+              </h2>
+              <BillingForm formData={formData} onChange={handleInputChange} />
+            </div>
 
-              {/* Shipping Information */}
+            {/* Checkbox for same as billing */}
+            <div className="flex items-center space-x-2 bg-white p-4 rounded-lg shadow-sm">
+              <input
+                type="checkbox"
+                id="sameAsBilling"
+                checked={sameAsBilling}
+                onChange={() => setSameAsBilling(!sameAsBilling)}
+                className="w-5 h-5 text-blue-600"
+              />
+              <label htmlFor="sameAsBilling" className="text-gray-700 text-sm">
+                Shipping address same as billing
+              </label>
+            </div>
+
+            {/* Shipping Info */}
+            {!sameAsBilling && (
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-6">
                   Shipping Information
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* First Name */}
-                  <div>
-                    <label
-                      htmlFor="firstName"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      First Name *
-                    </label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      placeholder="John"
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                        errors.firstName ? "border-red-300" : "border-gray-300"
-                      }`}
-                    />
-                    {errors.firstName && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.firstName}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Last Name */}
-                  <div>
-                    <label
-                      htmlFor="lastName"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Last Name *
-                    </label>
-                    <input
-                      type="text"
-                      id="lastName"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      placeholder="Doe"
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                        errors.lastName ? "border-red-300" : "border-gray-300"
-                      }`}
-                    />
-                    {errors.lastName && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.lastName}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Country */}
-                <div className="mt-4">
-                  <label
-                    htmlFor="country"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Country/Region *
-                  </label>
-                  <input
-                    type="text"
-                    id="country"
-                    name="country"
-                    value="India"
-                    readOnly
-                    className="w-full px-4 py-3 border rounded-lg bg-gray-100 cursor-not-allowed text-gray-700"
-                  />
-
-                  {errors.country && (
-                    <p className="mt-1 text-sm text-red-600">
-                      {errors.country}
-                    </p>
-                  )}
-                </div>
-
-                {/* Address */}
-                <div className="mt-4">
-                  <label
-                    htmlFor="address"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Address *
-                  </label>
-                  <input
-                    type="text"
-                    id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    placeholder="123 Main Street, Apt 4B"
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                      errors.address ? "border-red-300" : "border-gray-300"
-                    }`}
-                  />
-                  {errors.address && (
-                    <p className="mt-1 text-sm text-red-600">
-                      {errors.address}
-                    </p>
-                  )}
-                </div>
-
-                {/* City, State, PIN */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                  <div>
-                    <label
-                      htmlFor="city"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      City *
-                    </label>
-                    <input
-                      type="text"
-                      id="city"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleInputChange}
-                      placeholder="New York"
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                        errors.city ? "border-red-300" : "border-gray-300"
-                      }`}
-                    />
-                    {errors.city && (
-                      <p className="mt-1 text-sm text-red-600">{errors.city}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="state"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      State *
-                    </label>
-                    <div className="relative">
-                      <select
-                        id="state"
-                        name="state"
-                        value={formData.state}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors appearance-none bg-white ${
-                          errors.state ? "border-red-300" : "border-gray-300"
-                        }`}
-                      >
-                        <option value="">Select State</option>
-                        {states.map((state) => (
-                          <option key={state} value={state}>
-                            {state}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
-                    </div>
-                    {errors.state && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.state}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="pinCode"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      PIN Code *
-                    </label>
-                    <input
-                      type="text"
-                      id="pinCode"
-                      name="pinCode"
-                      value={formData.pinCode}
-                      onChange={handleInputChange}
-                      placeholder="10001"
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                        errors.pinCode ? "border-red-300" : "border-gray-300"
-                      }`}
-                    />
-                    {errors.pinCode && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.pinCode}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Phone */}
-                <div className="mt-4">
-                  <label
-                    htmlFor="phone"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Phone Number *
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    placeholder="+1 (555) 123-4567"
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                      errors.phone ? "border-red-300" : "border-gray-300"
-                    }`}
-                  />
-                  {errors.phone && (
-                    <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
-                  )}
-                </div>
+                <BillingForm
+                  formData={shippingData}
+                  onChange={(e) => handleInputChange(e, true)}
+                />
               </div>
-
-              {/* Payment Method */}
-              {/* <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-6">
-                  Payment Method
-                </h2>
-                <div className="flex items-center space-x-3 p-4 border border-blue-200 bg-blue-50 rounded-lg">
-                  <input
-                    type="radio"
-                    id="card"
-                    name="paymentMethod"
-                    value="card"
-                    checked={formData.paymentMethod === "card"}
-                    onChange={handleInputChange}
-                    className="h-4 w-4 text-blue-600"
-                  />
-                  <CreditCard className="h-5 w-5 text-blue-600" />
-                  <label
-                    htmlFor="card"
-                    className="text-sm font-medium text-gray-900"
-                  >
-                    Credit/Debit Card
-                  </label>
-                </div>
-              </div> */}
-            </form>
+            )}
           </div>
 
           {/* Order Summary */}
@@ -429,6 +243,7 @@ const Checkout = () => {
               <h2 className="text-lg font-semibold text-gray-900 mb-6">
                 Order Summary
               </h2>
+
               <div className="space-y-4 mb-6">
                 {items.map((item) => (
                   <div
@@ -454,6 +269,7 @@ const Checkout = () => {
                   </div>
                 ))}
               </div>
+
               <div className="border-t pt-4 space-y-3">
                 <div className="flex justify-between text-sm">
                   <span>Subtotal</span>
@@ -468,12 +284,16 @@ const Checkout = () => {
                   <span>₹{totals.total}</span>
                 </div>
               </div>
+
               <button
-                onClick={handleSubmit}
+                type="button"
+                onClick={handlePayment}
                 className="w-full mt-6 bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 flex items-center justify-center space-x-2"
               >
-                <Lock className="h-5 w-5" /> <span>Proceed to payment</span>
+                <Lock className="h-5 w-5" />
+                <span>Proceed to Payment</span>
               </button>
+
               <p className="text-xs text-gray-500 text-center mt-3">
                 Your payment information is secure and encrypted
               </p>
@@ -481,15 +301,75 @@ const Checkout = () => {
           </div>
         </div>
       </div>
-
-      {/* Order Initiated Modal */}
-      <OrderInitiatedModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        orderDetails={orderDetails}
-      />
     </div>
   );
 };
+
+// Reusable Billing/Shipping Form
+const BillingForm = ({ formData, onChange }) => (
+  <div className="space-y-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Input
+        label="First Name *"
+        name="firstName"
+        value={formData.firstName}
+        onChange={onChange}
+      />
+      <Input
+        label="Last Name *"
+        name="lastName"
+        value={formData.lastName}
+        onChange={onChange}
+      />
+    </div>
+    <Input label="Country/Region *" name="country" value="India" readOnly />
+    <Input
+      label="Address *"
+      name="address"
+      value={formData.address}
+      onChange={onChange}
+    />
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <Input
+        label="PIN Code *"
+        name="pinCode"
+        value={formData.pinCode}
+        onChange={onChange}
+      />
+      <Input
+        label="City / Region *"
+        name="city"
+        value={formData.city}
+        onChange={onChange}
+      />
+      <Input
+        label="State *"
+        name="state"
+        value={formData.state}
+        onChange={onChange}
+      />
+    </div>
+    <Input
+      label="Phone Number *"
+      name="phone"
+      value={formData.phone}
+      onChange={onChange}
+    />
+  </div>
+);
+
+const Input = ({ label, ...props }) => (
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-2">
+      {label}
+    </label>
+    <input
+      {...props}
+      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 border-gray-300 ${
+        props.readOnly ? "bg-gray-100 cursor-not-allowed" : ""
+      }`}
+    />
+  </div>
+);
 
 export default Checkout;

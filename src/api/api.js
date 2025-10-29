@@ -31,4 +31,12 @@ export const ENDPOINTS = {
   UPDATE_PROFILE: () => `${BASE_URL}update-profile.php`,
   REQUEST_PASSWORD_OTP: () => `${BASE_URL}request_password_otp.php`,
   VERIFY_PASSWORD_OTP: () => `${BASE_URL}verify_password_otp.php`,
+
+  CREATE_RAZORPAY_ORDER: () => `${BASE_URL}create_order.php`,
+  VERIFY_RAZORPAY_PAYMENT: () => `${BASE_URL}verify_payment.php`,
+  PINCODE: () => `${BASE_URL}pincode.php`,
+
+  GET_ORDERS: () => `${BASE_URL}orders.php`,
+
+  ADDRESSES: () => `${BASE_URL}addresses.php`,
 };
