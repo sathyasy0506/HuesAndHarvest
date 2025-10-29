@@ -34,6 +34,9 @@ export const ENDPOINTS = {
 
   CREATE_RAZORPAY_ORDER: () => `${BASE_URL}create_order.php`,
   VERIFY_RAZORPAY_PAYMENT: () => `${BASE_URL}verify_payment.php`,
+  PINCODE: () => `${BASE_URL}pincode.php`,
 
   GET_ORDERS: () => `${BASE_URL}orders.php`,
+
+  ADDRESSES: () => `${BASE_URL}addresses.php`,
 };

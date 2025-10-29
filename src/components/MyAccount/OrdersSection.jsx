@@ -14,6 +14,12 @@ const OrdersSection = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // ✅ Generate random tracking ID
+  const generateTrackingId = () => {
+    const randomNum = Math.floor(100000 + Math.random() * 900000);
+    return `H&H${randomNum}`;
+  };
+
   // ✅ Fetch Orders
   useEffect(() => {
     const fetchOrders = async () => {
@@ -35,7 +41,12 @@ const OrdersSection = () => {
 
         const data = await res.json();
         if (data.success) {
-          setOrders(data.orders);
+          // ✅ Add a dummy tracking ID to each order
+          const updatedOrders = data.orders.map((order) => ({
+            ...order,
+            trackingId: generateTrackingId(),
+          }));
+          setOrders(updatedOrders);
         } else {
           alert(data.message || "Failed to fetch orders.");
         }
@@ -105,14 +116,23 @@ const OrdersSection = () => {
           {filteredOrders.map((order) => (
             <div
               key={order.id}
-              className="bg-white rounded-lg shadow-sm p-6 flex justify-between"
+              className="bg-white rounded-lg shadow-sm p-6 flex justify-between items-center"
             >
               <div>
-                <h3 className="font-semibold text-lg">Order #{order.id}</h3>
+                <h3 className="font-semibold text-lg">
+                  Order #{order.order_number || order.id}
+                </h3>
                 <p className="text-gray-500">
                   Placed on {new Date(order.date).toLocaleDateString()}
                 </p>
-                {/* <p className="text-gray-700 font-semibold">₹{order.total}</p> */}
+                {/* ✅ Show dummy tracking ID */}
+                <p className="text-gray-700 font-medium mt-1">
+                  Tracking ID:{" "}
+                  <span className="text-blue-600 font-semibold">
+                    {order.trackingId}
+                  </span>
+                  <p className="text-gray-700 font-semibold">₹{order.total}</p>
+                </p>
               </div>
               <div className="flex items-center space-x-3">
                 {getStatusIcon(order.status)}

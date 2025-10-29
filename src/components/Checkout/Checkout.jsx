@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { ShoppingBag, Lock, ChevronDown } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { ShoppingBag, Lock } from "lucide-react";
 import { ENDPOINTS } from "../../api/api";
 
 const Checkout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const {
     items = [],
     totals = { subtotal: "0.00", total: "0.00" },
@@ -24,6 +26,18 @@ const Checkout = () => {
     paymentMethod: "razorpay",
   });
 
+  const [shippingData, setShippingData] = useState({
+    firstName: "",
+    lastName: "",
+    country: "India",
+    address: "",
+    city: "",
+    state: "",
+    pinCode: "",
+    phone: "",
+  });
+
+  const [sameAsBilling, setSameAsBilling] = useState(true);
   const [errors, setErrors] = useState({});
 
   // Prefill user email
@@ -52,44 +66,56 @@ const Checkout = () => {
     fetchUserEmail();
   }, []);
 
-  const handleInputChange = (e) => {
+  // Handle input changes
+  const handleInputChange = (e, isShipping = false) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const targetState = isShipping ? setShippingData : setFormData;
+
+    if (name === "pinCode") {
+      const numericValue = value.replace(/\D/g, "").slice(0, 6);
+      targetState((prev) => ({ ...prev, pinCode: numericValue }));
+
+      if (numericValue.length === 6) {
+        fetchPincodeDetails(numericValue, isShipping);
+      }
+      return;
+    }
+
+    targetState((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const states = [
-    "Andhra Pradesh",
-    "Arunachal Pradesh",
-    "Assam",
-    "Bihar",
-    "Chhattisgarh",
-    "Goa",
-    "Gujarat",
-    "Haryana",
-    "Himachal Pradesh",
-    "Jharkhand",
-    "Karnataka",
-    "Kerala",
-    "Madhya Pradesh",
-    "Maharashtra",
-    "Manipur",
-    "Meghalaya",
-    "Mizoram",
-    "Nagaland",
-    "Odisha",
-    "Punjab",
-    "Rajasthan",
-    "Sikkim",
-    "Tamil Nadu",
-    "Telangana",
-    "Tripura",
-    "Uttar Pradesh",
-    "Uttarakhand",
-    "West Bengal",
-  ];
+  // Fetch city/state from pincode
+  const fetchPincodeDetails = async (pincode, isShipping = false) => {
+    try {
+      const res = await fetch(ENDPOINTS.PINCODE(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pincode }),
+      });
 
-  // 🪄 Razorpay Payment Handler
+      const data = await res.json();
+      if (data.status === "success") {
+        if (isShipping) {
+          setShippingData((prev) => ({
+            ...prev,
+            city: data.city || "",
+            state: data.state || "",
+          }));
+        } else {
+          setFormData((prev) => ({
+            ...prev,
+            city: data.city || "",
+            state: data.state || "",
+          }));
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching pincode details:", error);
+    }
+  };
+
+  // Razorpay Payment Handler
   const handlePayment = async () => {
     const token = localStorage.getItem("hh_token");
     if (!token) {
@@ -98,7 +124,6 @@ const Checkout = () => {
     }
 
     try {
-      // Step 1: Create order in backend
       const res = await fetch(ENDPOINTS.CREATE_RAZORPAY_ORDER(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -111,9 +136,8 @@ const Checkout = () => {
         return;
       }
 
-      // Step 2: Configure Razorpay Checkout
       const options = {
-        key: "rzp_test_RZC0xunp2TupSo", // Replace with your Razorpay Key ID
+        key: "rzp_test_RZC0xunp2TupSo",
         amount: data.amount * 100,
         currency: data.currency,
         name: "Hues & Harvest",
@@ -126,7 +150,6 @@ const Checkout = () => {
         },
         theme: { color: "#4CAF50" },
         handler: async function (response) {
-          // Step 3: Verify payment
           const verifyRes = await fetch(ENDPOINTS.VERIFY_RAZORPAY_PAYMENT(), {
             method: "POST",
             headers: {
@@ -137,13 +160,19 @@ const Checkout = () => {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_order_id: response.razorpay_order_id,
               razorpay_signature: response.razorpay_signature,
-              orderData: { items, totals, formData },
+              orderData: {
+                items,
+                totals,
+                formData,
+                shippingData: sameAsBilling ? formData : shippingData,
+              },
             }),
           });
 
           const verifyData = await verifyRes.json();
           if (verifyData.success) {
             alert("✅ Payment successful! Your order has been placed.");
+            navigate("/account", { state: { activeSection: "orders" } });
           } else {
             alert("❌ Payment verification failed: " + verifyData.message);
           }
@@ -171,161 +200,41 @@ const Checkout = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="lg:grid lg:grid-cols-5 lg:gap-12">
           {/* Form Section */}
-          <div className="lg:col-span-3">
-            <form className="space-y-8">
-              {/* Contact Info */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-6">
-                  Contact Information
-                </h2>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="john.doe@example.com"
-                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border-gray-300"
-                  />
-                </div>
-              </div>
+          <div className="lg:col-span-3 space-y-8">
+            {/* Billing Info */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">
+                Billing Information
+              </h2>
+              <BillingForm formData={formData} onChange={handleInputChange} />
+            </div>
 
-              {/* Shipping Info */}
+            {/* Checkbox for same as billing */}
+            <div className="flex items-center space-x-2 bg-white p-4 rounded-lg shadow-sm">
+              <input
+                type="checkbox"
+                id="sameAsBilling"
+                checked={sameAsBilling}
+                onChange={() => setSameAsBilling(!sameAsBilling)}
+                className="w-5 h-5 text-blue-600"
+              />
+              <label htmlFor="sameAsBilling" className="text-gray-700 text-sm">
+                Shipping address same as billing
+              </label>
+            </div>
+
+            {/* Shipping Info */}
+            {!sameAsBilling && (
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-6">
                   Shipping Information
                 </h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      First Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      placeholder="John"
-                      className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 border-gray-300"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Last Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      placeholder="Doe"
-                      className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 border-gray-300"
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Country/Region *
-                  </label>
-                  <input
-                    type="text"
-                    name="country"
-                    value="India"
-                    readOnly
-                    className="w-full px-4 py-3 border rounded-lg bg-gray-100 cursor-not-allowed text-gray-700"
-                  />
-                </div>
-
-                <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Address *
-                  </label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    placeholder="123 Main Street"
-                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 border-gray-300"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      City *
-                    </label>
-                    <input
-                      type="text"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleInputChange}
-                      placeholder="New York"
-                      className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 border-gray-300"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      State *
-                    </label>
-                    <div className="relative">
-                      <select
-                        name="state"
-                        value={formData.state}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 appearance-none bg-white border-gray-300"
-                      >
-                        <option value="">Select State</option>
-                        {states.map((state) => (
-                          <option key={state} value={state}>
-                            {state}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      PIN Code *
-                    </label>
-                    <input
-                      type="text"
-                      name="pinCode"
-                      value={formData.pinCode}
-                      onChange={handleInputChange}
-                      placeholder="10001"
-                      className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 border-gray-300"
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Phone Number *
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    placeholder="+91 98765 43210"
-                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 border-gray-300"
-                  />
-                </div>
+                <BillingForm
+                  formData={shippingData}
+                  onChange={(e) => handleInputChange(e, true)}
+                />
               </div>
-            </form>
+            )}
           </div>
 
           {/* Order Summary */}
@@ -334,6 +243,7 @@ const Checkout = () => {
               <h2 className="text-lg font-semibold text-gray-900 mb-6">
                 Order Summary
               </h2>
+
               <div className="space-y-4 mb-6">
                 {items.map((item) => (
                   <div
@@ -394,5 +304,72 @@ const Checkout = () => {
     </div>
   );
 };
+
+// Reusable Billing/Shipping Form
+const BillingForm = ({ formData, onChange }) => (
+  <div className="space-y-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Input
+        label="First Name *"
+        name="firstName"
+        value={formData.firstName}
+        onChange={onChange}
+      />
+      <Input
+        label="Last Name *"
+        name="lastName"
+        value={formData.lastName}
+        onChange={onChange}
+      />
+    </div>
+    <Input label="Country/Region *" name="country" value="India" readOnly />
+    <Input
+      label="Address *"
+      name="address"
+      value={formData.address}
+      onChange={onChange}
+    />
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <Input
+        label="PIN Code *"
+        name="pinCode"
+        value={formData.pinCode}
+        onChange={onChange}
+      />
+      <Input
+        label="City / Region *"
+        name="city"
+        value={formData.city}
+        onChange={onChange}
+      />
+      <Input
+        label="State *"
+        name="state"
+        value={formData.state}
+        onChange={onChange}
+      />
+    </div>
+    <Input
+      label="Phone Number *"
+      name="phone"
+      value={formData.phone}
+      onChange={onChange}
+    />
+  </div>
+);
+
+const Input = ({ label, ...props }) => (
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-2">
+      {label}
+    </label>
+    <input
+      {...props}
+      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 border-gray-300 ${
+        props.readOnly ? "bg-gray-100 cursor-not-allowed" : ""
+      }`}
+    />
+  </div>
+);
 
 export default Checkout;

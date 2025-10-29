@@ -100,10 +100,19 @@ function AppContent() {
               <Route path="/accordian" element={<AccordionUsage />} />
               <Route path="/blog/:id" element={<SingleBlog />} />
               <Route path="/catagories" element={<ProductCategories />} />
-              <Route path="/checkout" element={<Checkout />} />
               <Route path="/showcase" element={<FeaturedProduct />} />
 
               {/* ✅ Protected Routes */}
+
+              <Route
+                path="/checkout"
+                element={
+                  <ProtectedRoute requiresAuth={true}>
+                    <Checkout />
+                  </ProtectedRoute>
+                }
+              />
+
               <Route
                 path="/cart"
                 element={
