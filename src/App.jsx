@@ -37,6 +37,11 @@ import FeaturedProduct from "./components/Home/FeaturedProduct";
 import Hero from "./components/Home/Hero";
 import OrderDetail from "./components/Orders/OrderDetails";
 import OrdersList from "./components/Orders/OrdersList";
+import TermsAndConditions from "./components/Policy/TermsAndConditions";
+import ShippingPolicy from "./components/Policy/ShippingPolicy";
+import { Cancel } from "@mui/icons-material";
+import PrivacyPolicy from "./components/Policy/PrivacyPolicy";
+import CancellationsAndRefunds from "./components/Policy/CancellationsAndRefunds";
 
 // ✅ Protected Route Wrapper
 const ProtectedRoute = ({ children, requiresAuth }) => {
@@ -103,6 +108,19 @@ function AppContent() {
               <Route path="/catagories" element={<ProductCategories />} />
               <Route path="/showcase" element={<FeaturedProduct />} />
               <Route path="/Hero" element={<Hero />} />
+
+              {/* Policy Pages */}
+
+              <Route
+                path="/terms-and-conditions"
+                element={<TermsAndConditions />}
+              />
+              <Route path="/shipping-policy" element={<ShippingPolicy />} />
+              <Route
+                path="/cancellation-and-refunds"
+                element={<CancellationsAndRefunds />}
+              />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
               {/* ✅ Protected Routes */}
 
