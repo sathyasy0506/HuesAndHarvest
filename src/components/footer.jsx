@@ -8,6 +8,7 @@ import {
   Facebook,
   Twitter,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import Silk from "./Background/Silk";
 import logo from "../assets/images/H&H.png";
 
@@ -58,7 +59,9 @@ const Footer = forwardRef((props, ref) => {
                 <div className="w-20 h-20 mx-auto mb-4 rounded-full border-2 flex items-center justify-center">
                   <item.icon className="w-8 h-8" />
                 </div>
-                <h3 className="text-sm font-medium tracking-wide">{item.label}</h3>
+                <h3 className="text-sm font-medium tracking-wide">
+                  {item.label}
+                </h3>
               </div>
             ))}
           </div>
@@ -121,15 +124,45 @@ const Footer = forwardRef((props, ref) => {
               <h4 className="text-lg font-semibold mb-6">OTHER LINKS</h4>
               <ul className="space-y-3 text-center">
                 <li>
-                  <a href="#" className="hover:text-white text-sm">
-                    Privacy Policy
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white text-sm">
+                  <Link
+                    to="/terms-and-conditions"
+                    title="Terms & Condition Page"
+                    className="hover:text-white text-sm"
+                  >
                     Terms & Condition
-                  </a>
+                  </Link>
                 </li>
+
+                <li>
+                  <Link
+                    to="/privacy-policy"
+                    title="Privacy Policy Page"
+                    className="hover:text-white text-sm"
+                  >
+                    Privacy Policy
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    to="/shipping-policy"
+                    title="Shipping Policy Page"
+                    className="hover:text-white text-sm"
+                  >
+                    Shipping Policy
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    to="/cancellation-and-refunds"
+                    title="Cancellations & Refunds Page"
+                    className="hover:text-white text-sm"
+                  >
+                    Cancellations & Refunds
+                  </Link>
+                </li>
+
                 <li>
                   <a href="#" className="hover:text-white text-sm">
                     Contact Us
