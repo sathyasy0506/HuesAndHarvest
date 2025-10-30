@@ -28,15 +28,15 @@ import Toaster from "./components/Common/Toaster";
 import { CartProvider } from "./contexts/CartContext";
 import SingleBlog from "./components/Blog/SingleBlog";
 import BlogList from "./components/Blog/BlogList";
-import Accordion from "@mui/material/Accordion";
 import AccordionUsage from "./components/Products/Accordian";
 import Snacks from "./components/shop/Snacks";
 import Combo from "./components/shop/Combo";
 import ProductCategories from "./components/Home/ProductCategories";
 import Checkout from "./components/Checkout/Checkout";
-import ProductShowcase from "./components/Home/ProductShowcase";
 import FeaturedProduct from "./components/Home/FeaturedProduct";
 import Hero from "./components/Home/Hero";
+import OrderDetail from "./components/Orders/OrderDetails";
+import OrdersList from "./components/Orders/OrdersList";
 
 // ✅ Protected Route Wrapper
 const ProtectedRoute = ({ children, requiresAuth }) => {
@@ -105,6 +105,23 @@ function AppContent() {
               <Route path="/Hero" element={<Hero />} />
 
               {/* ✅ Protected Routes */}
+
+              <Route
+                path="/orders"
+                element={
+                  <ProtectedRoute requiresAuth={true}>
+                    <OrdersList />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/orders/:id"
+                element={
+                  <ProtectedRoute requiresAuth={true}>
+                    <OrderDetail />
+                  </ProtectedRoute>
+                }
+              />
 
               <Route
                 path="/checkout"

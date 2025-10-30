@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ShoppingBag, Lock } from "lucide-react";
 import { ENDPOINTS } from "../../api/api";
+import LoaderCircle from "./LoaderCircle"; // ✅ import loader
 
 const Checkout = () => {
   const location = useLocation();
@@ -11,7 +12,7 @@ const Checkout = () => {
     items = [],
     totals = { subtotal: "0.00", total: "0.00" },
     cartWeight = 0,
-    source = "cart", // ✅ detect checkout source (default: cart)
+    source = "cart",
   } = location.state || {};
 
   const [formData, setFormData] = useState({
@@ -40,8 +41,8 @@ const Checkout = () => {
 
   const [sameAsBilling, setSameAsBilling] = useState(true);
   const [errors, setErrors] = useState({});
+  const [loadingStatus, setLoadingStatus] = useState(null); // ✅ loader control
 
-  // Prefill user email
   useEffect(() => {
     const fetchUserEmail = async () => {
       const token = localStorage.getItem("hh_token");
@@ -63,11 +64,9 @@ const Checkout = () => {
         console.error("Error fetching user email:", err);
       }
     };
-
     fetchUserEmail();
   }, []);
 
-  // Handle input changes
   const handleInputChange = (e, isShipping = false) => {
     const { name, value } = e.target;
     const targetState = isShipping ? setShippingData : setFormData;
@@ -75,10 +74,8 @@ const Checkout = () => {
     if (name === "pinCode") {
       const numericValue = value.replace(/\D/g, "").slice(0, 6);
       targetState((prev) => ({ ...prev, pinCode: numericValue }));
-
-      if (numericValue.length === 6) {
+      if (numericValue.length === 6)
         fetchPincodeDetails(numericValue, isShipping);
-      }
       return;
     }
 
@@ -86,7 +83,6 @@ const Checkout = () => {
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  // Fetch city/state from pincode
   const fetchPincodeDetails = async (pincode, isShipping = false) => {
     try {
       const res = await fetch(ENDPOINTS.PINCODE(), {
@@ -116,14 +112,16 @@ const Checkout = () => {
     }
   };
 
-  // ✅ Razorpay Payment Handler
-  // ✅ Razorpay Payment Handler
+  // ✅ Razorpay Payment Handler with Loader
   const handlePayment = async () => {
     const token = localStorage.getItem("hh_token");
     if (!token) {
-      alert("Please log in before proceeding to payment.");
+      setLoadingStatus({ status: "error", text: "Please log in to continue" });
+      setTimeout(() => setLoadingStatus(null), 1500);
       return;
     }
+
+    setLoadingStatus({ status: "loading", text: "Processing Payment..." }); // show loader
 
     try {
       const res = await fetch(ENDPOINTS.CREATE_RAZORPAY_ORDER(), {
@@ -134,9 +132,15 @@ const Checkout = () => {
 
       const data = await res.json();
       if (!data.success) {
-        alert("Failed to initiate payment");
+        setLoadingStatus({
+          status: "error",
+          text: "Failed to initiate payment",
+        });
+        setTimeout(() => setLoadingStatus(null), 1500);
         return;
       }
+
+      setLoadingStatus(null); // hide loader when Razorpay modal opens
 
       const options = {
         key: "rzp_test_RZC0xunp2TupSo",
@@ -153,7 +157,8 @@ const Checkout = () => {
         theme: { color: "#4CAF50" },
 
         handler: async function (response) {
-          // ✅ Ensure each item has proper IDs
+          setLoadingStatus({ status: "loading", text: "Verifying Payment..." });
+
           const safeItems = items.map((item) => ({
             id: item.id || item.product_id || 0,
             title: item.title,
@@ -164,7 +169,6 @@ const Checkout = () => {
             price: item.price,
           }));
 
-          // Verify payment
           const verifyRes = await fetch(ENDPOINTS.VERIFY_RAZORPAY_PAYMENT(), {
             method: "POST",
             headers: {
@@ -180,35 +184,40 @@ const Checkout = () => {
                 totals,
                 formData,
                 shippingData: sameAsBilling ? formData : shippingData,
-                source, // ✅ include source in order data
+                source,
               },
             }),
           });
 
           const verifyData = await verifyRes.json();
+
           if (verifyData.success) {
-            // ✅ Clear cart ONLY if source is from cart
             if (source === "cart") {
               try {
                 await fetch(ENDPOINTS.CLEAR_CART(), {
                   method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
+                  headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ token }),
                 });
-                console.log("🛒 Cart cleared successfully after payment.");
               } catch (err) {
                 console.error("Error clearing cart:", err);
               }
-            } else {
-              console.log("🛍️ Buy Now order - cart not cleared");
             }
 
-            alert("✅ Payment successful! Your order has been placed.");
-            navigate("/account", { state: { activeSection: "orders" } });
+            setLoadingStatus({
+              status: "success",
+              text: "Order Placed Successfully!",
+            });
+            setTimeout(() => {
+              setLoadingStatus(null);
+              navigate("/account", { state: { activeSection: "orders" } });
+            }, 1500);
           } else {
-            alert("❌ Payment verification failed: " + verifyData.message);
+            setLoadingStatus({
+              status: "error",
+              text: "Payment Verification Failed!",
+            });
+            setTimeout(() => setLoadingStatus(null), 1500);
           }
         },
       };
@@ -217,12 +226,17 @@ const Checkout = () => {
       rzp.open();
     } catch (error) {
       console.error(error);
-      alert("Something went wrong while initiating payment.");
+      setLoadingStatus({ status: "error", text: "Something went wrong" });
+      setTimeout(() => setLoadingStatus(null), 1500);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 relative">
+      {loadingStatus && (
+        <LoaderCircle status={loadingStatus.status} text={loadingStatus.text} />
+      )}
+
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center">
@@ -243,7 +257,7 @@ const Checkout = () => {
               <BillingForm formData={formData} onChange={handleInputChange} />
             </div>
 
-            {/* Checkbox for same as billing */}
+            {/* Checkbox */}
             <div className="flex items-center space-x-2 bg-white p-4 rounded-lg shadow-sm">
               <input
                 type="checkbox"
@@ -257,7 +271,6 @@ const Checkout = () => {
               </label>
             </div>
 
-            {/* Shipping Info */}
             {!sameAsBilling && (
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-6">
