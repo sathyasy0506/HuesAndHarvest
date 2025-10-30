@@ -13,16 +13,14 @@ const OrderItemsCard = ({ order, formatCurrency }) => {
             {order.items.length} items
           </p>
         </div>
-        <div className="text-right">
-          <div className="text-sm text-gray-500">Subtotal</div>
-          <div className="text-lg font-semibold text-gray-900">
-            {formatCurrency(order.items.reduce((s, it) => s + it.price, 0))}
-          </div>
-        </div>
       </div>
 
-      {/* Items list */}
-      <div className="divide-y divide-gray-100">
+      {/* Items list — scrollable if more than 3 */}
+      <div
+        className={`divide-y divide-gray-100 ${
+          order.items.length > 3 ? "max-h-80 overflow-y-auto" : ""
+        }`}
+      >
         {order.items.map((item) => (
           <div key={item.id} className="p-6 flex items-center gap-6">
             <div className="w-28 h-20 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center shadow-sm">
