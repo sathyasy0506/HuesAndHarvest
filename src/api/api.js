@@ -27,16 +27,29 @@ export const ENDPOINTS = {
   ADD_TO_CART: () => `${BASE_URL}add-to-cart.php`,
   REMOVE_FROM_CART: () => `${BASE_URL}removecart.php`,
   PRODUCT_QUANTITY: () => `${BASE_URL}product_quantity.php`,
-  PROFILE: () => `${BASE_URL}profile.php`,
   UPDATE_PROFILE: () => `${BASE_URL}update-profile.php`,
   REQUEST_PASSWORD_OTP: () => `${BASE_URL}request_password_otp.php`,
   VERIFY_PASSWORD_OTP: () => `${BASE_URL}verify_password_otp.php`,
+  HH_SECTIONS: () => `${BASE_URL}hh-sections.php`,
 
+  // cart operations
+  CLEAR_CART: () => `${BASE_URL}clear_cart.php`,
+
+  // login via otp
+  FLVO: () => `${BASE_URL}flvo.php`,
+  FLSO: () => `${BASE_URL}flso.php`,
+
+  // register
+  FRVO: () => `${BASE_URL}frvo.php`,
+  FRSO: () => `${BASE_URL}frso.php`,
+
+  // Razorpay payment
   CREATE_RAZORPAY_ORDER: () => `${BASE_URL}create_order.php`,
   VERIFY_RAZORPAY_PAYMENT: () => `${BASE_URL}verify_payment.php`,
   PINCODE: () => `${BASE_URL}pincode.php`,
 
-  GET_ORDERS: () => `${BASE_URL}orders.php`,
-
+  // Account related
   ADDRESSES: () => `${BASE_URL}addresses.php`,
+  PROFILE: () => `${BASE_URL}profile.php`,
+  GET_ORDERS: () => `${BASE_URL}orders.php`,
 };

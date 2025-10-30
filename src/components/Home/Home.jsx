@@ -12,18 +12,21 @@ import FreshInsights from "./FreshInsights";
 import FreshnessSection from "./FreshnessSection";
 import CaProductListing from "./CaProductListing";
 import ProductShowcase from "./ProductShowcase";
+import { ENDPOINTS } from "../../api/api";
 
 const Home = ({ onDataLoaded }) => {
   useEffect(() => {
     const fetchAllData = async () => {
       try {
         await Promise.all([
-          fetch("/api/products").then((res) => res.json()),
-          fetch("/api/categories").then((res) => res.json()),
-          fetch("/api/insights").then((res) => res.json()),
-          fetch("/api/featured").then((res) => res.json()),
-          fetch("/api/testimonials").then((res) => res.json()),
-          fetch("/api/instagram").then((res) => res.json()),
+          fetch(ENDPOINTS.HH_SECTIONS()).then((res) => res.json()),
+          fetch(ENDPOINTS.PRODUCT_COUNT()).then((res) => res.json()),
+          fetch(ENDPOINTS.LIST_PRODUCTS()).then((res) => res.json()),
+          fetch(ENDPOINTS.LIST_COMBO()).then((res) => res.json()),
+          fetch(ENDPOINTS.FEATURED_PRODUCTS()).then((res) => res.json()),
+          fetch(ENDPOINTS.ADD_TO_CART()).then((res) => res.json()),
+          fetch(ENDPOINTS.REVIEWS()).then((res) => res.json()),
+          fetch(ENDPOINTS.INSTAGRAM_FEED()).then((res) => res.json()),
         ]);
       } catch (error) {
         console.error("❌ Error loading home data:", error);

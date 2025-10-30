@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "../Common/Toaster";
+import { ENDPOINTS } from "../../api/api";
 
 const countries = [
   { name: "India", code: "+91" },
@@ -57,7 +58,7 @@ const SignUpForm = ({ onSwitchToLogin }) => {
     setIsLoading(true);
 
     try {
-      const res = await fetch("https://admin.huesandharvest.com/api/frso.php", {
+      const res = await fetch(ENDPOINTS.FRSO(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -98,7 +99,7 @@ const SignUpForm = ({ onSwitchToLogin }) => {
     setFormError("");
 
     try {
-      const res = await fetch("https://admin.huesandharvest.com/api/frvo.php", {
+      const res = await fetch(ENDPOINTS.FRVO(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

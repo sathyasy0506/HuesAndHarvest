@@ -11,6 +11,7 @@ const Checkout = () => {
     items = [],
     totals = { subtotal: "0.00", total: "0.00" },
     cartWeight = 0,
+    source = "cart", // ✅ detect checkout source (default: cart)
   } = location.state || {};
 
   const [formData, setFormData] = useState({
@@ -115,7 +116,8 @@ const Checkout = () => {
     }
   };
 
-  // Razorpay Payment Handler
+  // ✅ Razorpay Payment Handler
+  // ✅ Razorpay Payment Handler
   const handlePayment = async () => {
     const token = localStorage.getItem("hh_token");
     if (!token) {
@@ -149,7 +151,20 @@ const Checkout = () => {
           contact: formData.phone,
         },
         theme: { color: "#4CAF50" },
+
         handler: async function (response) {
+          // ✅ Ensure each item has proper IDs
+          const safeItems = items.map((item) => ({
+            id: item.id || item.product_id || 0,
+            title: item.title,
+            sku: item.sku,
+            quantity: item.quantity,
+            subtotal: item.subtotal,
+            item_key: item.item_key,
+            price: item.price,
+          }));
+
+          // Verify payment
           const verifyRes = await fetch(ENDPOINTS.VERIFY_RAZORPAY_PAYMENT(), {
             method: "POST",
             headers: {
@@ -161,16 +176,35 @@ const Checkout = () => {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_signature: response.razorpay_signature,
               orderData: {
-                items,
+                items: safeItems,
                 totals,
                 formData,
                 shippingData: sameAsBilling ? formData : shippingData,
+                source, // ✅ include source in order data
               },
             }),
           });
 
           const verifyData = await verifyRes.json();
           if (verifyData.success) {
+            // ✅ Clear cart ONLY if source is from cart
+            if (source === "cart") {
+              try {
+                await fetch(ENDPOINTS.CLEAR_CART(), {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ token }),
+                });
+                console.log("🛒 Cart cleared successfully after payment.");
+              } catch (err) {
+                console.error("Error clearing cart:", err);
+              }
+            } else {
+              console.log("🛍️ Buy Now order - cart not cleared");
+            }
+
             alert("✅ Payment successful! Your order has been placed.");
             navigate("/account", { state: { activeSection: "orders" } });
           } else {
