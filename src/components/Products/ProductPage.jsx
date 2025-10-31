@@ -208,27 +208,32 @@ function ProductPage() {
   };
 
   const handleBuyNow = () => {
-    // Build single item for checkout
+    // Build single item for checkout with all required fields
     const checkoutItem = {
-      item_key: product.id,
+      item_key: `buy_now_${product.id}_${Date.now()}`, // Unique key
+      id: product.id,
+      product_id: product.id,
       title: product.name,
-      quantity,
+      quantity: quantity,
       subtotal: (product.price * quantity).toFixed(2),
+      price: product.price.toString(),
       image: product.image,
-      weight: product.weight || 0,
-      price: product.price,
+      weight_per_unit: product.weight || 0,
+      weight_total: (product.weight || 0) * quantity,
+      sku: product.sku || `BUY_NOW_${product.id}`,
     };
 
     const totals = {
       subtotal: checkoutItem.subtotal,
-      total: checkoutItem.subtotal, // You can add shipping/tax if needed
+      total: checkoutItem.subtotal,
     };
 
     navigate("/checkout", {
       state: {
         items: [checkoutItem],
         totals,
-        cartWeight: checkoutItem.weight * quantity,
+        cartWeight: checkoutItem.weight_total,
+        source: "buy_now", // ✅ This identifies it as buy now
       },
     });
   };

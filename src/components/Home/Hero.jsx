@@ -2,16 +2,43 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Mouse } from "lucide-react";
 import Silk from "../Background/Silk";
-import mainImg1 from "../../assets/images/tb1.jpeg";
-import mainImg2 from "../../assets/images/tb2.jpeg";
+import { ENDPOINTS } from "../../api/api";
 
 const Hero = () => {
-  // For now all five use the same URL; replace with distinct URLs later
-  const images = [mainImg1, mainImg2];
-
+  const [images, setImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // ✅ Fetch images from your PHP API (background load)
   useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const res = await fetch(ENDPOINTS.HH_SECTIONS());
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        const hero = data && Array.isArray(data.hero) ? data.hero : [];
+        if (hero.length) {
+          const sorted = hero
+            .slice()
+            .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0))
+            .map((img) => img.url);
+
+          setImages(sorted);
+        } else {
+          setImages([]);
+        }
+      } catch (err) {
+        console.error("Error fetching hero images:", err);
+        setImages([]);
+      }
+    };
+
+    fetchImages();
+  }, []);
+
+  // ✅ Auto-slide every 5 seconds
+  useEffect(() => {
+    if (images.length === 0) return;
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
     }, 5000);
@@ -22,9 +49,7 @@ const Hero = () => {
   return (
     <section
       className="relative overflow-x-hidden overflow-y-hidden min-h-screen
-                 mt-16 md:-mt-8 lg:-mt-20
-                 pt-40 md:pt-52 lg:pt-[140px]
-                 pb-24 md:pb-32 lg:pb-10"
+      mt-4 md:-mt-8 lg:-mt-20 pt-40 md:pt-52 lg:pt-[140px] pb-24 md:pb-32 lg:pb-10 p-4"
     >
       {/* Silk Background */}
       <div className="absolute top-0 left-0 w-screen h-full -z-10">
@@ -58,7 +83,7 @@ const Hero = () => {
 
               <h1 className="text-5xl lg:text-7xl font-bold text-white leading-tight">
                 Harvested for Your{" "}
-                <span className="text-emerald-400  ">Taste</span>
+                <span className="text-emerald-400">Taste</span>
               </h1>
 
               <p className="text-xl text-gray-300 leading-relaxed max-w-lg">
@@ -86,7 +111,6 @@ const Hero = () => {
                 Learn Our Story
               </motion.button>
             </div>
-
             {/* <div className="flex items-center space-x-8 pt-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-white">100%</div>
@@ -103,32 +127,29 @@ const Hero = () => {
             </div> */}
           </motion.div>
 
-          {/* Right Image (badge moved outside overflow-hidden so it won't be clipped) */}
+          {/* Right Image */}
           <motion.div
             className="relative w-full"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            {/* Outer wrapper is relative and DOES NOT hide overflow. This allows the badge to sit outside the image's rounded container without being clipped. */}
             <div className="relative w-full">
-              {/* Image wrapper keeps rounded corners and hides overflow so the image stays clipped to the rounded shape. */}
               <div className="rounded-3xl overflow-hidden shadow-2xl">
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={currentIndex}
-                    src={images[currentIndex]}
-                    alt={`Premium Chips ${currentIndex + 1}`}
+                    src={images[currentIndex] || "/placeholder.jpg"} // fallback placeholder
+                    alt={`Hero ${currentIndex + 1}`}
                     className="w-full h-[320px] md:h-[520px] lg:h-[420px] object-cover"
-                    initial={{ opacity: 0, scale: 1.02 }} // new image fades/scales in
+                    initial={{ opacity: 0, scale: 1.02 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    // ❌ removed exit so no fade-out
                     transition={{ duration: 0.8 }}
                   />
                 </AnimatePresence>
               </div>
 
-              {/* Badge placed in the outer wrapper so it's not clipped by the rounded image container */}
+              {/* Floating badge */}
               <motion.div
                 className="absolute -top-4 -right-4 bg-orange-500 text-white px-6 py-2 rounded-[18px] font-bold shadow-lg z-20"
                 animate={{ rotate: [0, 5, 0] }}

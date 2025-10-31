@@ -28,14 +28,20 @@ import Toaster from "./components/Common/Toaster";
 import { CartProvider } from "./contexts/CartContext";
 import SingleBlog from "./components/Blog/SingleBlog";
 import BlogList from "./components/Blog/BlogList";
-import Accordion from "@mui/material/Accordion";
 import AccordionUsage from "./components/Products/Accordian";
 import Snacks from "./components/shop/Snacks";
 import Combo from "./components/shop/Combo";
 import ProductCategories from "./components/Home/ProductCategories";
 import Checkout from "./components/Checkout/Checkout";
-import ProductShowcase from "./components/Home/ProductShowcase";
 import FeaturedProduct from "./components/Home/FeaturedProduct";
+import Hero from "./components/Home/Hero";
+import OrderDetail from "./components/Orders/OrderDetails";
+import OrdersList from "./components/Orders/OrdersList";
+import TermsAndConditions from "./components/Policy/TermsAndConditions";
+import ShippingPolicy from "./components/Policy/ShippingPolicy";
+import { Cancel } from "@mui/icons-material";
+import PrivacyPolicy from "./components/Policy/PrivacyPolicy";
+import CancellationsAndRefunds from "./components/Policy/CancellationsAndRefunds";
 
 // ✅ Protected Route Wrapper
 const ProtectedRoute = ({ children, requiresAuth }) => {
@@ -100,10 +106,50 @@ function AppContent() {
               <Route path="/accordian" element={<AccordionUsage />} />
               <Route path="/blog/:id" element={<SingleBlog />} />
               <Route path="/catagories" element={<ProductCategories />} />
-              <Route path="/checkout" element={<Checkout />} />
               <Route path="/showcase" element={<FeaturedProduct />} />
+              <Route path="/Hero" element={<Hero />} />
+
+              {/* Policy Pages */}
+
+              <Route
+                path="/terms-and-conditions"
+                element={<TermsAndConditions />}
+              />
+              <Route path="/shipping-policy" element={<ShippingPolicy />} />
+              <Route
+                path="/cancellation-and-refunds"
+                element={<CancellationsAndRefunds />}
+              />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
               {/* ✅ Protected Routes */}
+
+              <Route
+                path="/orders"
+                element={
+                  <ProtectedRoute requiresAuth={true}>
+                    <OrdersList />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/orders/:id"
+                element={
+                  <ProtectedRoute requiresAuth={true}>
+                    <OrderDetail />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/checkout"
+                element={
+                  <ProtectedRoute requiresAuth={true}>
+                    <Checkout />
+                  </ProtectedRoute>
+                }
+              />
+
               <Route
                 path="/cart"
                 element={

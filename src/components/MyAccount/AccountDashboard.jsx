@@ -7,10 +7,13 @@ import PaymentMethodsSection from "./PaymentMethodsSection";
 import WishlistSection from "./WishlistSection";
 import HelpSection from "./HelpSection";
 import SecuritySection from "./SecuritySection";
+import { useLocation } from "react-router-dom";
 
 function AccountDashboard() {
-  const [activeSection, setActiveSection] = useState("profile");
-
+  const location = useLocation();
+  const [activeSection, setActiveSection] = useState(
+    location.state?.activeSection || "profile"
+  );
   const renderActiveSection = () => {
     switch (activeSection) {
       case "profile":

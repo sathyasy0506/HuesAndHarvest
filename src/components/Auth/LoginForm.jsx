@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
-
-const API_BASE = "https://admin.huesandharvest.com/api"; // <-- change this
+import { ENDPOINTS } from "../../api/api";
 
 const LoginForm = ({ onForgotPassword, onSwitchToSignUp }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -35,7 +34,7 @@ const LoginForm = ({ onForgotPassword, onSwitchToSignUp }) => {
 
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/flso.php`, {
+      const res = await fetch(ENDPOINTS.FLSO(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone_number: phoneNumber }),
@@ -63,7 +62,7 @@ const LoginForm = ({ onForgotPassword, onSwitchToSignUp }) => {
 
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/flvo.php`, {
+      const res = await fetch(ENDPOINTS.FLVO(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone_number: phoneNumber, otp }),
