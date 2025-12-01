@@ -108,16 +108,6 @@ const StarRating = ({ rating }) => {
   );
 };
 
-// clamp quantity before sending
-const safeQuantity = (() => {
-  const stockQtyRaw = product.stock_quantity;
-  const stockQty =
-    stockQtyRaw === null || stockQtyRaw === undefined || stockQtyRaw === ""
-      ? Infinity
-      : Number(stockQtyRaw);
-  return Math.max(1, Math.min(quantity, stockQty));
-})();
-
 // Inside ProductPage component
 
 const AverageRatingCircle = ({ rating }) => {
@@ -193,7 +183,7 @@ function ProductPage() {
         body: JSON.stringify({
           token,
           product_id: product.id,
-          quantity: safeQuantity,
+          quantity,
         }),
       });
 
