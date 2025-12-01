@@ -283,6 +283,24 @@ function ProductPage() {
       .catch((err) => console.error(err));
   }, [productId]);
 
+  // Clamp quantity to available stock when product loads/changes
+  useEffect(() => {
+    if (!product) return;
+
+    // parse stock quantity safely
+    const stockQtyRaw = product.stock_quantity;
+    const stockQty =
+      stockQtyRaw === null || stockQtyRaw === undefined || stockQtyRaw === ""
+        ? Infinity
+        : Number(stockQtyRaw);
+
+    // Ensure quantity is at least 1 and at most stockQty
+    setQuantity((q) => {
+      const newQ = Math.max(1, Math.min(q, stockQty));
+      return newQ;
+    });
+  }, [product]);
+
   const handleShowMoreModal = () => setModalVisibleCount((prev) => prev + 10);
   const closeModal = () => {
     setShowModal(false);
@@ -440,13 +458,15 @@ function ProductPage() {
                 {/* Row 1: Quantity + Add to Cart */}
                 <div className="flex items-center gap-4 w-full">
                   {/* Quantity Selector */}
+                  {/* Quantity Selector */}
                   <div className="flex items-center border rounded-full overflow-hidden flex-1">
                     <button
                       onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                       className="w-11 h-10 flex items-center justify-center text-lg text-gray-700 border border-gray-300 rounded-full"
                       disabled={
                         product.stock_quantity === 0 ||
-                        product.stock_status === "outofstock"
+                        product.stock_status === "outofstock" ||
+                        quantity <= 1
                       }
                     >
                       -
@@ -455,11 +475,29 @@ function ProductPage() {
                       {quantity}
                     </span>
                     <button
-                      onClick={() => setQuantity((q) => q + 1)}
+                      onClick={() =>
+                        setQuantity((q) => {
+                          const stockQtyRaw = product.stock_quantity;
+                          const stockQty =
+                            stockQtyRaw === null ||
+                            stockQtyRaw === undefined ||
+                            stockQtyRaw === ""
+                              ? Infinity
+                              : Number(stockQtyRaw);
+
+                          // don't exceed available stock
+                          if (q >= stockQty) return q;
+                          return q + 1;
+                        })
+                      }
                       className="w-10 h-10 flex items-center justify-center text-lg text-gray-700 border border-gray-300 rounded-full"
                       disabled={
                         product.stock_quantity === 0 ||
-                        product.stock_status === "outofstock"
+                        product.stock_status === "outofstock" ||
+                        (product.stock_quantity !== null &&
+                          product.stock_quantity !== undefined &&
+                          product.stock_quantity !== "" &&
+                          quantity >= Number(product.stock_quantity))
                       }
                     >
                       +

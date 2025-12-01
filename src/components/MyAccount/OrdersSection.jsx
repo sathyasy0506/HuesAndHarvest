@@ -70,8 +70,8 @@ const OrdersSection = () => {
         return <Truck className="w-5 h-5 text-blue-500" />;
       case "processing":
         return <RefreshCw className="w-5 h-5 text-yellow-500" />;
-      case "pending":
-        return <Clock className="w-5 h-5 text-gray-400" />;
+      // case "pending":
+      //   return <Clock className="w-5 h-5 text-gray-400" />;
       default:
         return <Package className="w-5 h-5 text-gray-400" />;
     }
@@ -96,7 +96,7 @@ const OrdersSection = () => {
 
         {/* Tabs */}
         <div className="flex space-x-2 mb-6">
-          {["all", "processing", "completed", "pending"].map((tab) => (
+          {["all", "processing", "completed"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -127,10 +127,10 @@ const OrdersSection = () => {
                 </p>
                 {/* ✅ Show dummy tracking ID */}
                 <p className="text-gray-700 font-medium mt-1">
-                  Tracking ID:{" "}
-                  <span className="text-blue-600 font-semibold">
+                  {/* Tracking ID:{" "} */}
+                  {/* <span className="text-blue-600 font-semibold">
                     {order.trackingId}
-                  </span>
+                  </span> */}
                   <p className="text-gray-700 font-semibold">₹{order.total}</p>
                 </p>
               </div>

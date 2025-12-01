@@ -108,6 +108,7 @@ function AppContent() {
               <Route path="/catagories" element={<ProductCategories />} />
               <Route path="/showcase" element={<FeaturedProduct />} />
               <Route path="/Hero" element={<Hero />} />
+              <Route path="/orderdetail" element={<OrderDetail />} />
 
               {/* Policy Pages */}
 

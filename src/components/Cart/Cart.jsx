@@ -319,7 +319,12 @@ const Cart = () => {
                     onClick={() =>
                       navigate("/checkout", {
                         state: {
-                          items,
+                          items: items.map((item) => ({
+                            ...item,
+                            length_in: item.length_in,
+                            width_in: item.width_in,
+                            breadth_in: item.breadth_in,
+                          })),
                           totals,
                           cartWeight,
                           source: "cart", // ✅ This identifies it as cart
